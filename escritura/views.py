@@ -4,11 +4,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import DetailView
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required # Decorador para requerir autenticación
+from django.http import Http404
+from django.contrib import messages
 
-from .models import Escrito # Importamos nuestro modelo Escrito
+from .models import Escrito, Profile # MODIFICADO: Importamos también el modelo Profile
 from .forms import CustomUserCreationForm, EscritoForm # Importamos nuestros formularios
-from django.http import Http404 # Para lanzar un error 404 si el usuario no es el autor
-from django.contrib import messages # AÑADIDO: Para mostrar mensajes al usuario
 
 # Vista basada en función para listar escritos públicos
 def lista_escritos(request):
@@ -188,3 +188,39 @@ def eliminar_escrito(request, pk):
 
     # Si la solicitud es GET, muestra la página de confirmación.
     return render(request, 'escritura/confirmar_eliminar_escrito.html', {'escrito': escrito})
+
+
+# AÑADIDO: Vista para mostrar el perfil del usuario y sus escritos
+@login_required # Solo usuarios autenticados pueden acceder a su perfil.
+def perfil_usuario(request):
+    """
+    Esta vista muestra el perfil del usuario autenticado, incluyendo
+    su biografía, foto de perfil y una lista de TODOS sus escritos
+    (sin importar el estado: borrador, privado, público).
+    """
+    # El objeto 'request.user' ya está disponible gracias a @login_required
+    # y el middleware de autenticación.
+    usuario = request.user
+
+    # Intentamos obtener el perfil del usuario.
+    # Gracias a la señal post_save que creamos, cada usuario debería tener un perfil.
+    try:
+        perfil = usuario.profile
+    except Profile.DoesNotExist:
+        # En un escenario muy improbable (ej. si la señal falló o se deshabilitó),
+        # podríamos crear uno aquí o redirigir. Por ahora, asumimos que existe.
+        perfil = Profile.objects.create(user=usuario)
+        # Podrías añadir un mensaje de warning aquí si esto fuera algo que debe ser notado:
+        # messages.warning(request, "Tu perfil fue creado automáticamente. Por favor, complétalo.")
+
+    # Recupera TODOS los escritos de este usuario, ordenados por fecha de creación.
+    # No filtramos por estado aquí, ya que es la vista personal del usuario.
+    mis_escritos = Escrito.objects.filter(autor=usuario).order_by('-fecha_creacion')
+
+    contexto = {
+        'usuario': usuario,      # El objeto User
+        'perfil': perfil,        # El objeto Profile asociado
+        'mis_escritos': mis_escritos # Todos los escritos del usuario
+    }
+
+    return render(request, 'escritura/perfil_usuario.html', contexto)
