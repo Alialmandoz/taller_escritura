@@ -1,6 +1,6 @@
 # Contenido del Proyecto: taller escritura
 
-**Generado el:** 2025-06-27 00:09:06
+**Generado el:** 2025-06-27 15:15:57
 
 ## Estructura del Proyecto
 
@@ -8,7 +8,10 @@
 taller escritura
 ├── .gitignore
 ├── Beige Ivory Watercolor Minimalist Productivity New Blog Instagram Post.png
+├── Desglose de Funcionalidades de la App.txt
+├── README.md
 ├── manage.py
+├── requirements.txt
 ├── escritura
 │   ├── __init__.py
 │   ├── admin.py
@@ -24,6 +27,7 @@ taller escritura
 │   │   ├── __init__.py
 │   ├── templates
 │   │   ├── escritura
+│   │   │   ├── base.html
 │   │   │   ├── crear_editar_escrito.html
 │   │   │   ├── detalle_escrito.html
 │   │   │   ├── lista_escritos.html
@@ -34,6 +38,11 @@ taller escritura
 │   ├── settings.py
 │   ├── urls.py
 │   ├── wsgi.py
+│   ├── static
+│   │   ├── css
+│   │   │   ├── main.css
+│   ├── templates
+│   │   ├── base.html
 ```
 
 ---
@@ -45,6 +54,414 @@ taller escritura
 ## Archivo: `Beige Ivory Watercolor Minimalist Productivity New Blog Instagram Post.png`
 
 [Contenido de 'Beige Ivory Watercolor Minimalist Productivity New Blog Instagram Post.png' omitido (Extensión no listada: .png)]
+
+## Archivo: `Desglose de Funcionalidades de la App.txt`
+
+```text
+Desglose de Funcionalidades de la Aplicación del Taller de Escritura
+I. Autenticación y Perfiles de Usuario:
+Registro y Login de Usuarios: Los participantes podrán crear una cuenta y acceder a la aplicación.
+Implicación técnica: Uso del sistema de autenticación de Django (django.contrib.auth).
+Perfiles de Usuario Completos:
+Bio: Un campo para una breve descripción personal.
+Foto de Perfil: Un campo para subir y mostrar una imagen de perfil.
+Lista de Escritos del Usuario: Una vista que muestre todos los escritos publicados por un usuario específico.
+Implicación técnica: Extensión del modelo User de Django (recomendado: modelo Profile con OneToOneField).
+II. Gestión de Escritos:
+Creación y Edición de Escritos: Los usuarios podrán crear nuevos textos y modificar los existentes.
+Implicación técnica: Modelos (models.Model), vistas (views), formularios (forms).
+Borradores (Drafts): Opción de guardar escritos en progreso sin publicarlos, visibles solo para el autor.
+Implicación técnica: Un campo de estado (status o visibility) en el modelo Escrito.
+Visibilidad de Escritos:
+Público: Visible para todos los participantes.
+Privado: Visible solo para el autor.
+Implicación técnica: Campo de estado/visibilidad en el modelo Escrito y lógica de permisos en vistas. (La visibilidad "Solo Amigos/Grupo" se dejará para una fase posterior si se implementa un sistema de relaciones sociales).
+Editor de Texto Enriquecido (Rich Text Editor): Permitir formato de texto (negritas, cursivas, etc.) en los escritos.
+Implicación técnica: Integración de una librería de terceros como django-ckeditor o django-tinymce.
+Etiquetas/Categorías (Tags/Categories): Para clasificar y organizar los escritos.
+Implicación técnica: Uso de una librería como django-taggit o un modelo Category con ManyToManyField.
+Control de Versiones (Versiones Anteriores): Posibilidad de ver y restaurar versiones previas de un escrito.
+Implicación técnica: Integración de una librería como django-reversion.
+Adjuntar Archivos (Opcional): Posibilidad de subir archivos (imágenes, PDFs) asociados a un escrito.
+Implicación técnica: FileField o ImageField en el modelo Escrito, o un modelo Adjunto separado.
+III. Interacción y Descubrimiento:
+Lectura y Comentarios: Los usuarios podrán leer los escritos de otros y dejar comentarios.
+Implicación técnica: Modelo Comentario, vistas para mostrar escritos y añadir comentarios, formularios para comentarios.
+Funcionalidad de Búsqueda: Búsqueda de escritos por título, autor, etiquetas, palabras clave.
+Implicación técnica: Consultas con el ORM de Django (Q objects, icontains); posible integración futura con soluciones de búsqueda más avanzadas.
+Paginación: Manejo eficiente de grandes listados de escritos o comentarios.
+Implicación técnica: Uso de la clase Paginator de Django en las vistas.
+Panel de Control (Dashboard): Una página principal personalizada para cada usuario al iniciar sesión.
+Sus últimos escritos: Mostrar los textos recientes del usuario.
+Notificaciones: Un sistema básico de notificaciones (ej. nuevo comentario en tu escrito).
+Nuevos escritos de usuarios que sigue: (Requeriría un sistema de "seguidores" - complejo, se planificará para fases futuras si se requiere).
+Próximas asignaciones: (Requeriría un sistema de "Asignaciones" o "Eventos" - a definir si es una necesidad clave ahora).
+Implicación técnica: Vistas basadas en clases, múltiples consultas a modelos, posiblemente un modelo Notificacion.
+IV. Administración y Moderación:
+Denuncia de Contenido: Los usuarios pueden reportar escritos o comentarios inapropiados.
+Implicación técnica: Un modelo Reporte que se relacione con Escrito y Comentario.
+Panel de Moderación: Un área para administradores/instructores para revisar y actuar sobre el contenido reportado.
+Implicación técnica: Vistas y plantillas restringidas por permisos, integración con el panel de administración de Django.
+Gestión de Usuarios: Herramientas para que el administrador pueda ver, editar o suspender cuentas de usuario.
+Implicación técnica: Principalmente a través del panel de administración de Django; posibles vistas personalizadas para tareas específicas.
+V. Aspectos de Usabilidad y Diseño:
+Diseño Responsivo: La aplicación se adaptará a diferentes tamaños de pantalla (móvil, tablet, escritorio).
+Implicación técnica: Principalmente CSS (media queries), posiblemente uso de un framework CSS (Bootstrap/Tailwind).
+Modalidad Oscura (Dark Mode): Opción para cambiar el tema visual de la aplicación.
+Implicación técnica: CSS (variables), JavaScript, y almacenamiento de preferencia (ej. en Profile o sesiones).
+
+```
+
+---
+
+## Archivo: `README.md`
+
+```markdown
+# taller_escritura ✨
+
+Una plataforma digital centralizada y colaborativa para participantes de talleres de escritura.
+
+[![Built with Django](https://img.shields.io/badge/Built%20with-Django-092E20?style=for-the-badge&logo=django&logoColor=white)](https://www.djangoproject.com/)
+[![Built with Python](https://img.shields.io/badge/Built%20with-Python-3670A0?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Licencia MIT](https://img.shields.io/badge/Licencia-MIT-green.svg)](./LICENSE)
+<!--
+Puedes añadir más badges aquí a medida que el proyecto crezca, por ejemplo:
+[![CI/CD](https://github.com/Alialmandoz/taller_escritura/actions/workflows/ci.yml/badge.svg)](https://github.com/Alialmandoz/taller_escritura/actions/workflows/ci.yml)
+-->
+
+## 📖 Tabla de Contenidos
+
+- [taller\_escritura ✨](#taller_escritura-)
+  - [📖 Tabla de Contenidos](#-tabla-de-contenidos)
+  - [🚀 Introducción](#-introducción)
+  - [✨ Características](#-características)
+  - [🛠️ Instalación](#️-instalación)
+    - [Prerrequisitos](#prerrequisitos)
+    - [Pasos de Instalación](#pasos-de-instalación)
+    - [Iniciando el Servidor de Desarrollo](#iniciando-el-servidor-de-desarrollo)
+
+## 🚀 Introducción
+
+**taller_escritura** es el "hogar digital" para que los participantes de un taller de escritura desarrollen, organicen y compartan sus textos, y obtengan retroalimentación constructiva de sus pares en un entorno de comunidad y apoyo.
+
+Esta plataforma busca ser la herramienta centralizada donde los escritores pueden:
+- Gestionar su proceso creativo de principio a fin.
+- Beneficiarse del intercambio y la perspectiva de otros para mejorar sus habilidades.
+- Sentirse parte de una comunidad activa y de apoyo.
+
+<!--
+![Captura de pantalla de la interfaz](docs/images/screenshot_lista_escritos.png)
+*Captura de pantalla de la lista de escritos.*
+-->
+*(Reemplaza este comentario con capturas de pantalla o un GIF/video cuando los tengas para una mejor presentación visual).*
+
+## ✨ Características
+
+Actualmente, la aplicación cuenta con las siguientes funcionalidades:
+
+-   **Autenticación de Usuarios:**
+    -   Registro de nuevas cuentas.
+    -   Inicio y cierre de sesión seguro.
+-   **Perfiles de Usuario:**
+    -   Cada usuario tiene un perfil asociado automáticamente para futuras extensiones (bio, foto de perfil).
+-   **Gestión de Escritos:**
+    -   Creación de nuevos escritos (título, contenido, estado).
+    -   Edición de escritos existentes (solo por su autor).
+    -   Visibilidad de escritos: `Público`, `Privado`, `Borrador`.
+-   **Visualización de Contenido:**
+    -   Lista de todos los escritos marcados como `Público`.
+    -   Página de detalle para cada escrito (mostrando el contenido completo).
+-   **Panel de Administración de Django:**
+    -   Gestión completa (CRUD) de usuarios, perfiles y escritos a través de una interfaz de administración integrada.
+
+## 🛠️ Instalación
+
+Sigue estos pasos para poner en marcha el proyecto en tu entorno local.
+
+### Prerrequisitos
+Asegúrate de tener instalado lo siguiente:
+-   **Python 3.8+** (preferiblemente la última versión estable, como Python 3.13 que estás usando).
+-   **pip** (gestor de paquetes de Python, suele venir con Python).
+-   **Git** (para clonar el repositorio).
+
+### Pasos de Instalación
+
+1.  **Clona el repositorio:**
+    ```bash
+    git clone https://github.com/Alialmandoz/taller_escritura.git
+    cd taller_escritura
+    ```
+
+2.  **Crea y activa un entorno virtual:**
+    Un entorno virtual es crucial para aislar las dependencias del proyecto.
+    ```bash
+    python -m venv venv
+    ```
+    -   **En macOS/Linux:**
+        ```bash
+        source venv/bin/activate
+        ```
+    -   **En Windows (Command Prompt):**
+        ```bash
+        venv\Scripts\activate.bat
+        ```
+    -   **En Windows (PowerShell):**
+        ```bash
+        venv\Scripts\Activate.ps1
+        ```
+
+3.  **Instala las dependencias de Python:**
+    Asegúrate de que tu entorno virtual esté activado.
+    ```bash
+    pip install -r requirements.txt
+    ```
+    *(Si aún no tienes `requirements.txt`, ejecútalo después de instalar Django y Pillow: `pip freeze > requirements.txt`)*
+
+4.  **Configura los archivos de medios (opcional, para desarrollo):**
+    Crea las carpetas necesarias para archivos subidos por usuarios y coloca una imagen de perfil por defecto:
+    ```bash
+    mkdir media
+    mkdir media/profile_pics
+    # Coloca una imagen 'default.jpg' dentro de 'media/profile_pics/'
+    ```
+
+5.  **Ejecuta las migraciones de la base de datos:**
+    Esto creará las tablas necesarias en tu base de datos SQLite.
+    ```bash
+    python manage.py migrate
+    ```
+
+6.  **Crea un superusuario (administrador):**
+    Necesitarás esto para acceder al panel de administración.
+    ```bash
+    python manage.py createsuperuser
+    ```
+    Sigue las indicaciones para establecer un nombre de usuario, email y contraseña.
+
+### Iniciando el Servidor de Desarrollo
+
+Una vez completados los pasos anteriores, puedes iniciar la aplicación:
+```bash
+python manage.py runserver
+
+
+La aplicación estará disponible en http://127.0.0.1:8000/.
+
+🚀 Uso
+Accediendo a la Aplicación
+
+Lista de Escritos Públicos: Abre tu navegador y ve a http://127.0.0.1:8000/escritura/.
+
+Panel de Administración: Accede a http://127.0.0.1:8000/admin/ e inicia sesión con tu superusuario.
+
+Flujo de Usuario Básico
+
+Registro: Crea una nueva cuenta en http://127.0.0.1:8000/escritura/registro/.
+
+Inicio de Sesión: Una vez registrado, puedes iniciar sesión usando el enlace "Iniciar Sesión" en la página principal o yendo a /accounts/login/.
+
+Crear un Escrito:
+
+Después de iniciar sesión, verás un botón "+ Crear Nuevo Escrito" en la página de lista.
+
+Haz clic, rellena los campos (Título, Contenido, Visibilidad).
+
+Selecciona Público si quieres que sea visible para todos.
+
+Haz clic en "Publicar Escrito".
+
+Ver un Escrito Detallado: Haz clic en el título de cualquier escrito en la lista para ver su contenido completo.
+
+Editar un Escrito:
+
+Desde la página de detalle de tus propios escritos, verás un botón "Editar".
+
+Haz clic para modificar el título, contenido o visibilidad.
+
+⚙️ Configuración Clave
+
+Las principales configuraciones del proyecto se encuentran en taller_escritura/settings.py.
+
+Variable	Descripción	Valor Actual (ejemplo)
+DEBUG	Modo de depuración. True para desarrollo, False para producción.	True
+LANGUAGE_CODE	Idioma predeterminado de la aplicación.	es-es
+TIME_ZONE	Zona horaria de la aplicación.	America/Mexico_City
+MEDIA_URL	URL pública para servir archivos subidos por usuarios.	/media/
+MEDIA_ROOT	Ruta en el sistema de archivos donde se guardan los archivos de medios.	BASE_DIR / 'media'
+LOGIN_REDIRECT_URL	URL a la que redirigir después de un inicio de sesión exitoso.	'escritura:lista_escritos'
+LOGOUT_REDIRECT_URL	URL a la que redirigir después de un cierre de sesión exitoso.	'escritura:lista_escritos'
+📦 Estructura del Proyecto
+Generated text
+taller escritura
+├── .gitignore                      # Archivos y directorios ignorados por Git
+├── manage.py                       # Utilidad de línea de comandos de Django
+├── requirements.txt                # Dependencias de Python del proyecto
+├── media/                          # Archivos subidos por usuarios (ej. fotos de perfil)
+│   └── profile_pics/
+│       └── default.jpg             # Imagen de perfil por defecto
+├── escritura/                      # Aplicación principal del taller de escritura
+│   ├── __init__.py
+│   ├── admin.py                    # Configuración para el panel de administración
+│   ├── apps.py                     # Configuración de la aplicación
+│   ├── forms.py                    # Formularios personalizados (registro, escrito)
+│   ├── models.py                   # Definición de los modelos de datos (Escrito, Profile)
+│   ├── tests.py                    # Archivo para pruebas de la aplicación
+│   ├── urls.py                     # Definición de URLs específicas de la aplicación
+│   ├── views.py                    # Lógica de las vistas (lista, detalle, registro, crear, editar)
+│   ├── migrations/                 # Migraciones de base de datos para los modelos
+│   │   ├── 0001_initial.py
+│   │   ├── 0002_profile.py
+│   │   └── __init__.py
+│   └── templates/                  # Directorio para plantillas HTML de la aplicación
+│       └── escritura/              # Subdirectorio para evitar conflictos de nombres de plantillas
+│           ├── crear_editar_escrito.html # Plantilla reutilizable para crear/editar escritos
+│           ├── detalle_escrito.html      # Plantilla para el detalle de un escrito
+│           ├── lista_escritos.html       # Plantilla para la lista de escritos públicos
+│           └── registro.html             # Plantilla para el formulario de registro
+└── taller_escritura/               # Configuración global del proyecto Django
+    ├── __init__.py
+    ├── asgi.py                     # Configuración para despliegue asíncrono
+    ├── settings.py                 # Configuración principal del proyecto
+    ├── urls.py                     # URLs globales del proyecto
+    └── wsgi.py                     # Configuración para despliegue web
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+Text
+IGNORE_WHEN_COPYING_END
+🧪 Pruebas
+
+Actualmente, las pruebas automatizadas están en desarrollo. Puedes ejecutar las pruebas predeterminadas de Django con:
+
+Generated bash
+python manage.py test
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+Bash
+IGNORE_WHEN_COPYING_END
+🤝 Contribución
+
+¡Agradecemos enormemente cualquier contribución al proyecto taller_escritura! Si deseas colaborar, te invitamos a seguir estas pautas:
+
+Reporta Errores o Sugiere Características: Abre un issue en el repositorio de GitHub.
+
+Contribuye con Código:
+
+Haz un fork del repositorio.
+
+Clona tu fork localmente.
+
+Crea una rama para tu característica o corrección (git checkout -b feature/nombre-de-tu-caracteristica o bugfix/descripcion-del-bug).
+
+Realiza tus cambios y asegúrate de que el código sea limpio y comentado.
+
+Haz commit de tus cambios con un mensaje claro y descriptivo (ej. feat: Implementar comentarios de usuarios o fix: Corregir error de visualización en lista de escritos).
+
+Sube tus cambios a tu fork (git push origin feature/nombre-de-tu-caracteristica).
+
+Abre una Pull Request desde tu rama a la rama main del repositorio original, describiendo tus cambios.
+
+🗺️ Roadmap
+
+Las próximas funcionalidades y mejoras planeadas para taller_escritura incluyen:
+
+I. Autenticación y Perfiles de Usuario:
+
+Vista de perfil de usuario completa (mostrar bio, foto, escritos del usuario).
+
+Edición del perfil de usuario.
+
+II. Gestión de Escritos:
+
+Integración de un editor de texto enriquecido (ej. django-ckeditor).
+
+Implementación de etiquetas/categorías para escritos.
+
+Control de versiones de escritos (django-reversion).
+
+Posibilidad de adjuntar archivos a escritos.
+
+III. Interacción y Descubrimiento:
+
+Comentarios en escritos (PRÓXIMO PASO).
+
+Funcionalidad de búsqueda avanzada.
+
+Paginación para listas largas.
+
+Panel de control (dashboard) para cada usuario.
+
+IV. Administración y Moderación:
+
+Sistema de denuncia de contenido.
+
+Panel de moderación para administradores.
+
+V. Aspectos de Usabilidad y Diseño:
+
+Diseño responsivo para diferentes dispositivos.
+
+Implementación de modalidad oscura (dark mode).
+
+❓ FAQ / Troubleshooting
+
+Q: ¿Por qué no veo mis escritos públicos en la lista?
+A: Asegúrate de que el campo Estado de tus escritos esté configurado como "Público" en el panel de administración. Recuerda que la vista lista_escritos solo muestra los públicos. Un "hard refresh" del navegador (Ctrl+Shift+R o Cmd+Shift+R) también puede ayudar.
+
+Q: Obtengo un error NoReverseMatch con las URLs de autenticación (login, logout).
+A: Verifica que la línea path('accounts/', include('django.contrib.auth.urls')), esté presente en tu archivo taller_escritura/urls.py (el urls.py principal de tu proyecto), y que hayas reiniciado el servidor de desarrollo después de ese cambio.
+
+Q: ¿Cómo activo mi entorno virtual?
+A: Si estás en la raíz de tu proyecto, usa source venv/bin/activate (macOS/Linux) o venv\Scripts\activate.bat (Windows Command Prompt) o venv\Scripts\Activate.ps1 (Windows PowerShell).
+
+📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Consulta el archivo LICENSE para más detalles.
+
+Generated text
+MIT License
+
+Copyright (c) 2025 Iván ([Tu nombre real o alias, si deseas])
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+Text
+IGNORE_WHEN_COPYING_END
+👏 Agradecimientos
+
+A la comunidad de Django y Python por sus excelentes herramientas y documentación.
+
+A todos los futuros contribuyentes que ayuden a mejorar este proyecto.
+
+📞 Contacto
+
+Iván (Alialmandoz) - tu@email.com (Opcional: reemplaza con tu email real)
+Proyecto Link: https://github.com/Alialmandoz/taller_escritura
+```
+
+---
 
 ## Archivo: `manage.py`
 
@@ -72,6 +489,24 @@ def main():
 if __name__ == '__main__':
     main()
 
+```
+
+---
+
+## Archivo: `requirements.txt`
+
+```text
+a s g i r e f = = 3 . 8 . 1 
+ 
+ D j a n g o = = 5 . 2 . 3 
+ 
+ p i l l o w = = 1 1 . 2 . 1 
+ 
+ s q l p a r s e = = 0 . 5 . 3 
+ 
+ t z d a t a = = 2 0 2 5 . 2 
+ 
+ 
 ```
 
 ---
@@ -277,7 +712,7 @@ urlpatterns = [
     path('<int:pk>/', views.DetalleEscrito.as_view(), name='detalle_escrito'),
     path('registro/', views.registro_usuario, name='registro'),
     path('crear/', views.crear_escrito, name='crear_escrito'),
-    
+    path('<int:pk>/editar/', views.editar_escrito, name='editar_escrito'),
 ]
 ```
 
@@ -291,25 +726,42 @@ urlpatterns = [
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import DetailView
 from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required # AÑADIDO: Decorador para requerir autenticación
+from django.contrib.auth.decorators import login_required # Decorador para requerir autenticación
 
-from .models import Escrito
-from .forms import CustomUserCreationForm, EscritoForm # MODIFICADO: Importamos también EscritoForm
+from .models import Escrito # Importamos nuestro modelo Escrito
+from .forms import CustomUserCreationForm, EscritoForm # Importamos nuestros formularios
+from django.http import Http404 # Para lanzar un error 404 si el usuario no es el autor
 
-
-# AÑADIDO: Vista basada en función para listar escritos públicos
+# Vista basada en función para listar escritos públicos
 def lista_escritos(request):
     """
     Esta vista recupera todos los objetos Escrito cuyo estado sea 'PUBLICO'
     y los pasa a la plantilla para su visualización.
     """
+    # Consulta a la base de datos: Obtiene todos los escritos donde el estado es 'PUBLICO'.
+    # .order_by('-fecha_creacion') asegura que los escritos más recientes aparezcan primero.
     escritos = Escrito.objects.filter(estado='PUBLICO').order_by('-fecha_creacion')
+
+    # AÑADIDO PARA DEPURACIÓN: Imprime el queryset para ver qué elementos contiene.
+    # Estas líneas te mostrarán en la terminal del servidor qué escritos está recuperando la consulta.
+    print(f"DEBUG: Escritos públicos recuperados: {escritos}")
+    print(f"DEBUG: Cantidad de escritos públicos: {escritos.count()}")
+    for escrito in escritos:
+        print(f"DEBUG: Escrito ID: {escrito.pk}, Título: {escrito.titulo}, Estado: {escrito.estado}, Autor: {escrito.autor.username}")
+
+
+    # Diccionario de contexto: Los datos que queremos pasar a la plantilla.
+    # La clave 'escritos' será el nombre de la variable en la plantilla.
     contexto = {
         'escritos': escritos
     }
+
+    # Renderiza la plantilla 'escritura/lista_escritos.html'
+    # y le pasa el diccionario 'contexto'.
     return render(request, 'escritura/lista_escritos.html', contexto)
 
-# AÑADIDO: Vista basada en clase para mostrar el detalle de un escrito
+
+# Vista basada en clase para mostrar el detalle de un escrito
 class DetalleEscrito(DetailView):
     """
     Esta vista basada en clase (CBV) se encarga de mostrar los detalles
@@ -330,8 +782,9 @@ class DetalleEscrito(DetailView):
         # Esto añade una capa de seguridad para que los usuarios no puedan acceder
         # a escritos privados o borradores a través de la URL directa.
         return Escrito.objects.filter(estado='PUBLICO')
-    
-# AÑADIDO: Vista para el registro de nuevos usuarios
+
+
+# Vista para el registro de nuevos usuarios
 def registro_usuario(request):
     """
     Esta vista maneja la lógica para el registro de nuevos usuarios.
@@ -373,7 +826,7 @@ def crear_escrito(request):
     if request.method == 'POST':
         form = EscritoForm(request.POST) # Crea una instancia del formulario con los datos enviados
         if form.is_valid():
-            # AÑADIDO: No guardamos el formulario directamente todavía (commit=False)
+            # No guardamos el formulario directamente todavía (commit=False)
             # porque necesitamos añadir el autor (el usuario actual) antes de guardar.
             escrito = form.save(commit=False) 
             escrito.autor = request.user # Asigna el autor del escrito al usuario actualmente logueado.
@@ -388,6 +841,47 @@ def crear_escrito(request):
     
     # Renderiza la plantilla con el formulario (vacío o con errores)
     return render(request, 'escritura/crear_editar_escrito.html', {'form': form, 'es_creacion': True})
+
+# Vista para editar un escrito existente
+@login_required # Solo usuarios autenticados pueden acceder.
+def editar_escrito(request, pk):
+    """
+    Esta vista permite a un usuario autenticado editar un escrito existente.
+    - pk: La clave primaria (ID) del escrito a editar.
+    - Se verifica que el usuario autenticado sea el autor del escrito.
+    """
+    # Intentar obtener el escrito, o lanzar un 404 si no existe.
+    escrito = get_object_or_404(Escrito, pk=pk)
+
+    # VERIFICACIÓN DE PERMISOS: Asegurarse de que solo el autor pueda editar.
+    # Si el usuario logueado no es el autor del escrito, levantamos un error 404
+    # (por motivos de seguridad, es mejor un 404 que un 403 en algunos casos,
+    # para no revelar la existencia del escrito a usuarios no autorizados).
+    if request.user != escrito.autor:
+        raise Http404("No tienes permiso para editar este escrito.")
+        # Alternativamente, podrías redirigir:
+        # from django.contrib import messages
+        # messages.error(request, "No tienes permiso para editar este escrito.")
+        # return redirect('escritura:detalle_escrito', pk=escrito.pk)
+
+
+    if request.method == 'POST':
+        # Si es POST, creamos una instancia del formulario con los datos enviados
+        # y le pasamos la instancia del escrito existente para que la actualice.
+        form = EscritoForm(request.POST, instance=escrito)
+        if form.is_valid():
+            # Guarda los cambios en el escrito. Como ya pasamos 'instance', no necesitamos commit=False.
+            form.save()
+            # Redirige a la página de detalle del escrito editado.
+            return redirect('escritura:detalle_escrito', pk=escrito.pk)
+    else:
+        # Si es GET, creamos una instancia del formulario y la inicializamos
+        # con los datos del escrito existente para que aparezcan pre-rellenados.
+        form = EscritoForm(instance=escrito)
+    
+    # Renderiza la misma plantilla usada para crear, pasando el formulario y la bandera.
+    # es_creacion = False le dice a la plantilla que es una operación de edición.
+    return render(request, 'escritura/crear_editar_escrito.html', {'form': form, 'es_creacion': False})
 ```
 
 ---
@@ -475,120 +969,86 @@ class Migration(migrations.Migration):
 
 ---
 
-## Archivo: `escritura/templates/escritura/crear_editar_escrito.html`
+## Archivo: `escritura/templates/escritura/base.html`
 
 ```html
-<!-- escritura/templates/escritura/crear_editar_escrito.html -->
+{# taller_escritura/templates/base.html #}
+{% load static %} {# IMPORTANT: This line loads Django's static files tags #}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if es_creacion %}Crear Nuevo Escrito{% else %}Editar Escrito{% endif %}</title>
-    <style>
-        /* Reutiliza estilos de formularios previos para consistencia */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 80vh;
-        }
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 700px; /* Un poco más ancho para el contenido */
-            box-sizing: border-box;
-        }
-        h1 {
-            color: #0056b3;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        p { /* Estilo para cada campo del formulario renderizado por Django */
-            margin-bottom: 15px;
-        }
-        p label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input[type="text"],
-        select, /* Estilo para el campo 'estado' que es un select */
-        textarea { /* Estilo para el campo 'contenido' que será un textarea */
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif; /* Asegurar fuente consistente */
-        }
-        textarea {
-            resize: vertical; /* Permite redimensionar verticalmente */
-            min-height: 200px; /* Altura mínima para el área de texto */
-        }
-        ul.errorlist {
-            color: red;
-            list-style-type: none;
-            padding-left: 0;
-            margin-top: 5px;
-            font-size: 0.9em;
-        }
-        .helptext {
-            font-size: 0.8em;
-            color: #666;
-            margin-top: 5px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.1em;
-            margin-top: 20px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .back-link {
-            display: block;
-            margin-top: 20px;
-            text-align: center;
-            text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-    </style>
+    {# AÑADIDO: Define a 'title' block that child templates can override #}
+    <title>{% block title %}Taller de Escritura{% endblock %}</title>
+
+    {# MODIFICADO: Link to our main CSS file, served from static files #}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    {# AÑADIDO: Optional 'head_extra' block for additional CSS/JS specific to child templates #}
+    {% block head_extra %}{% endblock %}
 </head>
 <body>
-    <div class="container">
-        <h1>{% if es_creacion %}Crear Nuevo Escrito{% else %}Editar Escrito{% endif %}</h1>
-        <form method="post">
-            {% csrf_token %} {# ¡CRÍTICO para la seguridad! #}
-            {{ form.as_p }} 
-            <button type="submit">
-                {% if es_creacion %}Publicar Escrito{% else %}Guardar Cambios{% endif %}
-            </button>
-        </form>
-        <a href="{% url 'escritura:lista_escritos' %}" class="back-link">&larr; Volver a la lista de escritos</a>
-    </div>
+    {# AÑADIDO: Basic navigation/auth links - common across pages #}
+    <header class="main-header">
+        <nav class="main-nav">
+            <div class="logo">
+                <a href="{% url 'escritura:lista_escritos' %}">Taller de Escritura</a>
+            </div>
+            <ul class="nav-links">
+                {% if user.is_authenticated %}
+                    <li><span class="welcome-message">Hola, {{ user.username }}!</span></li>
+                    <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                    <li><a href="{% url 'escritura:crear_escrito' %}" class="button primary">+ Crear Nuevo Escrito</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="button">Iniciar Sesión</a></li>
+                    <li><a href="{% url 'escritura:registro' %}" class="button secondary">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        {# AÑADIDO: This is the main content block that child templates will fill #}
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {# AÑADIDO: Optional 'footer' block #}
+    <footer class="main-footer">
+        <p>© 2025 Taller de Escritura. Todos los derechos reservados.</p>
+    </footer>
+
+    {# AÑADIDO: Optional 'body_extra' block for JavaScript files at the end of the body #}
+    {% block body_extra %}{% endblock %}
 </body>
 </html>
+
+```
+
+---
+
+## Archivo: `escritura/templates/escritura/crear_editar_escrito.html`
+
+```html
+{# escritura/templates/escritura/crear_editar_escrito.html #}
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if es_creacion %}Crear Nuevo Escrito{% else %}Editar Escrito{% endif %}
+{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">{% if es_creacion %}Crear Nuevo Escrito{% else %}Editar Escrito{% endif %}</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="button primary">
+            {% if es_creacion %}Publicar Escrito{% else %}Guardar Cambios{% endif %}
+        </button>
+    </form>
+    <a href="{% url 'escritura:lista_escritos' %}" class="back-link">← Volver a la lista de escritos</a>
+{% endblock %}
 ```
 
 ---
@@ -596,77 +1056,30 @@ class Migration(migrations.Migration):
 ## Archivo: `escritura/templates/escritura/detalle_escrito.html`
 
 ```html
-<!-- escritura/templates/escritura/detalle_escrito.html -->
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ escrito.titulo }} - Detalle del Escrito</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #0056b3;
-            margin-bottom: 10px;
-        }
-        .meta-info {
-            font-size: 0.9em;
-            color: #666;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 10px;
-        }
-        .content {
-            line-height: 1.8;
-            color: #444;
-            white-space: pre-wrap; /* Mantiene saltos de línea y espacios del TextField */
-        }
-        .back-link {
-            display: block;
-            margin-top: 30px;
-            text-decoration: none;
-            color: #007bff;
-            font-weight: bold;
-        }
-        .back-link:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>{{ escrito.titulo }}</h1> {# Muestra el título del escrito #}
-        <p class="meta-info">
-            Por: {{ escrito.autor.username }} | 
-            Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }} |
-            Última actualización: {{ escrito.fecha_actualizacion|date:"d M Y H:i" }}
-        </p>
-        <div class="content">
-            {# Muestra el contenido completo del escrito #}
-            {# Considerar la integración de un editor de texto enriquecido aquí en el futuro #}
-            <p>{{ escrito.contenido }}</p> 
-        </div>
-        
-        {# AÑADIDO: Enlace para volver a la lista de escritos #}
-        {# La etiqueta {% url %} es la mejor manera de crear enlaces dinámicos en Django. #}
-        {# 'escritura:lista_escritos' usa el namespace 'escritura' y el nombre de la URL 'lista_escritos'. #}
-        <a href="{% url 'escritura:lista_escritos' %}" class="back-link">&larr; Volver a la lista de escritos</a>
+{# escritura/templates/escritura/detalle_escrito.html #}
+{% extends 'base.html' %}
+
+{% block title %}{{ escrito.titulo }} - Detalle del Escrito{% endblock %}
+
+{% block content %}
+    <div class="header-section">
+        <h1 class="page-title">{{ escrito.titulo }}</h1>
+        {% if user.is_authenticated and user == escrito.autor %}
+            <a href="{% url 'escritura:editar_escrito' pk=escrito.pk %}" class="button warning">Editar</a>
+        {% endif %}
     </div>
-</body>
-</html>
+
+    <p class="meta-info">
+        Por: {{ escrito.autor.username }} |
+        Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }} |
+        Última actualización: {{ escrito.fecha_actualizacion|date:"d M Y H:i" }}
+    </p>
+    <div class="content">
+        <p>{{ escrito.contenido }}</p>
+    </div>
+
+    <a href="{% url 'escritura:lista_escritos' %}" class="back-link">← Volver a la lista de escritos</a>
+{% endblock %}
 ```
 
 ---
@@ -674,86 +1087,31 @@ class Migration(migrations.Migration):
 ## Archivo: `escritura/templates/escritura/lista_escritos.html`
 
 ```html
-<!-- escritura/templates/escritura/lista_escritos.html -->
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Escritos del Taller</title>
-    <style>
-        /* CSS básico para hacer la página un poco más legible */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-        h1 {
-            color: #0056b3;
-        }
-        .escrito-list {
-            list-style: none;
-            padding: 0;
-        }
-        .escrito-item {
-            background-color: #fff;
-            margin-bottom: 15px;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .escrito-item h2 {
-            margin-top: 0;
-            color: #007bff;
-        }
-        /* AÑADIDO: Estilo para los enlaces de título */
-        .escrito-item h2 a {
-            text-decoration: none; /* Quita el subrayado predeterminado */
-            color: #007bff; /* Color azul para el enlace */
-        }
-        .escrito-item h2 a:hover {
-            text-decoration: underline; /* Subrayado al pasar el ratón */
-        }
-        .escrito-item p {
-            line-height: 1.6;
-        }
-        .escrito-meta {
-            font-size: 0.9em;
-            color: #666;
-            margin-top: 10px;
-            border-top: 1px solid #eee;
-            padding-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <div class="auth-links">
-        {% if user.is_authenticated %}
-            <span class="welcome-message">Hola, {{ user.username }}!</span>
-            <a href="{% url 'logout' %}">Cerrar Sesión</a>
-        {% else %}
-            <a href="{% url 'login' %}">Inicia sesión aquí</a>
-            <a href="{% url 'escritura:registro' %}">Registrarse</a>
-        {% endif %}
-    </div>
+{# escritura/templates/escritura/lista_escritos.html #}
+{% extends 'base.html' %} {# Extends the base template #}
 
-    {# AÑADIDO: Enlace para crear un nuevo escrito (solo visible si el usuario está autenticado) #}
-    {% if user.is_authenticated %}
-        <div style="text-align: right; margin-bottom: 20px;">
-            <a href="{% url 'escritura:crear_escrito' %}" style="background-color: #28a745; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-weight: bold;">+ Crear Nuevo Escrito</a>
-        </div>
-    {% endif %}
+{% block title %}Lista de Escritos Públicos{% endblock %} {# Sets the specific title for this page #}
 
-    <h1>Escritos Públicos del Taller</h1>
+{% block content %} {# This content will be inserted into the 'content' block in base.html #}
+    <h1 class="page-title">Escritos Públicos del Taller</h1>
 
     {% if escritos %}
-        <!-- ... tu lista de escritos existente ... -->
+        <ul class="escrito-list">
+            {% for escrito in escritos %}
+                <li class="escrito-item">
+                    <h2><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
+                    <p>{{ escrito.contenido|truncatechars:200 }}</p> 
+                    <div class="escrito-meta">
+                        <p>Por: {{ escrito.autor.username }}</p>
+                        <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
     {% else %}
         <p>No hay escritos públicos disponibles en este momento.</p>
     {% endif %}
-</body>
-</html>
+{% endblock %}
 ```
 
 ---
@@ -761,114 +1119,22 @@ class Migration(migrations.Migration):
 ## Archivo: `escritura/templates/escritura/registro.html`
 
 ```html
-<!-- escritura/templates/escritura/registro.html -->
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Usuario</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 80vh;
-        }
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
-        }
-        h1 {
-            color: #0056b3;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        p { /* Estilo para cada campo del formulario renderizado por Django */
-            margin-bottom: 15px;
-        }
-        p label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="password"],
-        input[type="email"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box; /* Incluye padding y borde en el ancho total */
-        }
-        ul.errorlist { /* Estilo para la lista de errores del formulario */
-            color: red;
-            list-style-type: none;
-            padding-left: 0;
-            margin-top: 5px;
-            font-size: 0.9em;
-        }
-        .helptext { /* Estilo para el texto de ayuda de Django Forms */
-            font-size: 0.8em;
-            color: #666;
-            margin-top: 5px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.1em;
-            margin-top: 20px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .login-link {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.9em;
-        }
-        .login-link a {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .login-link a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Registro</h1>
-        <form method="post">
-            {% csrf_token %} {# AÑADIDO: ¡MUY IMPORTANTE! Token de seguridad de Django #}
-            {# Renderiza el formulario de Django como párrafos. Cada campo será un <p> con su label y input. #}
-            {{ form.as_p }} 
-            <button type="submit">Registrarse</button>
-        </form>
-        <div class="login-link">
-            ¿Ya tienes una cuenta? <a href="#">Inicia sesión aquí</a> {# AÑADIDO: Placeholder para el enlace de login #}
-        </div>
+{# escritura/templates/escritura/registro.html #}
+{% extends 'base.html' %}
+
+{% block title %}Registro de Usuario{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Registro</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="button">Registrarse</button>
+    </form>
+    <div class="login-link">
+        ¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a>
     </div>
-</body>
-</html>
+{% endblock %}
 ```
 
 ---
@@ -971,8 +1237,7 @@ ROOT_URLCONF = 'taller_escritura.urls' # Define dónde están las URLs principal
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [], # Puedes añadir rutas a directorios de plantillas globales aquí.
-                    # Por ahora, Django buscará plantillas dentro de cada app en una carpeta 'templates'.
+        'DIRS': [BASE_DIR / 'taller_escritura/templates'], # MODIFICADO: Añade la ruta al directorio de plantillas globales.
         'APP_DIRS': True, # Esto le dice a Django que busque plantillas dentro de las carpetas 'templates' de cada aplicación en INSTALLED_APPS.
         'OPTIONS': {
             'context_processors': [
@@ -1042,6 +1307,12 @@ USE_TZ = True # Habilita el soporte para zonas horarias en los datetimes.
 
 STATIC_URL = 'static/' # La URL base para servir archivos estáticos.
 
+# AÑADIDO: Where Django's staticfiles app will look for additional static files.
+# This is for project-wide static files, not specific to an app.
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -1100,6 +1371,319 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'taller_escritura.settings')
 
 application = get_wsgi_application()
+
+```
+
+---
+
+## Archivo: `taller_escritura/static/css/main.css`
+
+```css
+/* taller_escritura/static/css/main.css */
+
+/* Base Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0; /* Reset default body margin */
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+    flex-direction: column; /* For sticky footer or overall layout */
+    min-height: 100vh; /* Make sure body takes full viewport height */
+}
+
+/* Main Content Container */
+.container {
+    max-width: 800px;
+    margin: 20px auto; /* Centrar y añadir margen superior/inferior */
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    flex-grow: 1; /* Allow container to grow and push footer down */
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: #0056b3;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* Links */
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* Buttons */
+.button {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block; /* Allow padding */
+    text-align: center;
+}
+.button:hover {
+    background-color: #0056b3;
+    text-decoration: none;
+}
+
+.button.primary {
+    background-color: #28a745; /* Green */
+}
+.button.primary:hover {
+    background-color: #218838;
+}
+
+.button.secondary {
+    background-color: #6c757d; /* Gray */
+}
+.button.secondary:hover {
+    background-color: #5a6268;
+}
+
+.button.warning {
+    background-color: #ffc107; /* Yellow */
+    color: #333;
+}
+.button.warning:hover {
+    background-color: #e0a800;
+}
+
+
+/* Header Styles */
+.main-header {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.main-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px; /* Optional: limit nav width */
+    margin: 0 auto;
+}
+
+.logo a {
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px; /* Space between nav items */
+    align-items: center;
+}
+
+.nav-links li {
+    margin: 0;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 0;
+}
+
+.nav-links a:hover {
+    text-decoration: underline;
+}
+
+.welcome-message {
+    font-weight: bold;
+    margin-right: 10px;
+    color: white;
+}
+
+/* Footer Styles */
+.main-footer {
+    background-color: #343a40; /* Dark gray */
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}
+
+/* Form Styles (reused from previous templates) */
+form {
+    display: flex;
+    flex-direction: column;
+}
+p { /* Style for each form field rendered by Django */
+    margin-bottom: 15px;
+}
+p label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+input[type="text"],
+input[type="password"],
+input[type="email"],
+select, /* Style for 'estado' field which is a select */
+textarea { /* Style for 'contenido' field which will be a textarea */
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif; /* Ensure consistent font */
+}
+textarea {
+    resize: vertical; /* Allows vertical resizing */
+    min-height: 200px; /* Minimum height for text area */
+}
+ul.errorlist { /* Style for form error list */
+    color: red;
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 5px;
+    font-size: 0.9em;
+}
+.helptext { /* Style for Django Forms help text */
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Specific Escrito List/Detail Styles */
+.escrito-list {
+    list-style: none;
+    padding: 0;
+}
+.escrito-item {
+    background-color: #fff;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.escrito-item h2 {
+    margin-top: 0;
+    color: #007bff;
+}
+.escrito-item h2 a {
+    text-decoration: none;
+    color: #007bff;
+}
+.escrito-item h2 a:hover {
+    text-decoration: underline;
+}
+.escrito-item p {
+    line-height: 1.6;
+}
+.escrito-meta {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 10px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+/* Escrito Detail Specific Styles */
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.header-section h1 {
+    margin: 0;
+}
+.content {
+    line-height: 1.8;
+    color: #444;
+    white-space: pre-wrap;
+}
+.back-link {
+    display: block;
+    margin-top: 30px;
+    text-align: center;
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+.back-link:hover {
+    text-decoration: underline;
+}
+
+```
+
+---
+
+## Archivo: `taller_escritura/templates/base.html`
+
+```html
+{# taller_escritura/templates/base.html #}
+{% load static %} {# IMPORTANT: This line loads Django's static files tags #}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {# AÑADIDO: Define a 'title' block that child templates can override #}
+    <title>{% block title %}Taller de Escritura{% endblock %}</title>
+
+    {# MODIFICADO: Link to our main CSS file, served from static files #}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    {# AÑADIDO: Optional 'head_extra' block for additional CSS/JS specific to child templates #}
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    {# AÑADIDO: Basic navigation/auth links - common across pages #}
+    <header class="main-header">
+        <nav class="main-nav">
+            <div class="logo">
+                <a href="{% url 'escritura:lista_escritos' %}">Taller de Escritura</a>
+            </div>
+            <ul class="nav-links">
+                {% if user.is_authenticated %}
+                    <li><span class="welcome-message">Hola, {{ user.username }}!</span></li>
+                    <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                    <li><a href="{% url 'escritura:crear_escrito' %}" class="button primary">+ Crear Nuevo Escrito</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="button">Iniciar Sesión</a></li>
+                    <li><a href="{% url 'escritura:registro' %}" class="button secondary">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        {# AÑADIDO: This is the main content block that child templates will fill #}
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {# AÑADIDO: Optional 'footer' block #}
+    <footer class="main-footer">
+        <p>© 2025 Taller de Escritura. Todos los derechos reservados.</p>
+    </footer>
+
+    {# AÑADIDO: Optional 'body_extra' block for JavaScript files at the end of the body #}
+    {% block body_extra %}{% endblock %}
+</body>
+</html>
 
 ```
 
