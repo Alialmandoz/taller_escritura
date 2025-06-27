@@ -1,8 +1,11 @@
 # escritura/views.py
 
-from django.shortcuts import render, get_object_or_404 # Importamos get_object_or_404
-from django.views.generic import DetailView           # AÑADIDO: Importamos DetailView de las CBV
-from .models import Escrito                           # Importamos nuestro modelo Escrito
+from django.shortcuts import render, get_object_or_404, redirect # MODIFICADO: Añadimos 'redirect'
+from django.views.generic import DetailView
+from django.contrib.auth import login # AÑADIDO: Para iniciar sesión al usuario después del registro
+from .models import Escrito
+from .forms import CustomUserCreationForm # AÑADIDO: Importamos nuestro formulario de registro
+
 
 # AÑADIDO: Vista basada en función para listar escritos públicos
 def lista_escritos(request):
@@ -37,3 +40,30 @@ class DetalleEscrito(DetailView):
         # Esto añade una capa de seguridad para que los usuarios no puedan acceder
         # a escritos privados o borradores a través de la URL directa.
         return Escrito.objects.filter(estado='PUBLICO')
+    
+# AÑADIDO: Vista para el registro de nuevos usuarios
+def registro_usuario(request):
+    """
+    Esta vista maneja la lógica para el registro de nuevos usuarios.
+    - Si la solicitud es GET, muestra el formulario de registro vacío.
+    - Si la solicitud es POST, procesa los datos del formulario:
+        - Si es válido, crea el usuario, inicia sesión al usuario y redirige a la página principal.
+        - Si no es válido, vuelve a mostrar el formulario con los errores.
+    """
+    if request.method == 'POST':
+        # Si la solicitud es POST, el formulario ha sido enviado
+        form = CustomUserCreationForm(request.POST) # Crea una instancia del formulario con los datos enviados
+        if form.is_valid():
+            # Si el formulario es válido, guarda el nuevo usuario
+            user = form.save()
+            # Opcional: Iniciar sesión al usuario automáticamente después del registro
+            login(request, user)
+            # Redirige al usuario a una página de éxito (ej. la lista de escritos o un dashboard)
+            # Por ahora, redirigimos a la lista de escritos.
+            return redirect('escritura:lista_escritos')
+    else:
+        # Si la solicitud es GET, muestra un formulario vacío
+        form = CustomUserCreationForm()
+    
+    # Renderiza la plantilla con el formulario (vacío o con errores)
+    return render(request, 'escritura/registro.html', {'form': form})

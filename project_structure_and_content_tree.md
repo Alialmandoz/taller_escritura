@@ -1,6 +1,6 @@
 # Contenido del Proyecto: taller escritura
 
-**Generado el:** 2025-06-26 23:10:23
+**Generado el:** 2025-06-26 23:28:18
 
 ## Estructura del Proyecto
 
@@ -19,6 +19,7 @@ taller escritura
 │   ├── views.py
 │   ├── migrations
 │   │   ├── 0001_initial.py
+│   │   ├── 0002_profile.py
 │   │   ├── __init__.py
 │   ├── templates
 │   │   ├── escritura
@@ -86,7 +87,7 @@ if __name__ == '__main__':
 # escritura/admin.py
 
 from django.contrib import admin
-from .models import Escrito # AÑADIDO: Importamos nuestro modelo 'Escrito'.
+from .models import Escrito, Profile # AÑADIDO: Importamos nuestro modelo 'Escrito'y el "profile".
                              # Es crucial importar el modelo que deseas registrar.
 
 # Register your models here.
@@ -95,6 +96,7 @@ from .models import Escrito # AÑADIDO: Importamos nuestro modelo 'Escrito'.
 # Esto genera automáticamente una interfaz CRUD (Crear, Leer, Actualizar, Borrar)
 # para tus objetos Escrito, permitiendo una gestión sencilla desde el navegador.
 admin.site.register(Escrito)
+admin.site.register(Profile)
 ```
 
 ---
@@ -119,61 +121,85 @@ class EscrituraConfig(AppConfig):
 # escritura/models.py
 
 from django.db import models
-from django.contrib.auth import get_user_model # Importa la función para obtener el modelo de usuario activo
+from django.contrib.auth import get_user_model
+from django.db.models.signals import post_save # AÑADIDO: Para crear el perfil automáticamente
+from django.dispatch import receiver         # AÑADIDO: Para conectar la señal
 
-# AÑADIDO: Obtén el modelo de usuario actualmente activo.
-# Esto es una buena práctica para referenciar al modelo de usuario de Django,
-# ya que permite que en el futuro se pueda reemplazar por un modelo de usuario personalizado.
+# Obtén el modelo de usuario actualmente activo.
 User = get_user_model()
 
-# AÑADIDO: Definición del modelo Escrito
+# Definición del modelo Escrito (contenido existente)
 class Escrito(models.Model):
     # Opciones para el estado de visibilidad del escrito
-    # Usamos tuplas de (valor_real_en_bd, nombre_legible_para_humanos)
     ESTADO_CHOICES = [
-        ('BORRADOR', 'Borrador'),    # Visible solo para el autor
-        ('PRIVADO', 'Privado'),      # Visible solo para el autor
-        ('PUBLICO', 'Público'),      # Visible para todos los participantes
+        ('BORRADOR', 'Borrador'),
+        ('PRIVADO', 'Privado'),
+        ('PUBLICO', 'Público'),
     ]
 
-    # Campo ForeignKey: Establece una relación "muchos a uno" con el modelo User.
-    # Un usuario puede tener muchos escritos, pero un escrito pertenece a un solo autor.
-    # on_delete=models.CASCADE: Si el autor es eliminado, sus escritos también se eliminarán.
     autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='escritos')
-
-    # CharField: Campo para texto corto, como títulos. max_length es obligatorio.
     titulo = models.CharField(max_length=200)
-
-    # TextField: Campo para texto largo, ideal para el contenido del escrito.
     contenido = models.TextField()
-
-    # DateTimeField: Guarda la fecha y hora de creación.
-    # auto_now_add=True: Establece la fecha y hora actual automáticamente cuando se crea el objeto.
     fecha_creacion = models.DateTimeField(auto_now_add=True)
-
-    # DateTimeField: Guarda la fecha y hora de la última modificación.
-    # auto_now=True: Actualiza la fecha y hora cada vez que el objeto es guardado.
     fecha_actualizacion = models.DateTimeField(auto_now=True)
-
-    # CharField con choices: Permite seleccionar un valor de una lista predefinida.
-    # default='BORRADOR': El valor por defecto al crear un nuevo escrito.
     estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='BORRADOR')
 
-    # Método __str__ (Método "string" en Python):
-    # Define cómo se representa un objeto de esta clase cuando se imprime o se muestra en el admin de Django.
-    # Es muy útil para la depuración y para una mejor visualización.
     def __str__(self):
         return f"{self.titulo} por {self.autor.username}"
 
-    # Clase Meta (Opcional pero útil):
-    # Aquí puedes definir opciones para el modelo que no son campos.
     class Meta:
-        # Ordena los escritos por fecha de creación de forma descendente por defecto.
         ordering = ['-fecha_creacion']
-        # Establece un nombre más legible para el modelo en el panel de administración
-        # (singular y plural).
         verbose_name = "Escrito"
         verbose_name_plural = "Escritos"
+
+# AÑADIDO: Definición del modelo Profile
+class Profile(models.Model):
+    """
+    Modelo de perfil de usuario extendido.
+    Tiene una relación uno a uno con el modelo User de Django.
+    """
+    # OneToOneField: Establece una relación "uno a uno" con el modelo User.
+    # Cada User tendrá un (y solo un) Profile asociado.
+    # on_delete=models.CASCADE: Si el usuario es eliminado, su perfil también se eliminará.
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    # TextField: Campo para una biografía personal (opcional, blank=True permite dejarlo vacío).
+    bio = models.TextField(blank=True, null=True, verbose_name="Biografía")
+
+    # ImageField: Campo para subir una imagen de perfil.
+    # upload_to='profile_pics/': Las imágenes se guardarán en MEDIA_ROOT/profile_pics/
+    # default='default.jpg': Imagen por defecto si no se sube ninguna.
+    # blank=True, null=True: El campo es opcional.
+    foto_perfil = models.ImageField(default='profile_pics/default.jpg', upload_to='profile_pics/', blank=True, null=True, verbose_name="Foto de Perfil")
+
+    def __str__(self):
+        """
+        Representación en string del objeto Profile.
+        Muestra el nombre de usuario del usuario asociado al perfil.
+        """
+        return f"Perfil de {self.user.username}"
+
+# AÑADIDO: Señales para crear/actualizar Profile automáticamente con User
+# Las señales permiten que ciertas funciones se ejecuten cuando ocurren eventos
+# específicos en otros modelos (ej. cuando se guarda un User).
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    """
+    Esta función se ejecuta CADA VEZ que un objeto User es guardado.
+    Si el usuario es nuevo (created=True), se crea automáticamente un objeto Profile
+    asociado a ese usuario.
+    """
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    """
+    Esta función se ejecuta CADA VEZ que un objeto User es guardado.
+    Asegura que el Profile asociado al usuario también se guarde.
+    """
+    instance.profile.save()
 ```
 
 ---
@@ -297,6 +323,39 @@ class Migration(migrations.Migration):
                 'verbose_name_plural': 'Escritos',
                 'ordering': ['-fecha_creacion'],
             },
+        ),
+    ]
+
+```
+
+---
+
+## Archivo: `escritura/migrations/0002_profile.py`
+
+```python
+# Generated by Django 5.2.3 on 2025-06-27 02:18
+
+import django.db.models.deletion
+from django.conf import settings
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ('escritura', '0001_initial'),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name='Profile',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('bio', models.TextField(blank=True, null=True, verbose_name='Biografía')),
+                ('foto_perfil', models.ImageField(blank=True, default='profile_pics/default.jpg', null=True, upload_to='profile_pics/', verbose_name='Foto de Perfil')),
+                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+            ],
         ),
     ]
 
@@ -649,6 +708,15 @@ STATIC_URL = 'static/' # La URL base para servir archivos estáticos.
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField' # Tipo de campo predeterminado para claves primarias automáticas.
+
+
+# Configuración para archivos de medios (subidos por los usuarios)
+MEDIA_URL = '/media/' # La URL base para acceder a los archivos de medios en el navegador.
+MEDIA_ROOT = BASE_DIR / 'media' # La ruta absoluta en el sistema de archivos donde Django guardará los archivos.
+
+# Puedes crear una imagen de "perfil por defecto" aquí.
+# Por ejemplo: taller_escritura/media/profile_pics/default.jpg
+# Asegúrate de crear el directorio 'media' en la raíz de tu proyecto.
 ```
 
 ---

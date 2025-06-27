@@ -136,3 +136,12 @@ STATIC_URL = 'static/' # La URL base para servir archivos estáticos.
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField' # Tipo de campo predeterminado para claves primarias automáticas.
+
+
+# Configuración para archivos de medios (subidos por los usuarios)
+MEDIA_URL = '/media/' # La URL base para acceder a los archivos de medios en el navegador.
+MEDIA_ROOT = BASE_DIR / 'media' # La ruta absoluta en el sistema de archivos donde Django guardará los archivos.
+
+# Puedes crear una imagen de "perfil por defecto" aquí.
+# Por ejemplo: taller_escritura/media/profile_pics/default.jpg
+# Asegúrate de crear el directorio 'media' en la raíz de tu proyecto.
