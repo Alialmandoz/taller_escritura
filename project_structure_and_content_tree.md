@@ -1,6 +1,6 @@
 # Contenido del Proyecto: taller escritura
 
-**Generado el:** 2025-06-27 15:15:57
+**Generado el:** 2025-06-27 15:48:09
 
 ## Estructura del Proyecto
 
@@ -28,19 +28,20 @@ taller escritura
 │   ├── templates
 │   │   ├── escritura
 │   │   │   ├── base.html
+│   │   │   ├── confirmar_eliminar_escrito.html
 │   │   │   ├── crear_editar_escrito.html
 │   │   │   ├── detalle_escrito.html
 │   │   │   ├── lista_escritos.html
 │   │   │   ├── registro.html
+├── static
+│   ├── css
+│   │   ├── main.css
 ├── taller_escritura
 │   ├── __init__.py
 │   ├── asgi.py
 │   ├── settings.py
 │   ├── urls.py
 │   ├── wsgi.py
-│   ├── static
-│   │   ├── css
-│   │   │   ├── main.css
 │   ├── templates
 │   │   ├── base.html
 ```
@@ -713,6 +714,8 @@ urlpatterns = [
     path('registro/', views.registro_usuario, name='registro'),
     path('crear/', views.crear_escrito, name='crear_escrito'),
     path('<int:pk>/editar/', views.editar_escrito, name='editar_escrito'),
+    # AÑADIDO: URL para la eliminación de escritos (con confirmación)
+    path('<int:pk>/eliminar/', views.eliminar_escrito, name='eliminar_escrito'),
 ]
 ```
 
@@ -731,6 +734,7 @@ from django.contrib.auth.decorators import login_required # Decorador para reque
 from .models import Escrito # Importamos nuestro modelo Escrito
 from .forms import CustomUserCreationForm, EscritoForm # Importamos nuestros formularios
 from django.http import Http404 # Para lanzar un error 404 si el usuario no es el autor
+from django.contrib import messages # AÑADIDO: Para mostrar mensajes al usuario
 
 # Vista basada en función para listar escritos públicos
 def lista_escritos(request):
@@ -882,6 +886,34 @@ def editar_escrito(request, pk):
     # Renderiza la misma plantilla usada para crear, pasando el formulario y la bandera.
     # es_creacion = False le dice a la plantilla que es una operación de edición.
     return render(request, 'escritura/crear_editar_escrito.html', {'form': form, 'es_creacion': False})
+
+
+# AÑADIDO: Vista para eliminar un escrito
+@login_required # Solo usuarios autenticados pueden acceder.
+def eliminar_escrito(request, pk):
+    """
+    Esta vista maneja la eliminación de un escrito.
+    - Si la solicitud es GET, muestra una página de confirmación.
+    - Si la solicitud es POST, procede a eliminar el escrito.
+    - Se verifica que el usuario autenticado sea el autor del escrito.
+    """
+    escrito = get_object_or_404(Escrito, pk=pk)
+
+    # VERIFICACIÓN DE PERMISOS: Asegurarse de que solo el autor pueda eliminar.
+    if request.user != escrito.autor:
+        messages.error(request, "No tienes permiso para eliminar este escrito.")
+        return redirect('escritura:detalle_escrito', pk=escrito.pk)
+        # O podrías lanzar un Http404 como en editar_escrito, si prefieres no dar pistas.
+        # raise Http404("No tienes permiso para eliminar este escrito.")
+
+    if request.method == 'POST':
+        # Si la solicitud es POST, significa que el usuario ha confirmado la eliminación.
+        escrito.delete() # ¡Elimina el objeto de la base de datos!
+        messages.success(request, f"El escrito '{escrito.titulo}' ha sido eliminado exitosamente.")
+        return redirect('escritura:lista_escritos') # Redirige a la lista después de eliminar.
+
+    # Si la solicitud es GET, muestra la página de confirmación.
+    return render(request, 'escritura/confirmar_eliminar_escrito.html', {'escrito': escrito})
 ```
 
 ---
@@ -979,17 +1011,17 @@ class Migration(migrations.Migration):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {# AÑADIDO: Define a 'title' block that child templates can override #}
+    {# Define a 'title' block that child templates can override #}
     <title>{% block title %}Taller de Escritura{% endblock %}</title>
-
-    {# MODIFICADO: Link to our main CSS file, served from static files #}
+    
+    {# Link to our main CSS file, served from static files #}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-
-    {# AÑADIDO: Optional 'head_extra' block for additional CSS/JS specific to child templates #}
-    {% block head_extra %}{% endblock %}
+    
+    {# Optional 'head_extra' block for additional CSS/JS specific to child templates #}
+    {% block head_extra %}{% endblock %} 
 </head>
 <body>
-    {# AÑADIDO: Basic navigation/auth links - common across pages #}
+    {# Basic navigation/auth links - common across pages #}
     <header class="main-header">
         <nav class="main-nav">
             <div class="logo">
@@ -1009,20 +1041,63 @@ class Migration(migrations.Migration):
     </header>
 
     <main class="container">
-        {# AÑADIDO: This is the main content block that child templates will fill #}
+        {# This is the main content block that child templates will fill #}
         {% block content %}
         {% endblock %}
     </main>
 
-    {# AÑADIDO: Optional 'footer' block #}
+    {# Optional 'footer' block #}
     <footer class="main-footer">
-        <p>© 2025 Taller de Escritura. Todos los derechos reservados.</p>
+        <p>&copy; 2025 Taller de Escritura. Todos los derechos reservados.</p>
     </footer>
 
-    {# AÑADIDO: Optional 'body_extra' block for JavaScript files at the end of the body #}
+    {# Optional 'body_extra' block for JavaScript files at the end of the body #}
     {% block body_extra %}{% endblock %}
 </body>
 </html>
+```
+
+---
+
+## Archivo: `escritura/templates/escritura/confirmar_eliminar_escrito.html`
+
+```html
+{# escritura/templates/escritura/confirmar_eliminar_escrito.html #}
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Eliminación{% endblock %}
+
+{% block content %}
+    <div class="confirmation-container">
+        <h1 class="page-title" style="color: #dc3545;">¿Estás seguro de eliminar?</h1>
+        <p>Estás a punto de eliminar el escrito **"{{ escrito.titulo }}"** de forma permanente. Esta acción no se puede deshacer.</p>
+        <p>Autor: <strong>{{ escrito.autor.username }}</strong></p>
+
+        <form method="post" style="display: flex; gap: 15px; margin-top: 30px; justify-content: center;">
+            {% csrf_token %} {# ¡CRÍTICO para la seguridad! #}
+            <button type="submit" class="button danger">Sí, Eliminar</button>
+            <a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}" class="button secondary">No, Cancelar</a>
+        </form>
+    </div>
+
+    <style>
+        /* Estilos específicos para la página de confirmación */
+        .confirmation-container {
+            text-align: center;
+            background-color: #FAF7F0;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 50px auto;
+        }
+        .confirmation-container p {
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+    </style>
+{% endblock %}
 
 ```
 
@@ -1065,7 +1140,12 @@ class Migration(migrations.Migration):
     <div class="header-section">
         <h1 class="page-title">{{ escrito.titulo }}</h1>
         {% if user.is_authenticated and user == escrito.autor %}
-            <a href="{% url 'escritura:editar_escrito' pk=escrito.pk %}" class="button warning">Editar</a>
+            {# MODIFICADO: Agrupamos los botones de acción para un mejor control de layout #}
+            <div class="action-buttons">
+                <a href="{% url 'escritura:editar_escrito' pk=escrito.pk %}" class="button warning">Editar</a>
+                {# AÑADIDO: Botón para iniciar el proceso de eliminación #}
+                <a href="{% url 'escritura:eliminar_escrito' pk=escrito.pk %}" class="button danger">Eliminar</a>
+            </div>
         {% endif %}
     </div>
 
@@ -1135,6 +1215,333 @@ class Migration(migrations.Migration):
         ¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a>
     </div>
 {% endblock %}
+```
+
+---
+
+## Archivo: `static/css/main.css`
+
+```css
+/* static/css/main.css */
+
+/* Base Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0; /* Reset default body margin */
+    background-color: #F5EFE6; /* Nuevo color de fondo principal */
+    color: #333333; /* Color de texto general */
+    display: flex;
+    flex-direction: column; /* Para layout de pie de página pegajoso */
+    min-height: 100vh; /* Asegura que el body ocupe el 100% del alto de la ventana */
+}
+
+/* Main Content Container */
+.container {
+    max-width: 800px; /* Límite de ancho para desktops */
+    margin: 20px auto; /* Centrar y añadir margen superior/inferior */
+    background-color: #FAF7F0; /* Nuevo color de fondo para el contenido/tarjetas */
+    padding: 20px; /* Ajuste de padding para móviles */
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    flex-grow: 1; /* Permite que el contenedor crezca y empuje el pie de página hacia abajo */
+    box-sizing: border-box; /* Asegura que padding y borde no aumenten el ancho total */
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: #AA775A; /* Nuevo color para encabezados */
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* Links */
+a {
+    color: #6B4F4F; /* Nuevo color para enlaces */
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* Buttons */
+.button {
+    background-color: #AA775A; /* Nuevo color de fondo para botones primarios */
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    text-align: center;
+    transition: background-color 0.3s ease; /* Transición suave al pasar el ratón */
+}
+.button:hover {
+    background-color: #8C644E; /* Nuevo color de fondo para hover */
+    text-decoration: none;
+}
+
+/* Specific button variants - ajustados a la nueva paleta */
+.button.primary { /* Usado para "Crear Nuevo Escrito", "Publicar Escrito", "Guardar Cambios" */
+    background-color: #AA775A;
+}
+.button.primary:hover {
+    background-color: #8C644E;
+}
+
+.button.secondary { /* Usado para "Registrarse" */
+    background-color: #E8D8C9; /* Un tono más claro, complementario */
+    color: #6B4F4F; /* Texto oscuro para contraste */
+}
+.button.secondary:hover {
+    background-color: #CC9980;
+}
+
+.button.warning { /* Usado para "Editar" - ahora se alinea más a un color de acción neutral/primaria */
+    background-color: #AA775A;
+    color: white;
+}
+.button.warning:hover {
+    background-color: #8C644E;
+}
+
+
+/* Header Styles */
+.main-header {
+    background-color: #CC9980; /* Nuevo color de fondo para el encabezado */
+    color: white;
+    padding: 15px 20px; /* Ajuste de padding para móviles */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.main-nav {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px; /* Límite opcional para el ancho de la navegación */
+    margin: 0 auto;
+}
+
+.logo {
+    flex-basis: 100%; /* El logo ocupa todo el ancho en móviles */
+    text-align: center;
+    margin-bottom: 10px;
+}
+.logo a {
+    color: white;
+    font-size: 1.8em; /* Tamaño de fuente ligeramente más grande para el logo */
+    font-weight: bold;
+    text-decoration: none;
+    display: block; /* Asegura que el enlace ocupe todo el espacio del logo */
+}
+
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap; /* Permite que los enlaces se envuelvan */
+    justify-content: center; /* Centra los enlaces en móviles */
+    gap: 15px; /* Espacio entre elementos de navegación */
+    align-items: center;
+    width: 100%; /* Ocupa todo el ancho disponible */
+}
+
+.nav-links li {
+    margin: 0;
+}
+
+.nav-links a, .nav-links span {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 0;
+    white-space: nowrap; /* Evita que los textos como "Hola, usuario!" se rompan */
+}
+
+.nav-links a:hover {
+    text-decoration: underline;
+}
+
+.welcome-message {
+    font-weight: bold;
+    margin-right: 0; /* Ya no necesitamos margen si están centrados */
+    color: white;
+}
+
+/* Footer Styles */
+.main-footer {
+    background-color: #AA775A; /* Nuevo color para el pie de página */
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px; /* Margen superior para separarlo del contenido */
+}
+
+/* Form Styles (reused and adapted) */
+form {
+    display: flex;
+    flex-direction: column;
+}
+p {
+    margin-bottom: 15px;
+}
+p label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #6B4F4F; /* Nuevo color para etiquetas de formulario */
+}
+input[type="text"],
+input[type="password"],
+input[type="email"],
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #CC9980; /* Nuevo color para borde de campos */
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    background-color: #FAF7F0; /* Fondo de campo, más claro */
+}
+textarea {
+    resize: vertical;
+    min-height: 150px; /* Altura mínima para el área de texto */
+}
+ul.errorlist {
+    color: red;
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 5px;
+    font-size: 0.9em;
+}
+.helptext {
+    font-size: 0.8em;
+    color: #8C644E; /* Nuevo color para texto de ayuda */
+    margin-top: 5px;
+}
+
+/* Specific Escrito List/Detail Styles */
+.escrito-list {
+    list-style: none;
+    padding: 0;
+}
+.escrito-item {
+    background-color: #FAF7F0; /* Fondo de item de lista */
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.escrito-item h2 {
+    margin-top: 0;
+    color: #AA775A; /* Color de título de escrito */
+}
+.escrito-item h2 a {
+    text-decoration: none;
+    color: #AA775A;
+}
+.escrito-item h2 a:hover {
+    text-decoration: underline;
+}
+.escrito-item p {
+    line-height: 1.6;
+}
+.escrito-meta {
+    font-size: 0.9em;
+    color: #6B4F4F; /* Color de metadata */
+    margin-top: 10px;
+    border-top: 1px solid #E8D8C9; /* Línea separadora suave */
+    padding-top: 10px;
+}
+
+/* Escrito Detail Specific Styles */
+.header-section {
+    display: flex;
+    flex-wrap: wrap; /* Permite que los elementos se envuelvan */
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.header-section h1 {
+    flex-grow: 1; /* Permite que el título crezca */
+    margin-right: 10px; /* Espacio entre título y botón */
+}
+.content {
+    line-height: 1.8;
+    color: #444444; /* Un gris ligeramente más oscuro para el contenido principal */
+    white-space: pre-wrap;
+}
+.back-link {
+    display: block;
+    margin-top: 30px;
+    text-align: center;
+    text-decoration: none;
+    color: #6B4F4F; /* Enlace de volver */
+    font-weight: bold;
+}
+.back-link:hover {
+    text-decoration: underline;
+}
+
+<<<<<<< HEAD:static/css/main.css
+/* Media Queries for Responsiveness */
+
+/* Small devices (phones, 600px and down) - Estilos base ya son para esto */
+
+/* Medium devices (tablets, 600px and up) */
+@media (min-width: 600px) {
+    .container {
+        padding: 30px; /* Más padding en pantallas más grandes */
+    }
+    .main-header {
+        padding: 15px 30px;
+    }
+    .logo {
+        flex-basis: auto; /* El logo ya no ocupa todo el ancho */
+        text-align: left;
+        margin-bottom: 0;
+    }
+    .nav-links {
+        justify-content: flex-end; /* Alinear enlaces a la derecha */
+        width: auto;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) {
+    .container {
+        margin-top: 40px; /* Más margen superior en pantallas grandes */
+        margin-bottom: 40px;
+    }
+    h1 {
+        font-size: 2.5em; /* Aumentar tamaño de h1 en pantallas grandes */
+    }
+    .logo a {
+        font-size: 2em; /* Logo más grande */
+    }
+}
+=======
+/* AÑADIDO: Estilo para botones de acción */
+.action-buttons {
+    display: flex;
+    gap: 10px; /* Espacio entre los botones */
+    margin-left: 10px; /* Separación del título si es necesario */
+}
+
+/* AÑADIDO: Estilo para botón de eliminación (danger) */
+.button.danger {
+    background-color: #dc3545; /* Rojo */
+}
+.button.danger:hover {
+    background-color: #c82333; /* Rojo más oscuro al pasar el ratón */
+}
+>>>>>>> ca996659e6b1d8f590b998bd8609d9f77266ca7a:taller_escritura/static/css/main.css
+
 ```
 
 ---
@@ -1371,260 +1778,6 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'taller_escritura.settings')
 
 application = get_wsgi_application()
-
-```
-
----
-
-## Archivo: `taller_escritura/static/css/main.css`
-
-```css
-/* taller_escritura/static/css/main.css */
-
-/* Base Styles */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0; /* Reset default body margin */
-    background-color: #f4f4f4;
-    color: #333;
-    display: flex;
-    flex-direction: column; /* For sticky footer or overall layout */
-    min-height: 100vh; /* Make sure body takes full viewport height */
-}
-
-/* Main Content Container */
-.container {
-    max-width: 800px;
-    margin: 20px auto; /* Centrar y añadir margen superior/inferior */
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    flex-grow: 1; /* Allow container to grow and push footer down */
-}
-
-/* Headings */
-h1, h2, h3, h4, h5, h6 {
-    color: #0056b3;
-    margin-top: 0;
-    margin-bottom: 20px;
-}
-
-/* Links */
-a {
-    color: #007bff;
-    text-decoration: none;
-}
-a:hover {
-    text-decoration: underline;
-}
-
-/* Buttons */
-.button {
-    background-color: #007bff;
-    color: white;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 0.9em;
-    text-decoration: none;
-    font-weight: bold;
-    display: inline-block; /* Allow padding */
-    text-align: center;
-}
-.button:hover {
-    background-color: #0056b3;
-    text-decoration: none;
-}
-
-.button.primary {
-    background-color: #28a745; /* Green */
-}
-.button.primary:hover {
-    background-color: #218838;
-}
-
-.button.secondary {
-    background-color: #6c757d; /* Gray */
-}
-.button.secondary:hover {
-    background-color: #5a6268;
-}
-
-.button.warning {
-    background-color: #ffc107; /* Yellow */
-    color: #333;
-}
-.button.warning:hover {
-    background-color: #e0a800;
-}
-
-
-/* Header Styles */
-.main-header {
-    background-color: #007bff;
-    color: white;
-    padding: 15px 30px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.main-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px; /* Optional: limit nav width */
-    margin: 0 auto;
-}
-
-.logo a {
-    color: white;
-    font-size: 1.5em;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-.nav-links {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 20px; /* Space between nav items */
-    align-items: center;
-}
-
-.nav-links li {
-    margin: 0;
-}
-
-.nav-links a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 5px 0;
-}
-
-.nav-links a:hover {
-    text-decoration: underline;
-}
-
-.welcome-message {
-    font-weight: bold;
-    margin-right: 10px;
-    color: white;
-}
-
-/* Footer Styles */
-.main-footer {
-    background-color: #343a40; /* Dark gray */
-    color: white;
-    text-align: center;
-    padding: 20px;
-    margin-top: 40px;
-}
-
-/* Form Styles (reused from previous templates) */
-form {
-    display: flex;
-    flex-direction: column;
-}
-p { /* Style for each form field rendered by Django */
-    margin-bottom: 15px;
-}
-p label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-input[type="text"],
-input[type="password"],
-input[type="email"],
-select, /* Style for 'estado' field which is a select */
-textarea { /* Style for 'contenido' field which will be a textarea */
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif; /* Ensure consistent font */
-}
-textarea {
-    resize: vertical; /* Allows vertical resizing */
-    min-height: 200px; /* Minimum height for text area */
-}
-ul.errorlist { /* Style for form error list */
-    color: red;
-    list-style-type: none;
-    padding-left: 0;
-    margin-top: 5px;
-    font-size: 0.9em;
-}
-.helptext { /* Style for Django Forms help text */
-    font-size: 0.8em;
-    color: #666;
-    margin-top: 5px;
-}
-
-/* Specific Escrito List/Detail Styles */
-.escrito-list {
-    list-style: none;
-    padding: 0;
-}
-.escrito-item {
-    background-color: #fff;
-    margin-bottom: 15px;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-.escrito-item h2 {
-    margin-top: 0;
-    color: #007bff;
-}
-.escrito-item h2 a {
-    text-decoration: none;
-    color: #007bff;
-}
-.escrito-item h2 a:hover {
-    text-decoration: underline;
-}
-.escrito-item p {
-    line-height: 1.6;
-}
-.escrito-meta {
-    font-size: 0.9em;
-    color: #666;
-    margin-top: 10px;
-    border-top: 1px solid #eee;
-    padding-top: 10px;
-}
-
-/* Escrito Detail Specific Styles */
-.header-section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-.header-section h1 {
-    margin: 0;
-}
-.content {
-    line-height: 1.8;
-    color: #444;
-    white-space: pre-wrap;
-}
-.back-link {
-    display: block;
-    margin-top: 30px;
-    text-align: center;
-    text-decoration: none;
-    color: #007bff;
-    font-weight: bold;
-}
-.back-link:hover {
-    text-decoration: underline;
-}
 
 ```
 

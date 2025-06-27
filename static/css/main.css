@@ -264,6 +264,7 @@ ul.errorlist {
     text-decoration: underline;
 }
 
+<<<<<<< HEAD:static/css/main.css
 /* Media Queries for Responsiveness */
 
 /* Small devices (phones, 600px and down) - Estilos base ya son para esto */
@@ -300,3 +301,19 @@ ul.errorlist {
         font-size: 2em; /* Logo más grande */
     }
 }
+=======
+/* AÑADIDO: Estilo para botones de acción */
+.action-buttons {
+    display: flex;
+    gap: 10px; /* Espacio entre los botones */
+    margin-left: 10px; /* Separación del título si es necesario */
+}
+
+/* AÑADIDO: Estilo para botón de eliminación (danger) */
+.button.danger {
+    background-color: #dc3545; /* Rojo */
+}
+.button.danger:hover {
+    background-color: #c82333; /* Rojo más oscuro al pasar el ratón */
+}
+>>>>>>> ca996659e6b1d8f590b998bd8609d9f77266ca7a:taller_escritura/static/css/main.css

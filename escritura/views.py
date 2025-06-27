@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required # Decorador para reque
 from .models import Escrito # Importamos nuestro modelo Escrito
 from .forms import CustomUserCreationForm, EscritoForm # Importamos nuestros formularios
 from django.http import Http404 # Para lanzar un error 404 si el usuario no es el autor
+from django.contrib import messages # AÑADIDO: Para mostrar mensajes al usuario
 
 # Vista basada en función para listar escritos públicos
 def lista_escritos(request):
@@ -159,3 +160,31 @@ def editar_escrito(request, pk):
     # Renderiza la misma plantilla usada para crear, pasando el formulario y la bandera.
     # es_creacion = False le dice a la plantilla que es una operación de edición.
     return render(request, 'escritura/crear_editar_escrito.html', {'form': form, 'es_creacion': False})
+
+
+# AÑADIDO: Vista para eliminar un escrito
+@login_required # Solo usuarios autenticados pueden acceder.
+def eliminar_escrito(request, pk):
+    """
+    Esta vista maneja la eliminación de un escrito.
+    - Si la solicitud es GET, muestra una página de confirmación.
+    - Si la solicitud es POST, procede a eliminar el escrito.
+    - Se verifica que el usuario autenticado sea el autor del escrito.
+    """
+    escrito = get_object_or_404(Escrito, pk=pk)
+
+    # VERIFICACIÓN DE PERMISOS: Asegurarse de que solo el autor pueda eliminar.
+    if request.user != escrito.autor:
+        messages.error(request, "No tienes permiso para eliminar este escrito.")
+        return redirect('escritura:detalle_escrito', pk=escrito.pk)
+        # O podrías lanzar un Http404 como en editar_escrito, si prefieres no dar pistas.
+        # raise Http404("No tienes permiso para eliminar este escrito.")
+
+    if request.method == 'POST':
+        # Si la solicitud es POST, significa que el usuario ha confirmado la eliminación.
+        escrito.delete() # ¡Elimina el objeto de la base de datos!
+        messages.success(request, f"El escrito '{escrito.titulo}' ha sido eliminado exitosamente.")
+        return redirect('escritura:lista_escritos') # Redirige a la lista después de eliminar.
+
+    # Si la solicitud es GET, muestra la página de confirmación.
+    return render(request, 'escritura/confirmar_eliminar_escrito.html', {'escrito': escrito})
