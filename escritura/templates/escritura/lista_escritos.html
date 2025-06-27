@@ -52,27 +52,28 @@
     </style>
 </head>
 <body>
+    <div class="auth-links">
+        {% if user.is_authenticated %}
+            <span class="welcome-message">Hola, {{ user.username }}!</span>
+            <a href="{% url 'logout' %}">Cerrar Sesión</a>
+        {% else %}
+            <a href="{% url 'login' %}">Inicia sesión aquí</a>
+            <a href="{% url 'escritura:registro' %}">Registrarse</a>
+        {% endif %}
+    </div>
+
+    {# AÑADIDO: Enlace para crear un nuevo escrito (solo visible si el usuario está autenticado) #}
+    {% if user.is_authenticated %}
+        <div style="text-align: right; margin-bottom: 20px;">
+            <a href="{% url 'escritura:crear_escrito' %}" style="background-color: #28a745; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-weight: bold;">+ Crear Nuevo Escrito</a>
+        </div>
+    {% endif %}
+
     <h1>Escritos Públicos del Taller</h1>
 
-    {% if escritos %} {# Si la lista de escritos no está vacía... #}
-        <ul class="escrito-list">
-            {# Bucle para iterar sobre cada escrito en la lista 'escritos' #}
-            {% for escrito in escritos %}
-                <li class="escrito-item">
-                    {# MODIFICADO: El título ahora es un enlace al detalle del escrito. #}
-                    {# La etiqueta {% url %} genera la URL dinámicamente usando el nombre 'escritura:detalle_escrito' #}
-                    {# y le pasa el 'pk' (clave primaria) del escrito actual como argumento. #}
-                    <h2><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
-                    {# slice de contenido para mostrar solo una parte #}
-                    <p>{{ escrito.contenido|truncatechars:200 }}</p> 
-                    <div class="escrito-meta">
-                        <p>Por: {{ escrito.autor.username }}</p> {# Muestra el nombre de usuario del autor #}
-                        <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p> {# Formato de fecha #}
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %} {# Si no hay escritos, muestra un mensaje #}
+    {% if escritos %}
+        <!-- ... tu lista de escritos existente ... -->
+    {% else %}
         <p>No hay escritos públicos disponibles en este momento.</p>
     {% endif %}
 </body>

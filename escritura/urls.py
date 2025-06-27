@@ -1,6 +1,6 @@
 # escritura/urls.py
 
-from django.urls import path
+from django.urls import path, include
 from . import views # Importamos el módulo views de nuestra propia aplicación
 
 # Definición del nombre de la aplicación para URL namespaces
@@ -11,4 +11,6 @@ urlpatterns = [
     path('', views.lista_escritos, name='lista_escritos'),
     path('<int:pk>/', views.DetalleEscrito.as_view(), name='detalle_escrito'),
     path('registro/', views.registro_usuario, name='registro'),
+    path('crear/', views.crear_escrito, name='crear_escrito'),
+    
 ]

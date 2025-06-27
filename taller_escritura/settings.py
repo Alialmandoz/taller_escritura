@@ -145,3 +145,9 @@ MEDIA_ROOT = BASE_DIR / 'media' # La ruta absoluta en el sistema de archivos don
 # Puedes crear una imagen de "perfil por defecto" aquí.
 # Por ejemplo: taller_escritura/media/profile_pics/default.jpg
 # Asegúrate de crear el directorio 'media' en la raíz de tu proyecto.
+
+LOGIN_REDIRECT_URL = 'escritura:lista_escritos' 
+
+# URL a la que redirigir después de un cierre de sesión exitoso.
+# También redirigimos a la lista de escritos públicos, o podrías tener una página de "gracias por visitar".
+LOGOUT_REDIRECT_URL = 'escritura:lista_escritos' 

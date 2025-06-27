@@ -1,0 +1,111 @@
+<!-- escritura/templates/escritura/crear_editar_escrito.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if es_creacion %}Crear Nuevo Escrito{% else %}Editar Escrito{% endif %}</title>
+    <style>
+        /* Reutiliza estilos de formularios previos para consistencia */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px; /* Un poco más ancho para el contenido */
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        p { /* Estilo para cada campo del formulario renderizado por Django */
+            margin-bottom: 15px;
+        }
+        p label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        select, /* Estilo para el campo 'estado' que es un select */
+        textarea { /* Estilo para el campo 'contenido' que será un textarea */
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif; /* Asegurar fuente consistente */
+        }
+        textarea {
+            resize: vertical; /* Permite redimensionar verticalmente */
+            min-height: 200px; /* Altura mínima para el área de texto */
+        }
+        ul.errorlist {
+            color: red;
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+        .helptext {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{% if es_creacion %}Crear Nuevo Escrito{% else %}Editar Escrito{% endif %}</h1>
+        <form method="post">
+            {% csrf_token %} {# ¡CRÍTICO para la seguridad! #}
+            {{ form.as_p }} 
+            <button type="submit">
+                {% if es_creacion %}Publicar Escrito{% else %}Guardar Cambios{% endif %}
+            </button>
+        </form>
+        <a href="{% url 'escritura:lista_escritos' %}" class="back-link">&larr; Volver a la lista de escritos</a>
+    </div>
+</body>
+</html>

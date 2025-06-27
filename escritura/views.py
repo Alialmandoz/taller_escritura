@@ -1,10 +1,12 @@
 # escritura/views.py
 
-from django.shortcuts import render, get_object_or_404, redirect # MODIFICADO: Añadimos 'redirect'
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import DetailView
-from django.contrib.auth import login # AÑADIDO: Para iniciar sesión al usuario después del registro
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required # AÑADIDO: Decorador para requerir autenticación
+
 from .models import Escrito
-from .forms import CustomUserCreationForm # AÑADIDO: Importamos nuestro formulario de registro
+from .forms import CustomUserCreationForm, EscritoForm # MODIFICADO: Importamos también EscritoForm
 
 
 # AÑADIDO: Vista basada en función para listar escritos públicos
@@ -67,3 +69,34 @@ def registro_usuario(request):
     
     # Renderiza la plantilla con el formulario (vacío o con errores)
     return render(request, 'escritura/registro.html', {'form': form})
+
+
+# Vista para crear un nuevo escrito
+@login_required # Decorador: Solo usuarios autenticados pueden acceder a esta vista.
+def crear_escrito(request):
+    """
+    Esta vista permite a un usuario autenticado crear un nuevo escrito.
+    - Si la solicitud es GET, muestra un formulario EscritoForm vacío.
+    - Si la solicitud es POST, procesa el formulario:
+        - Si es válido, guarda el escrito, asigna el autor (el usuario actual)
+          y redirige a la página de detalle del nuevo escrito.
+        - Si no es válido, vuelve a mostrar el formulario con los errores.
+    """
+    if request.method == 'POST':
+        form = EscritoForm(request.POST) # Crea una instancia del formulario con los datos enviados
+        if form.is_valid():
+            # AÑADIDO: No guardamos el formulario directamente todavía (commit=False)
+            # porque necesitamos añadir el autor (el usuario actual) antes de guardar.
+            escrito = form.save(commit=False) 
+            escrito.autor = request.user # Asigna el autor del escrito al usuario actualmente logueado.
+            escrito.save() # Ahora sí, guarda el objeto Escrito completo en la base de datos.
+            
+            # Redirige a la página de detalle del escrito recién creado.
+            # Necesitamos pasar el 'pk' del escrito a la URL.
+            return redirect('escritura:detalle_escrito', pk=escrito.pk)
+    else:
+        # Si la solicitud es GET, muestra un formulario vacío.
+        form = EscritoForm()
+    
+    # Renderiza la plantilla con el formulario (vacío o con errores)
+    return render(request, 'escritura/crear_editar_escrito.html', {'form': form, 'es_creacion': True})

@@ -1,6 +1,6 @@
 # Contenido del Proyecto: taller escritura
 
-**Generado el:** 2025-06-26 23:28:18
+**Generado el:** 2025-06-26 23:59:53
 
 ## Estructura del Proyecto
 
@@ -13,6 +13,7 @@ taller escritura
 │   ├── __init__.py
 │   ├── admin.py
 │   ├── apps.py
+│   ├── forms.py
 │   ├── models.py
 │   ├── tests.py
 │   ├── urls.py
@@ -23,8 +24,10 @@ taller escritura
 │   │   ├── __init__.py
 │   ├── templates
 │   │   ├── escritura
+│   │   │   ├── crear_editar_escrito.html
 │   │   │   ├── detalle_escrito.html
 │   │   │   ├── lista_escritos.html
+│   │   │   ├── registro.html
 ├── taller_escritura
 │   ├── __init__.py
 │   ├── asgi.py
@@ -111,6 +114,54 @@ class EscrituraConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'escritura'
 
+```
+
+---
+
+## Archivo: `escritura/forms.py`
+
+```python
+# escritura/forms.py
+
+from django import forms
+from django.contrib.auth.forms import UserCreationForm # Importamos el formulario de creación de usuarios de Django
+from .models import Escrito #  Importamos nuestro modelo Escrito
+
+
+# Formulario personalizado para el registro de usuarios
+class CustomUserCreationForm(UserCreationForm):
+    """
+    Formulario de registro personalizado que hereda de UserCreationForm de Django.
+    Por ahora, no añadimos campos extra directamente aquí,
+    ya que los campos del perfil (bio, foto) se gestionarán en el modelo Profile.
+    """
+    class Meta(UserCreationForm.Meta):
+        # Le decimos al formulario qué modelo usar (User) y qué campos mostrar.
+        # UserCreationForm.Meta ya incluye 'username' y 'password'.
+        # Puedes añadir más campos del modelo User aquí si los necesitaras en el registro.
+        model = UserCreationForm.Meta.model # Esto se refiere al modelo User
+
+# Formulario para crear y editar objetos Escrito
+class EscritoForm(forms.ModelForm):
+    """
+    Formulario basado en el modelo Escrito para crear y editar textos.
+    """
+    class Meta:
+        model = Escrito # Le decimos a Django que este formulario está basado en el modelo Escrito.
+        # Definimos los campos del modelo Escrito que queremos incluir en el formulario.
+        # Excluimos 'autor', 'fecha_creacion' y 'fecha_actualizacion' porque
+        # se gestionarán automáticamente en la vista.
+        fields = ['titulo', 'contenido', 'estado'] 
+        
+        # Opcional: Puedes personalizar las etiquetas o widgets de los campos.
+        labels = {
+            'titulo': 'Título del Escrito',
+            'contenido': 'Contenido del Texto',
+            'estado': 'Visibilidad',
+        }
+        # widgets = {
+        #     'contenido': forms.Textarea(attrs={'cols': 80, 'rows': 15}),
+        # }
 ```
 
 ---
@@ -220,7 +271,7 @@ from django.test import TestCase
 ```python
 # escritura/urls.py
 
-from django.urls import path
+from django.urls import path, include
 from . import views # Importamos el módulo views de nuestra propia aplicación
 
 # Definición del nombre de la aplicación para URL namespaces
@@ -228,15 +279,11 @@ from . import views # Importamos el módulo views de nuestra propia aplicación
 app_name = 'escritura'
 
 urlpatterns = [
-    # path(ruta_url, vista_a_llamar, name=nombre_para_referenciar_url)
-    # path('', ...) significa la raíz de esta app (ej: /escritura/)
     path('', views.lista_escritos, name='lista_escritos'),
-
-    # AÑADIDO: URL para el detalle de un escrito.
-    # <int:pk> es un conversor de path que captura un número entero (la clave primaria del escrito)
-    # y lo pasa como argumento 'pk' a la vista DetalleEscrito.
-    # .as_view() se usa para llamar vistas basadas en clase.
     path('<int:pk>/', views.DetalleEscrito.as_view(), name='detalle_escrito'),
+    path('registro/', views.registro_usuario, name='registro'),
+    path('crear/', views.crear_escrito, name='crear_escrito'),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
 ```
 
@@ -247,9 +294,14 @@ urlpatterns = [
 ```python
 # escritura/views.py
 
-from django.shortcuts import render, get_object_or_404 # Importamos get_object_or_404
-from django.views.generic import DetailView           # AÑADIDO: Importamos DetailView de las CBV
-from .models import Escrito                           # Importamos nuestro modelo Escrito
+from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import DetailView
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required # AÑADIDO: Decorador para requerir autenticación
+
+from .models import Escrito
+from .forms import CustomUserCreationForm, EscritoForm # MODIFICADO: Importamos también EscritoForm
+
 
 # AÑADIDO: Vista basada en función para listar escritos públicos
 def lista_escritos(request):
@@ -284,6 +336,64 @@ class DetalleEscrito(DetailView):
         # Esto añade una capa de seguridad para que los usuarios no puedan acceder
         # a escritos privados o borradores a través de la URL directa.
         return Escrito.objects.filter(estado='PUBLICO')
+    
+# AÑADIDO: Vista para el registro de nuevos usuarios
+def registro_usuario(request):
+    """
+    Esta vista maneja la lógica para el registro de nuevos usuarios.
+    - Si la solicitud es GET, muestra el formulario de registro vacío.
+    - Si la solicitud es POST, procesa los datos del formulario:
+        - Si es válido, crea el usuario, inicia sesión al usuario y redirige a la página principal.
+        - Si no es válido, vuelve a mostrar el formulario con los errores.
+    """
+    if request.method == 'POST':
+        # Si la solicitud es POST, el formulario ha sido enviado
+        form = CustomUserCreationForm(request.POST) # Crea una instancia del formulario con los datos enviados
+        if form.is_valid():
+            # Si el formulario es válido, guarda el nuevo usuario
+            user = form.save()
+            # Opcional: Iniciar sesión al usuario automáticamente después del registro
+            login(request, user)
+            # Redirige al usuario a una página de éxito (ej. la lista de escritos o un dashboard)
+            # Por ahora, redirigimos a la lista de escritos.
+            return redirect('escritura:lista_escritos')
+    else:
+        # Si la solicitud es GET, muestra un formulario vacío
+        form = CustomUserCreationForm()
+    
+    # Renderiza la plantilla con el formulario (vacío o con errores)
+    return render(request, 'escritura/registro.html', {'form': form})
+
+
+# Vista para crear un nuevo escrito
+@login_required # Decorador: Solo usuarios autenticados pueden acceder a esta vista.
+def crear_escrito(request):
+    """
+    Esta vista permite a un usuario autenticado crear un nuevo escrito.
+    - Si la solicitud es GET, muestra un formulario EscritoForm vacío.
+    - Si la solicitud es POST, procesa el formulario:
+        - Si es válido, guarda el escrito, asigna el autor (el usuario actual)
+          y redirige a la página de detalle del nuevo escrito.
+        - Si no es válido, vuelve a mostrar el formulario con los errores.
+    """
+    if request.method == 'POST':
+        form = EscritoForm(request.POST) # Crea una instancia del formulario con los datos enviados
+        if form.is_valid():
+            # AÑADIDO: No guardamos el formulario directamente todavía (commit=False)
+            # porque necesitamos añadir el autor (el usuario actual) antes de guardar.
+            escrito = form.save(commit=False) 
+            escrito.autor = request.user # Asigna el autor del escrito al usuario actualmente logueado.
+            escrito.save() # Ahora sí, guarda el objeto Escrito completo en la base de datos.
+            
+            # Redirige a la página de detalle del escrito recién creado.
+            # Necesitamos pasar el 'pk' del escrito a la URL.
+            return redirect('escritura:detalle_escrito', pk=escrito.pk)
+    else:
+        # Si la solicitud es GET, muestra un formulario vacío.
+        form = EscritoForm()
+    
+    # Renderiza la plantilla con el formulario (vacío o con errores)
+    return render(request, 'escritura/crear_editar_escrito.html', {'form': form, 'es_creacion': True})
 ```
 
 ---
@@ -367,6 +477,124 @@ class Migration(migrations.Migration):
 
 ```python
 
+```
+
+---
+
+## Archivo: `escritura/templates/escritura/crear_editar_escrito.html`
+
+```html
+<!-- escritura/templates/escritura/crear_editar_escrito.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if es_creacion %}Crear Nuevo Escrito{% else %}Editar Escrito{% endif %}</title>
+    <style>
+        /* Reutiliza estilos de formularios previos para consistencia */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 700px; /* Un poco más ancho para el contenido */
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        p { /* Estilo para cada campo del formulario renderizado por Django */
+            margin-bottom: 15px;
+        }
+        p label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        select, /* Estilo para el campo 'estado' que es un select */
+        textarea { /* Estilo para el campo 'contenido' que será un textarea */
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif; /* Asegurar fuente consistente */
+        }
+        textarea {
+            resize: vertical; /* Permite redimensionar verticalmente */
+            min-height: 200px; /* Altura mínima para el área de texto */
+        }
+        ul.errorlist {
+            color: red;
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+        .helptext {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .back-link {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>{% if es_creacion %}Crear Nuevo Escrito{% else %}Editar Escrito{% endif %}</h1>
+        <form method="post">
+            {% csrf_token %} {# ¡CRÍTICO para la seguridad! #}
+            {{ form.as_p }} 
+            <button type="submit">
+                {% if es_creacion %}Publicar Escrito{% else %}Guardar Cambios{% endif %}
+            </button>
+        </form>
+        <a href="{% url 'escritura:lista_escritos' %}" class="back-link">&larr; Volver a la lista de escritos</a>
+    </div>
+</body>
+</html>
 ```
 
 ---
@@ -506,29 +734,145 @@ class Migration(migrations.Migration):
     </style>
 </head>
 <body>
+    <div class="auth-links">
+        {% if user.is_authenticated %}
+            <span class="welcome-message">Hola, {{ user.username }}!</span>
+            <a href="{% url 'logout' %}">Cerrar Sesión</a>
+        {% else %}
+            <a href="{% url 'login' %}">Inicia sesión aquí</a>
+            <a href="{% url 'escritura:registro' %}">Registrarse</a>
+        {% endif %}
+    </div>
+
+    {# AÑADIDO: Enlace para crear un nuevo escrito (solo visible si el usuario está autenticado) #}
+    {% if user.is_authenticated %}
+        <div style="text-align: right; margin-bottom: 20px;">
+            <a href="{% url 'escritura:crear_escrito' %}" style="background-color: #28a745; color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-weight: bold;">+ Crear Nuevo Escrito</a>
+        </div>
+    {% endif %}
+
     <h1>Escritos Públicos del Taller</h1>
 
-    {% if escritos %} {# Si la lista de escritos no está vacía... #}
-        <ul class="escrito-list">
-            {# Bucle para iterar sobre cada escrito en la lista 'escritos' #}
-            {% for escrito in escritos %}
-                <li class="escrito-item">
-                    {# MODIFICADO: El título ahora es un enlace al detalle del escrito. #}
-                    {# La etiqueta {% url %} genera la URL dinámicamente usando el nombre 'escritura:detalle_escrito' #}
-                    {# y le pasa el 'pk' (clave primaria) del escrito actual como argumento. #}
-                    <h2><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
-                    {# slice de contenido para mostrar solo una parte #}
-                    <p>{{ escrito.contenido|truncatechars:200 }}</p> 
-                    <div class="escrito-meta">
-                        <p>Por: {{ escrito.autor.username }}</p> {# Muestra el nombre de usuario del autor #}
-                        <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p> {# Formato de fecha #}
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %} {# Si no hay escritos, muestra un mensaje #}
+    {% if escritos %}
+        <!-- ... tu lista de escritos existente ... -->
+    {% else %}
         <p>No hay escritos públicos disponibles en este momento.</p>
     {% endif %}
+</body>
+</html>
+```
+
+---
+
+## Archivo: `escritura/templates/escritura/registro.html`
+
+```html
+<!-- escritura/templates/escritura/registro.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        p { /* Estilo para cada campo del formulario renderizado por Django */
+            margin-bottom: 15px;
+        }
+        p label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Incluye padding y borde en el ancho total */
+        }
+        ul.errorlist { /* Estilo para la lista de errores del formulario */
+            color: red;
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+        .helptext { /* Estilo para el texto de ayuda de Django Forms */
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        .login-link a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Registro</h1>
+        <form method="post">
+            {% csrf_token %} {# AÑADIDO: ¡MUY IMPORTANTE! Token de seguridad de Django #}
+            {# Renderiza el formulario de Django como párrafos. Cada campo será un <p> con su label y input. #}
+            {{ form.as_p }} 
+            <button type="submit">Registrarse</button>
+        </form>
+        <div class="login-link">
+            ¿Ya tienes una cuenta? <a href="#">Inicia sesión aquí</a> {# AÑADIDO: Placeholder para el enlace de login #}
+        </div>
+    </div>
 </body>
 </html>
 ```
@@ -717,6 +1061,12 @@ MEDIA_ROOT = BASE_DIR / 'media' # La ruta absoluta en el sistema de archivos don
 # Puedes crear una imagen de "perfil por defecto" aquí.
 # Por ejemplo: taller_escritura/media/profile_pics/default.jpg
 # Asegúrate de crear el directorio 'media' en la raíz de tu proyecto.
+
+LOGIN_REDIRECT_URL = 'escritura:lista_escritos' 
+
+# URL a la que redirigir después de un cierre de sesión exitoso.
+# También redirigimos a la lista de escritos públicos, o podrías tener una página de "gracias por visitar".
+LOGOUT_REDIRECT_URL = 'escritura:lista_escritos' 
 ```
 
 ---

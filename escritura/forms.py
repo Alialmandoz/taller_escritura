@@ -1,9 +1,11 @@
 # escritura/forms.py
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm # AÑADIDO: Importamos el formulario de creación de usuarios de Django
+from django.contrib.auth.forms import UserCreationForm
+from .models import Escrito # Importamos nuestro modelo Escrito
 
-# AÑADIDO: Formulario personalizado para el registro de usuarios
+
+# Formulario personalizado para el registro de usuarios
 class CustomUserCreationForm(UserCreationForm):
     """
     Formulario de registro personalizado que hereda de UserCreationForm de Django.
@@ -11,7 +13,23 @@ class CustomUserCreationForm(UserCreationForm):
     ya que los campos del perfil (bio, foto) se gestionarán en el modelo Profile.
     """
     class Meta(UserCreationForm.Meta):
-        # Le decimos al formulario qué modelo usar (User) y qué campos mostrar.
-        # UserCreationForm.Meta ya incluye 'username' y 'password'.
-        # Puedes añadir más campos del modelo User aquí si los necesitaras en el registro.
-        model = UserCreationForm.Meta.model # Esto se refiere al modelo User
+        model = UserCreationForm.Meta.model
+        # Si NO quieres pedir el email en el registro, simplemente usa los campos predeterminados:
+        fields = UserCreationForm.Meta.fields
+        # Si SÍ quieres pedir el email en el registro, descomenta la línea de abajo:
+        # fields = UserCreationForm.Meta.fields + ('email',)
+
+
+# Formulario para crear y editar objetos Escrito (sin cambios)
+class EscritoForm(forms.ModelForm):
+    """
+    Formulario basado en el modelo Escrito para crear y editar textos.
+    """
+    class Meta:
+        model = Escrito
+        fields = ['titulo', 'contenido', 'estado'] 
+        labels = {
+            'titulo': 'Título del Escrito',
+            'contenido': 'Contenido del Texto',
+            'estado': 'Visibilidad',
+        }
