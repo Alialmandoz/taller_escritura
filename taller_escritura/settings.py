@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     # AÑADIDO: Tu aplicación personalizada 'escritura'.
     # Es crucial añadirla aquí para que Django sepa que existe y la cargue.
     'escritura',
+    # AÑADIDO: Apps de CKEditor
+    'ckeditor',
+    'ckeditor_uploader', # Necesario para subir imágenes
 ]
 
 MIDDLEWARE = [
@@ -155,4 +158,30 @@ LOGIN_REDIRECT_URL = 'escritura:lista_escritos'
 
 # URL a la que redirigir después de un cierre de sesión exitoso.
 # También redirigimos a la lista de escritos públicos, o podrías tener una página de "gracias por visitar".
-LOGOUT_REDIRECT_URL = 'escritura:lista_escritos' 
+LOGOUT_REDIRECT_URL = 'escritura:lista_escritos'
+
+# AÑADIDO: Configuración específica para django-ckeditor
+CKEDITOR_UPLOAD_PATH = 'uploads/' # Las imágenes subidas desde el editor se guardarán en MEDIA_ROOT/uploads/
+
+# Opcional: Configuración de la barra de herramientas de CKEditor
+# Puedes personalizar qué botones aparecen en el editor.
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom', # Define una barra de herramientas personalizada
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv'],
+            ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+            ['Link', 'Unlink', 'Anchor'],
+            ['Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak'],
+            ['Styles', 'Format', 'Font', 'FontSize'],
+            ['TextColor', 'BGColor'],
+            ['Maximize', 'ShowBlocks', '-', 'About'],
+            ['Source'] # Botón para ver el código fuente HTML
+        ],
+        'width': '100%', # Opcional: Ancho del editor
+        'height': 300,   # Opcional: Alto del editor
+        'extraPlugins': 'codesnippet', # Ejemplo: Añadir un plugin para snippets de código
+        # Más opciones en: https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html
+    }
+}

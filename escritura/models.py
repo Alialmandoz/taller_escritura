@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save # AÑADIDO: Para crear el perfil automáticamente
 from django.dispatch import receiver         # AÑADIDO: Para conectar la señal
+from ckeditor_uploader.fields import RichTextUploadingField # MODIFICADO: Importa RichTextUploadingField
 
 # Obtén el modelo de usuario actualmente activo.
 User = get_user_model()
@@ -19,7 +20,7 @@ class Escrito(models.Model):
 
     autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='escritos')
     titulo = models.CharField(max_length=200)
-    contenido = models.TextField()
+    contenido = RichTextUploadingField() # MODIFICADO: Usa RichTextUploadingField para permitir subir archivos
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
     estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='BORRADOR')

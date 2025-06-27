@@ -6,6 +6,9 @@
 {% endblock %}
 
 {% block content %}
+    {# AÑADIDO: Renderiza los archivos JS/CSS necesarios para el editor de texto enriquecido #}
+    {{ form.media }}
+
     <h1 class="page-title">{% if es_creacion %}Crear Nuevo Escrito{% else %}Editar Escrito{% endif %}</h1>
     <form method="post">
         {% csrf_token %}
