@@ -3,25 +3,42 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import DetailView
 from django.contrib.auth import login
-from django.contrib.auth.decorators import login_required # AÑADIDO: Decorador para requerir autenticación
+from django.contrib.auth.decorators import login_required # Decorador para requerir autenticación
 
-from .models import Escrito
-from .forms import CustomUserCreationForm, EscritoForm # MODIFICADO: Importamos también EscritoForm
+from .models import Escrito # Importamos nuestro modelo Escrito
+from .forms import CustomUserCreationForm, EscritoForm # Importamos nuestros formularios
 
 
-# AÑADIDO: Vista basada en función para listar escritos públicos
+# Vista basada en función para listar escritos públicos
 def lista_escritos(request):
     """
     Esta vista recupera todos los objetos Escrito cuyo estado sea 'PUBLICO'
     y los pasa a la plantilla para su visualización.
     """
+    # Consulta a la base de datos: Obtiene todos los escritos donde el estado es 'PUBLICO'.
+    # .order_by('-fecha_creacion') asegura que los escritos más recientes aparezcan primero.
     escritos = Escrito.objects.filter(estado='PUBLICO').order_by('-fecha_creacion')
+
+    # AÑADIDO PARA DEPURACIÓN: Imprime el queryset para ver qué elementos contiene.
+    # Estas líneas te mostrarán en la terminal del servidor qué escritos está recuperando la consulta.
+    print(f"DEBUG: Escritos públicos recuperados: {escritos}")
+    print(f"DEBUG: Cantidad de escritos públicos: {escritos.count()}")
+    for escrito in escritos:
+        print(f"DEBUG: Escrito ID: {escrito.pk}, Título: {escrito.titulo}, Estado: {escrito.estado}, Autor: {escrito.autor.username}")
+
+
+    # Diccionario de contexto: Los datos que queremos pasar a la plantilla.
+    # La clave 'escritos' será el nombre de la variable en la plantilla.
     contexto = {
         'escritos': escritos
     }
+
+    # Renderiza la plantilla 'escritura/lista_escritos.html'
+    # y le pasa el diccionario 'contexto'.
     return render(request, 'escritura/lista_escritos.html', contexto)
 
-# AÑADIDO: Vista basada en clase para mostrar el detalle de un escrito
+
+# Vista basada en clase para mostrar el detalle de un escrito
 class DetalleEscrito(DetailView):
     """
     Esta vista basada en clase (CBV) se encarga de mostrar los detalles
@@ -42,8 +59,9 @@ class DetalleEscrito(DetailView):
         # Esto añade una capa de seguridad para que los usuarios no puedan acceder
         # a escritos privados o borradores a través de la URL directa.
         return Escrito.objects.filter(estado='PUBLICO')
-    
-# AÑADIDO: Vista para el registro de nuevos usuarios
+
+
+# Vista para el registro de nuevos usuarios
 def registro_usuario(request):
     """
     Esta vista maneja la lógica para el registro de nuevos usuarios.
@@ -85,7 +103,7 @@ def crear_escrito(request):
     if request.method == 'POST':
         form = EscritoForm(request.POST) # Crea una instancia del formulario con los datos enviados
         if form.is_valid():
-            # AÑADIDO: No guardamos el formulario directamente todavía (commit=False)
+            # No guardamos el formulario directamente todavía (commit=False)
             # porque necesitamos añadir el autor (el usuario actual) antes de guardar.
             escrito = form.save(commit=False) 
             escrito.autor = request.user # Asigna el autor del escrito al usuario actualmente logueado.

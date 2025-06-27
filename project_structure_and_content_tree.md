@@ -1,6 +1,6 @@
 # Contenido del Proyecto: taller escritura
 
-**Generado el:** 2025-06-26 23:59:53
+**Generado el:** 2025-06-27 00:09:06
 
 ## Estructura del Proyecto
 
@@ -124,8 +124,8 @@ class EscrituraConfig(AppConfig):
 # escritura/forms.py
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm # Importamos el formulario de creación de usuarios de Django
-from .models import Escrito #  Importamos nuestro modelo Escrito
+from django.contrib.auth.forms import UserCreationForm
+from .models import Escrito # Importamos nuestro modelo Escrito
 
 
 # Formulario personalizado para el registro de usuarios
@@ -136,32 +136,26 @@ class CustomUserCreationForm(UserCreationForm):
     ya que los campos del perfil (bio, foto) se gestionarán en el modelo Profile.
     """
     class Meta(UserCreationForm.Meta):
-        # Le decimos al formulario qué modelo usar (User) y qué campos mostrar.
-        # UserCreationForm.Meta ya incluye 'username' y 'password'.
-        # Puedes añadir más campos del modelo User aquí si los necesitaras en el registro.
-        model = UserCreationForm.Meta.model # Esto se refiere al modelo User
+        model = UserCreationForm.Meta.model
+        # Si NO quieres pedir el email en el registro, simplemente usa los campos predeterminados:
+        fields = UserCreationForm.Meta.fields
+        # Si SÍ quieres pedir el email en el registro, descomenta la línea de abajo:
+        # fields = UserCreationForm.Meta.fields + ('email',)
 
-# Formulario para crear y editar objetos Escrito
+
+# Formulario para crear y editar objetos Escrito (sin cambios)
 class EscritoForm(forms.ModelForm):
     """
     Formulario basado en el modelo Escrito para crear y editar textos.
     """
     class Meta:
-        model = Escrito # Le decimos a Django que este formulario está basado en el modelo Escrito.
-        # Definimos los campos del modelo Escrito que queremos incluir en el formulario.
-        # Excluimos 'autor', 'fecha_creacion' y 'fecha_actualizacion' porque
-        # se gestionarán automáticamente en la vista.
+        model = Escrito
         fields = ['titulo', 'contenido', 'estado'] 
-        
-        # Opcional: Puedes personalizar las etiquetas o widgets de los campos.
         labels = {
             'titulo': 'Título del Escrito',
             'contenido': 'Contenido del Texto',
             'estado': 'Visibilidad',
         }
-        # widgets = {
-        #     'contenido': forms.Textarea(attrs={'cols': 80, 'rows': 15}),
-        # }
 ```
 
 ---
@@ -283,7 +277,7 @@ urlpatterns = [
     path('<int:pk>/', views.DetalleEscrito.as_view(), name='detalle_escrito'),
     path('registro/', views.registro_usuario, name='registro'),
     path('crear/', views.crear_escrito, name='crear_escrito'),
-    path('accounts/', include('django.contrib.auth.urls')),
+    
 ]
 ```
 
@@ -1080,6 +1074,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('escritura/', include('escritura.urls')),
+    path('accounts/', include('django.contrib.auth.urls')),
 ]
 
 ```
