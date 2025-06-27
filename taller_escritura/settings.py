@@ -61,8 +61,7 @@ ROOT_URLCONF = 'taller_escritura.urls' # Define dónde están las URLs principal
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [], # Puedes añadir rutas a directorios de plantillas globales aquí.
-                    # Por ahora, Django buscará plantillas dentro de cada app en una carpeta 'templates'.
+        'DIRS': [BASE_DIR / 'taller_escritura/templates'], # MODIFICADO: Añade la ruta al directorio de plantillas globales.
         'APP_DIRS': True, # Esto le dice a Django que busque plantillas dentro de las carpetas 'templates' de cada aplicación en INSTALLED_APPS.
         'OPTIONS': {
             'context_processors': [
