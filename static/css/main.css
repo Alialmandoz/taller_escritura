@@ -263,8 +263,6 @@ ul.errorlist {
 .back-link:hover {
     text-decoration: underline;
 }
-
-<<<<<<< HEAD:static/css/main.css
 /* Media Queries for Responsiveness */
 
 /* Small devices (phones, 600px and down) - Estilos base ya son para esto */
@@ -316,4 +314,58 @@ ul.errorlist {
 .button.danger:hover {
     background-color: #c82333; /* Rojo más oscuro al pasar el ratón */
 }
->>>>>>> ca996659e6b1d8f590b998bd8609d9f77266ca7a:taller_escritura/static/css/main.css
+.messages {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.messages li {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid transparent; /* Base para el borde */
+    color: #333; /* Color de texto por defecto */
+    position: relative;
+}
+
+/* Estilos específicos para cada tipo de mensaje (tags) */
+.messages li.success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.messages li.info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+.messages li.warning {
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #856404;
+}
+
+.messages li.error {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Estilo para el botón de cerrar mensaje */
+.close-message {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.2em;
+    padding: 0 5px;
+    line-height: 1;
+}
+.close-message:hover {
+    color: black;
+}
