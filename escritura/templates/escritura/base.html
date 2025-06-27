@@ -5,17 +5,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {# AÑADIDO: Define a 'title' block that child templates can override #}
+    {# Define a 'title' block that child templates can override #}
     <title>{% block title %}Taller de Escritura{% endblock %}</title>
-
-    {# MODIFICADO: Link to our main CSS file, served from static files #}
+    
+    {# Link to our main CSS file, served from static files #}
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-
-    {# AÑADIDO: Optional 'head_extra' block for additional CSS/JS specific to child templates #}
-    {% block head_extra %}{% endblock %}
+    
+    {# Optional 'head_extra' block for additional CSS/JS specific to child templates #}
+    {% block head_extra %}{% endblock %} 
 </head>
 <body>
-    {# AÑADIDO: Basic navigation/auth links - common across pages #}
+    {# Basic navigation/auth links - common across pages #}
     <header class="main-header">
         <nav class="main-nav">
             <div class="logo">
@@ -35,17 +35,17 @@
     </header>
 
     <main class="container">
-        {# AÑADIDO: This is the main content block that child templates will fill #}
+        {# This is the main content block that child templates will fill #}
         {% block content %}
         {% endblock %}
     </main>
 
-    {# AÑADIDO: Optional 'footer' block #}
+    {# Optional 'footer' block #}
     <footer class="main-footer">
-        <p>© 2025 Taller de Escritura. Todos los derechos reservados.</p>
+        <p>&copy; 2025 Taller de Escritura. Todos los derechos reservados.</p>
     </footer>
 
-    {# AÑADIDO: Optional 'body_extra' block for JavaScript files at the end of the body #}
+    {# Optional 'body_extra' block for JavaScript files at the end of the body #}
     {% block body_extra %}{% endblock %}
 </body>
 </html>
