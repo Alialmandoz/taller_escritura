@@ -1,0 +1,79 @@
+<!-- escritura/templates/escritura/lista_escritos.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Escritos del Taller</title>
+    <style>
+        /* CSS básico para hacer la página un poco más legible */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            color: #0056b3;
+        }
+        .escrito-list {
+            list-style: none;
+            padding: 0;
+        }
+        .escrito-item {
+            background-color: #fff;
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .escrito-item h2 {
+            margin-top: 0;
+            color: #007bff;
+        }
+        /* AÑADIDO: Estilo para los enlaces de título */
+        .escrito-item h2 a {
+            text-decoration: none; /* Quita el subrayado predeterminado */
+            color: #007bff; /* Color azul para el enlace */
+        }
+        .escrito-item h2 a:hover {
+            text-decoration: underline; /* Subrayado al pasar el ratón */
+        }
+        .escrito-item p {
+            line-height: 1.6;
+        }
+        .escrito-meta {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Escritos Públicos del Taller</h1>
+
+    {% if escritos %} {# Si la lista de escritos no está vacía... #}
+        <ul class="escrito-list">
+            {# Bucle para iterar sobre cada escrito en la lista 'escritos' #}
+            {% for escrito in escritos %}
+                <li class="escrito-item">
+                    {# MODIFICADO: El título ahora es un enlace al detalle del escrito. #}
+                    {# La etiqueta {% url %} genera la URL dinámicamente usando el nombre 'escritura:detalle_escrito' #}
+                    {# y le pasa el 'pk' (clave primaria) del escrito actual como argumento. #}
+                    <h2><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
+                    {# slice de contenido para mostrar solo una parte #}
+                    <p>{{ escrito.contenido|truncatechars:200 }}</p> 
+                    <div class="escrito-meta">
+                        <p>Por: {{ escrito.autor.username }}</p> {# Muestra el nombre de usuario del autor #}
+                        <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p> {# Formato de fecha #}
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %} {# Si no hay escritos, muestra un mensaje #}
+        <p>No hay escritos públicos disponibles en este momento.</p>
+    {% endif %}
+</body>
+</html>
