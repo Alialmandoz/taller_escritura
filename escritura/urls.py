@@ -12,5 +12,5 @@ urlpatterns = [
     path('<int:pk>/', views.DetalleEscrito.as_view(), name='detalle_escrito'),
     path('registro/', views.registro_usuario, name='registro'),
     path('crear/', views.crear_escrito, name='crear_escrito'),
-    
+    path('<int:pk>/editar/', views.editar_escrito, name='editar_escrito'),
 ]

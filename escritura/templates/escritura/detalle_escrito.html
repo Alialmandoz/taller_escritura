@@ -20,9 +20,27 @@
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
-        h1 {
-            color: #0056b3;
+        .header-section { /* AÑADIDO: Para agrupar título y botón de edición */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 10px;
+        }
+        .header-section h1 {
+            margin: 0; /* Reiniciar margen para que no afecte el flexbox */
+            color: #0056b3;
+        }
+        .edit-button { /* AÑADIDO: Estilo para el botón de edición */
+            background-color: #ffc107; /* Amarillo */
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .edit-button:hover {
+            background-color: #e0a800; /* Amarillo más oscuro al pasar el ratón */
         }
         .meta-info {
             font-size: 0.9em;
@@ -50,22 +68,25 @@
 </head>
 <body>
     <div class="container">
-        <h1>{{ escrito.titulo }}</h1> {# Muestra el título del escrito #}
+        {# MODIFICADO: Agrupamos título y botón de edición en una sección para un mejor diseño #}
+        <div class="header-section">
+            <h1>{{ escrito.titulo }}</h1> {# Muestra el título del escrito #}
+            {# AÑADIDO: Botón de edición visible solo si el usuario actual es el autor del escrito #}
+            {% if user.is_authenticated and user == escrito.autor %}
+                <a href="{% url 'escritura:editar_escrito' pk=escrito.pk %}" class="edit-button">Editar</a>
+            {% endif %}
+        </div>
+        
         <p class="meta-info">
             Por: {{ escrito.autor.username }} | 
             Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }} |
             Última actualización: {{ escrito.fecha_actualizacion|date:"d M Y H:i" }}
         </p>
         <div class="content">
-            {# Muestra el contenido completo del escrito #}
-            {# Considerar la integración de un editor de texto enriquecido aquí en el futuro #}
             <p>{{ escrito.contenido }}</p> 
         </div>
         
-        {# AÑADIDO: Enlace para volver a la lista de escritos #}
-        {# La etiqueta {% url %} es la mejor manera de crear enlaces dinámicos en Django. #}
-        {# 'escritura:lista_escritos' usa el namespace 'escritura' y el nombre de la URL 'lista_escritos'. #}
-        <a href="{% url 'escritura:lista_escritos' %}" class="back-link">&larr; Volver a la lista de escritos</a>
+        <a href="{% url 'escritura:lista_escritos' %}" class="back-link">← Volver a la lista de escritos</a>
     </div>
 </body>
 </html>

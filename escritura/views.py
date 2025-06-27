@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required # Decorador para reque
 
 from .models import Escrito # Importamos nuestro modelo Escrito
 from .forms import CustomUserCreationForm, EscritoForm # Importamos nuestros formularios
-
+from django.http import Http404 # Para lanzar un error 404 si el usuario no es el autor
 
 # Vista basada en función para listar escritos públicos
 def lista_escritos(request):
@@ -118,3 +118,44 @@ def crear_escrito(request):
     
     # Renderiza la plantilla con el formulario (vacío o con errores)
     return render(request, 'escritura/crear_editar_escrito.html', {'form': form, 'es_creacion': True})
+
+# Vista para editar un escrito existente
+@login_required # Solo usuarios autenticados pueden acceder.
+def editar_escrito(request, pk):
+    """
+    Esta vista permite a un usuario autenticado editar un escrito existente.
+    - pk: La clave primaria (ID) del escrito a editar.
+    - Se verifica que el usuario autenticado sea el autor del escrito.
+    """
+    # Intentar obtener el escrito, o lanzar un 404 si no existe.
+    escrito = get_object_or_404(Escrito, pk=pk)
+
+    # VERIFICACIÓN DE PERMISOS: Asegurarse de que solo el autor pueda editar.
+    # Si el usuario logueado no es el autor del escrito, levantamos un error 404
+    # (por motivos de seguridad, es mejor un 404 que un 403 en algunos casos,
+    # para no revelar la existencia del escrito a usuarios no autorizados).
+    if request.user != escrito.autor:
+        raise Http404("No tienes permiso para editar este escrito.")
+        # Alternativamente, podrías redirigir:
+        # from django.contrib import messages
+        # messages.error(request, "No tienes permiso para editar este escrito.")
+        # return redirect('escritura:detalle_escrito', pk=escrito.pk)
+
+
+    if request.method == 'POST':
+        # Si es POST, creamos una instancia del formulario con los datos enviados
+        # y le pasamos la instancia del escrito existente para que la actualice.
+        form = EscritoForm(request.POST, instance=escrito)
+        if form.is_valid():
+            # Guarda los cambios en el escrito. Como ya pasamos 'instance', no necesitamos commit=False.
+            form.save()
+            # Redirige a la página de detalle del escrito editado.
+            return redirect('escritura:detalle_escrito', pk=escrito.pk)
+    else:
+        # Si es GET, creamos una instancia del formulario y la inicializamos
+        # con los datos del escrito existente para que aparezcan pre-rellenados.
+        form = EscritoForm(instance=escrito)
+    
+    # Renderiza la misma plantilla usada para crear, pasando el formulario y la bandera.
+    # es_creacion = False le dice a la plantilla que es una operación de edición.
+    return render(request, 'escritura/crear_editar_escrito.html', {'form': form, 'es_creacion': False})
