@@ -13,4 +13,6 @@ urlpatterns = [
     path('registro/', views.registro_usuario, name='registro'),
     path('crear/', views.crear_escrito, name='crear_escrito'),
     path('<int:pk>/editar/', views.editar_escrito, name='editar_escrito'),
+    # AÑADIDO: URL para la eliminación de escritos (con confirmación)
+    path('<int:pk>/eliminar/', views.eliminar_escrito, name='eliminar_escrito'),
 ]

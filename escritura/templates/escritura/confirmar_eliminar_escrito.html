@@ -1,0 +1,36 @@
+{# escritura/templates/escritura/confirmar_eliminar_escrito.html #}
+{% extends 'base.html' %}
+
+{% block title %}Confirmar Eliminación{% endblock %}
+
+{% block content %}
+    <div class="confirmation-container">
+        <h1 class="page-title" style="color: #dc3545;">¿Estás seguro de eliminar?</h1>
+        <p>Estás a punto de eliminar el escrito **"{{ escrito.titulo }}"** de forma permanente. Esta acción no se puede deshacer.</p>
+        <p>Autor: <strong>{{ escrito.autor.username }}</strong></p>
+
+        <form method="post" style="display: flex; gap: 15px; margin-top: 30px; justify-content: center;">
+            {% csrf_token %} {# ¡CRÍTICO para la seguridad! #}
+            <button type="submit" class="button danger">Sí, Eliminar</button>
+            <a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}" class="button secondary">No, Cancelar</a>
+        </form>
+    </div>
+
+    <style>
+        /* Estilos específicos para la página de confirmación */
+        .confirmation-container {
+            text-align: center;
+            background-color: #FAF7F0;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 50px auto;
+        }
+        .confirmation-container p {
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+    </style>
+{% endblock %}

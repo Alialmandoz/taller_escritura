@@ -7,7 +7,12 @@
     <div class="header-section">
         <h1 class="page-title">{{ escrito.titulo }}</h1>
         {% if user.is_authenticated and user == escrito.autor %}
-            <a href="{% url 'escritura:editar_escrito' pk=escrito.pk %}" class="button warning">Editar</a>
+            {# MODIFICADO: Agrupamos los botones de acción para un mejor control de layout #}
+            <div class="action-buttons">
+                <a href="{% url 'escritura:editar_escrito' pk=escrito.pk %}" class="button warning">Editar</a>
+                {# AÑADIDO: Botón para iniciar el proceso de eliminación #}
+                <a href="{% url 'escritura:eliminar_escrito' pk=escrito.pk %}" class="button danger">Eliminar</a>
+            </div>
         {% endif %}
     </div>
 

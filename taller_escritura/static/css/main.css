@@ -244,3 +244,18 @@ ul.errorlist { /* Style for form error list */
 .back-link:hover {
     text-decoration: underline;
 }
+
+/* AÑADIDO: Estilo para botones de acción */
+.action-buttons {
+    display: flex;
+    gap: 10px; /* Espacio entre los botones */
+    margin-left: 10px; /* Separación del título si es necesario */
+}
+
+/* AÑADIDO: Estilo para botón de eliminación (danger) */
+.button.danger {
+    background-color: #dc3545; /* Rojo */
+}
+.button.danger:hover {
+    background-color: #c82333; /* Rojo más oscuro al pasar el ratón */
+}
