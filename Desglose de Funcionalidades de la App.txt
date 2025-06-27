@@ -1,0 +1,51 @@
+Desglose de Funcionalidades de la Aplicación del Taller de Escritura
+I. Autenticación y Perfiles de Usuario:
+Registro y Login de Usuarios: Los participantes podrán crear una cuenta y acceder a la aplicación.
+Implicación técnica: Uso del sistema de autenticación de Django (django.contrib.auth).
+Perfiles de Usuario Completos:
+Bio: Un campo para una breve descripción personal.
+Foto de Perfil: Un campo para subir y mostrar una imagen de perfil.
+Lista de Escritos del Usuario: Una vista que muestre todos los escritos publicados por un usuario específico.
+Implicación técnica: Extensión del modelo User de Django (recomendado: modelo Profile con OneToOneField).
+II. Gestión de Escritos:
+Creación y Edición de Escritos: Los usuarios podrán crear nuevos textos y modificar los existentes.
+Implicación técnica: Modelos (models.Model), vistas (views), formularios (forms).
+Borradores (Drafts): Opción de guardar escritos en progreso sin publicarlos, visibles solo para el autor.
+Implicación técnica: Un campo de estado (status o visibility) en el modelo Escrito.
+Visibilidad de Escritos:
+Público: Visible para todos los participantes.
+Privado: Visible solo para el autor.
+Implicación técnica: Campo de estado/visibilidad en el modelo Escrito y lógica de permisos en vistas. (La visibilidad "Solo Amigos/Grupo" se dejará para una fase posterior si se implementa un sistema de relaciones sociales).
+Editor de Texto Enriquecido (Rich Text Editor): Permitir formato de texto (negritas, cursivas, etc.) en los escritos.
+Implicación técnica: Integración de una librería de terceros como django-ckeditor o django-tinymce.
+Etiquetas/Categorías (Tags/Categories): Para clasificar y organizar los escritos.
+Implicación técnica: Uso de una librería como django-taggit o un modelo Category con ManyToManyField.
+Control de Versiones (Versiones Anteriores): Posibilidad de ver y restaurar versiones previas de un escrito.
+Implicación técnica: Integración de una librería como django-reversion.
+Adjuntar Archivos (Opcional): Posibilidad de subir archivos (imágenes, PDFs) asociados a un escrito.
+Implicación técnica: FileField o ImageField en el modelo Escrito, o un modelo Adjunto separado.
+III. Interacción y Descubrimiento:
+Lectura y Comentarios: Los usuarios podrán leer los escritos de otros y dejar comentarios.
+Implicación técnica: Modelo Comentario, vistas para mostrar escritos y añadir comentarios, formularios para comentarios.
+Funcionalidad de Búsqueda: Búsqueda de escritos por título, autor, etiquetas, palabras clave.
+Implicación técnica: Consultas con el ORM de Django (Q objects, icontains); posible integración futura con soluciones de búsqueda más avanzadas.
+Paginación: Manejo eficiente de grandes listados de escritos o comentarios.
+Implicación técnica: Uso de la clase Paginator de Django en las vistas.
+Panel de Control (Dashboard): Una página principal personalizada para cada usuario al iniciar sesión.
+Sus últimos escritos: Mostrar los textos recientes del usuario.
+Notificaciones: Un sistema básico de notificaciones (ej. nuevo comentario en tu escrito).
+Nuevos escritos de usuarios que sigue: (Requeriría un sistema de "seguidores" - complejo, se planificará para fases futuras si se requiere).
+Próximas asignaciones: (Requeriría un sistema de "Asignaciones" o "Eventos" - a definir si es una necesidad clave ahora).
+Implicación técnica: Vistas basadas en clases, múltiples consultas a modelos, posiblemente un modelo Notificacion.
+IV. Administración y Moderación:
+Denuncia de Contenido: Los usuarios pueden reportar escritos o comentarios inapropiados.
+Implicación técnica: Un modelo Reporte que se relacione con Escrito y Comentario.
+Panel de Moderación: Un área para administradores/instructores para revisar y actuar sobre el contenido reportado.
+Implicación técnica: Vistas y plantillas restringidas por permisos, integración con el panel de administración de Django.
+Gestión de Usuarios: Herramientas para que el administrador pueda ver, editar o suspender cuentas de usuario.
+Implicación técnica: Principalmente a través del panel de administración de Django; posibles vistas personalizadas para tareas específicas.
+V. Aspectos de Usabilidad y Diseño:
+Diseño Responsivo: La aplicación se adaptará a diferentes tamaños de pantalla (móvil, tablet, escritorio).
+Implicación técnica: Principalmente CSS (media queries), posiblemente uso de un framework CSS (Bootstrap/Tailwind).
+Modalidad Oscura (Dark Mode): Opción para cambiar el tema visual de la aplicación.
+Implicación técnica: CSS (variables), JavaScript, y almacenamiento de preferencia (ej. en Profile o sesiones).
