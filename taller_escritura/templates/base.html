@@ -1,0 +1,51 @@
+{# taller_escritura/templates/base.html #}
+{% load static %} {# IMPORTANT: This line loads Django's static files tags #}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {# AÑADIDO: Define a 'title' block that child templates can override #}
+    <title>{% block title %}Taller de Escritura{% endblock %}</title>
+
+    {# MODIFICADO: Link to our main CSS file, served from static files #}
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+
+    {# AÑADIDO: Optional 'head_extra' block for additional CSS/JS specific to child templates #}
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    {# AÑADIDO: Basic navigation/auth links - common across pages #}
+    <header class="main-header">
+        <nav class="main-nav">
+            <div class="logo">
+                <a href="{% url 'escritura:lista_escritos' %}">Taller de Escritura</a>
+            </div>
+            <ul class="nav-links">
+                {% if user.is_authenticated %}
+                    <li><span class="welcome-message">Hola, {{ user.username }}!</span></li>
+                    <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                    <li><a href="{% url 'escritura:crear_escrito' %}" class="button primary">+ Crear Nuevo Escrito</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}" class="button">Iniciar Sesión</a></li>
+                    <li><a href="{% url 'escritura:registro' %}" class="button secondary">Registrarse</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        {# AÑADIDO: This is the main content block that child templates will fill #}
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {# AÑADIDO: Optional 'footer' block #}
+    <footer class="main-footer">
+        <p>© 2025 Taller de Escritura. Todos los derechos reservados.</p>
+    </footer>
+
+    {# AÑADIDO: Optional 'body_extra' block for JavaScript files at the end of the body #}
+    {% block body_extra %}{% endblock %}
+</body>
+</html>

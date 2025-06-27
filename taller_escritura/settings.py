@@ -132,6 +132,12 @@ USE_TZ = True # Habilita el soporte para zonas horarias en los datetimes.
 
 STATIC_URL = 'static/' # La URL base para servir archivos estáticos.
 
+# AÑADIDO: Where Django's staticfiles app will look for additional static files.
+# This is for project-wide static files, not specific to an app.
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 

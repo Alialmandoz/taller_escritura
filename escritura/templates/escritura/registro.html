@@ -1,108 +1,16 @@
-<!-- escritura/templates/escritura/registro.html -->
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Usuario</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 80vh;
-        }
-        .container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
-        }
-        h1 {
-            color: #0056b3;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        p { /* Estilo para cada campo del formulario renderizado por Django */
-            margin-bottom: 15px;
-        }
-        p label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="password"],
-        input[type="email"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box; /* Incluye padding y borde en el ancho total */
-        }
-        ul.errorlist { /* Estilo para la lista de errores del formulario */
-            color: red;
-            list-style-type: none;
-            padding-left: 0;
-            margin-top: 5px;
-            font-size: 0.9em;
-        }
-        .helptext { /* Estilo para el texto de ayuda de Django Forms */
-            font-size: 0.8em;
-            color: #666;
-            margin-top: 5px;
-        }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.1em;
-            margin-top: 20px;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .login-link {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 0.9em;
-        }
-        .login-link a {
-            color: #007bff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .login-link a:hover {
-            text-decoration: underline;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Registro</h1>
-        <form method="post">
-            {% csrf_token %} {# AÑADIDO: ¡MUY IMPORTANTE! Token de seguridad de Django #}
-            {# Renderiza el formulario de Django como párrafos. Cada campo será un <p> con su label y input. #}
-            {{ form.as_p }} 
-            <button type="submit">Registrarse</button>
-        </form>
-        <div class="login-link">
-            ¿Ya tienes una cuenta? <a href="#">Inicia sesión aquí</a> {# AÑADIDO: Placeholder para el enlace de login #}
-        </div>
+{# escritura/templates/escritura/registro.html #}
+{% extends 'base.html' %}
+
+{% block title %}Registro de Usuario{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Registro</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="button">Registrarse</button>
+    </form>
+    <div class="login-link">
+        ¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a>
     </div>
-</body>
-</html>
+{% endblock %}

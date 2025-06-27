@@ -1,0 +1,246 @@
+/* taller_escritura/static/css/main.css */
+
+/* Base Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0; /* Reset default body margin */
+    background-color: #f4f4f4;
+    color: #333;
+    display: flex;
+    flex-direction: column; /* For sticky footer or overall layout */
+    min-height: 100vh; /* Make sure body takes full viewport height */
+}
+
+/* Main Content Container */
+.container {
+    max-width: 800px;
+    margin: 20px auto; /* Centrar y añadir margen superior/inferior */
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    flex-grow: 1; /* Allow container to grow and push footer down */
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    color: #0056b3;
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* Links */
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* Buttons */
+.button {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block; /* Allow padding */
+    text-align: center;
+}
+.button:hover {
+    background-color: #0056b3;
+    text-decoration: none;
+}
+
+.button.primary {
+    background-color: #28a745; /* Green */
+}
+.button.primary:hover {
+    background-color: #218838;
+}
+
+.button.secondary {
+    background-color: #6c757d; /* Gray */
+}
+.button.secondary:hover {
+    background-color: #5a6268;
+}
+
+.button.warning {
+    background-color: #ffc107; /* Yellow */
+    color: #333;
+}
+.button.warning:hover {
+    background-color: #e0a800;
+}
+
+
+/* Header Styles */
+.main-header {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.main-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px; /* Optional: limit nav width */
+    margin: 0 auto;
+}
+
+.logo a {
+    color: white;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px; /* Space between nav items */
+    align-items: center;
+}
+
+.nav-links li {
+    margin: 0;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 0;
+}
+
+.nav-links a:hover {
+    text-decoration: underline;
+}
+
+.welcome-message {
+    font-weight: bold;
+    margin-right: 10px;
+    color: white;
+}
+
+/* Footer Styles */
+.main-footer {
+    background-color: #343a40; /* Dark gray */
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}
+
+/* Form Styles (reused from previous templates) */
+form {
+    display: flex;
+    flex-direction: column;
+}
+p { /* Style for each form field rendered by Django */
+    margin-bottom: 15px;
+}
+p label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+input[type="text"],
+input[type="password"],
+input[type="email"],
+select, /* Style for 'estado' field which is a select */
+textarea { /* Style for 'contenido' field which will be a textarea */
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif; /* Ensure consistent font */
+}
+textarea {
+    resize: vertical; /* Allows vertical resizing */
+    min-height: 200px; /* Minimum height for text area */
+}
+ul.errorlist { /* Style for form error list */
+    color: red;
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 5px;
+    font-size: 0.9em;
+}
+.helptext { /* Style for Django Forms help text */
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Specific Escrito List/Detail Styles */
+.escrito-list {
+    list-style: none;
+    padding: 0;
+}
+.escrito-item {
+    background-color: #fff;
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.escrito-item h2 {
+    margin-top: 0;
+    color: #007bff;
+}
+.escrito-item h2 a {
+    text-decoration: none;
+    color: #007bff;
+}
+.escrito-item h2 a:hover {
+    text-decoration: underline;
+}
+.escrito-item p {
+    line-height: 1.6;
+}
+.escrito-meta {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 10px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+/* Escrito Detail Specific Styles */
+.header-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.header-section h1 {
+    margin: 0;
+}
+.content {
+    line-height: 1.8;
+    color: #444;
+    white-space: pre-wrap;
+}
+.back-link {
+    display: block;
+    margin-top: 30px;
+    text-align: center;
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+.back-link:hover {
+    text-decoration: underline;
+}
