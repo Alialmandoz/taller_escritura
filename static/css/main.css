@@ -273,8 +273,12 @@ ul.errorlist {
 .content {
     line-height: 1.8;
     color: #444444; /* Un gris ligeramente más oscuro para el contenido principal */
-    white-space: pre-wrap;
+    /* ELIMINADO: white-space: pre-wrap; */
     font-family: 'Lato', sans-serif; /* APLICADO: Lato para contenido de detalle */
+}
+/* AÑADIDO: Estilo para los párrafos dentro del contenido */
+.content p {
+    margin-bottom: 1em; /* Añade un margen inferior a los párrafos para separarlos */
 }
 .back-link {
     display: block;
