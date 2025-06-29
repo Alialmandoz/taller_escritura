@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Taller de Escritura{% endblock %}</title>
+    <title>{% block title %}Taller de Escritura de Cálamo y Papiro {% endblock %}</title>
     
     {# AÑADIDO: Enlaces para importar las fuentes de Google Fonts #}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,7 +21,7 @@
     <header class="main-header">
         <nav class="main-nav">
             <div class="logo">
-                <a href="{% url 'escritura:lista_escritos' %}">Taller de Escritura</a>
+                <a href="{% url 'escritura:lista_escritos' %}">Taller de Escritura de Cálamo y Papiro</a>
             </div>
             <ul class="nav-links">
                 {% if user.is_authenticated %}
