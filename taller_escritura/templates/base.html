@@ -57,10 +57,14 @@
         {% endblock %}
     </main>
 
-    <footer>
+    <footer class="main-footer"> {# MODIFICADO: Cambiado de <footer> a <footer class="main-footer"> para consistencia #}
         <p>© 2025 Taller de Escritura. Todos los derechos reservados.</p>
     </footer>
 
     {% block body_extra %}{% endblock %}
+
+    {# AÑADIDO: Carga del archivo JavaScript principal del sitio. #}
+    {# Se coloca al final del body para no bloquear la renderización del contenido de la página. #}
+    <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>

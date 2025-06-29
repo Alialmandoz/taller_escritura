@@ -9,9 +9,27 @@
     {% if escritos %}
         <ul class="escrito-list">
             {% for escrito in escritos %}
-                <li class="escrito-item">
+                {# MODIFICADO: La clase 'escrito-item' ahora es el contenedor principal para cada tarjeta #}
+                <li class="escrito-item"> 
+                    
+                    {# AÑADIDO: El botón que controlará el estado de expansión/contracción. #}
+                    {# Usamos <button> por accesibilidad. Los atributos aria son para lectores de pantalla. #}
+                    <button 
+                        class="toggle-button" 
+                        aria-expanded="false" 
+                        aria-controls="escrito-content-{{ escrito.pk }}"
+                        title="Expandir/Contraer"
+                    >
+                    </button>
+                    
                     <h2><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
-                    <p>{{ escrito.contenido|truncatechars:200 }}</p> 
+                    
+                    {# MODIFICADO: Envolvemos el contenido en un div para poder controlarlo. #}
+                    {# Le damos un ID único por si necesitamos controlarlo específicamente. #}
+                    <div class="escrito-content" id="escrito-content-{{ escrito.pk }}">
+                        {{ escrito.contenido|safe }} 
+                    </div>
+
                     <div class="escrito-meta">
                         <p>Por: {{ escrito.autor.username }}</p>
                         <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>

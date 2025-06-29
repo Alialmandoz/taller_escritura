@@ -221,37 +221,117 @@ ul.errorlist {
     list-style: none;
     padding: 0;
 }
+
+/* --- AÑADIDO Y MODIFICADO: Estilos para la lista de escritos con expandir/contraer --- */
 .escrito-item {
-    background-color: #FAF7F0; /* Fondo de item de lista */
-    margin-bottom: 15px;
-    padding: 15px;
+    background-color: #FAF7F0;
+    margin-bottom: 20px; /* Más espacio entre items */
+    padding: 20px; /* Más padding interno */
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative; /* Clave para posicionar el botón de toggle */
 }
+
 .escrito-item h2 {
     margin-top: 0;
-    color: #AA775A; /* Color de título de escrito */
-    font-family: 'Playfair Display', serif; /* APLICADO: Playfair Display para título de item */
+    margin-right: 40px; /* Espacio para que el título no se solape con el botón */
+    color: #AA775A;
+    font-family: 'Playfair Display', serif;
 }
+
 .escrito-item h2 a {
     text-decoration: none;
     color: #AA775A;
 }
+
 .escrito-item h2 a:hover {
     text-decoration: underline;
 }
+
 .escrito-item p {
     line-height: 1.6;
-    font-family: 'Lato', sans-serif; /* APLICADO: Lato para párrafos de contenido en la lista */
+    font-family: 'Lato', sans-serif;
 }
+
 .escrito-meta {
     font-size: 0.9em;
-    color: #6B4F4F; /* Color de metadata */
+    color: #6B4F4F;
     margin-top: 10px;
-    border-top: 1px solid #E8D8C9; /* Línea separadora suave */
+    border-top: 1px solid #E8D8C9;
     padding-top: 10px;
-    font-family: 'Lato', sans-serif; /* APLICADO: Lato para metadata */
+    font-family: 'Lato', sans-serif;
 }
+
+/* Contenedor del contenido del escrito */
+.escrito-content {
+    max-height: 100px; /* Altura máxima cuando está contraído */
+    overflow: hidden; /* Oculta el texto que se desborda */
+    position: relative; /* Para el efecto de difuminado */
+    transition: max-height 0.4s ease-in-out; /* Transición suave para la altura */
+}
+
+/* Estado expandido (cuando .escrito-item tiene la clase .is-expanded) */
+.escrito-item.is-expanded .escrito-content {
+    max-height: 1500px; /* Un valor grande para asegurar que todo el contenido sea visible */
+}
+
+/* Efecto de difuminado al final del contenido contraído */
+.escrito-content::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(to bottom, transparent, #FAF7F0);
+    transition: opacity 0.4s ease-in-out;
+}
+
+/* Ocultamos el difuminado cuando el contenido está expandido */
+.escrito-item.is-expanded .escrito-content::after {
+    opacity: 0;
+}
+
+/* Botón de Toggle (+/-) */
+.toggle-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 28px;
+    height: 28px;
+    background-color: #E8D8C9;
+    color: #AA775A;
+    border: 1px solid #CC9980;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 1;
+    padding: 0;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.toggle-button:hover {
+    background-color: #CC9980;
+    color: white;
+}
+
+.toggle-button::before {
+    content: '+'; /* Símbolo por defecto (contraído) */
+}
+
+.escrito-item.is-expanded .toggle-button::before {
+    content: '−'; /* Símbolo cuando está expandido (signo menos) */
+}
+
+.escrito-item.is-expanded .toggle-button {
+    transform: rotate(180deg); /* Animación de rotación */
+}
+/* --- Fin de la sección de expandir/contraer --- */
+
 
 /* Escrito Detail Specific Styles */
 .header-section {
@@ -273,10 +353,8 @@ ul.errorlist {
 .content {
     line-height: 1.8;
     color: #444444; /* Un gris ligeramente más oscuro para el contenido principal */
-    /* ELIMINADO: white-space: pre-wrap; */
     font-family: 'Lato', sans-serif; /* APLICADO: Lato para contenido de detalle */
 }
-/* AÑADIDO: Estilo para los párrafos dentro del contenido */
 .content p {
     margin-bottom: 1em; /* Añade un margen inferior a los párrafos para separarlos */
 }
@@ -387,7 +465,7 @@ ul.errorlist {
     }
 }
 
-/* AÑADIDO: Estilos específicos para la página de perfil */
+/* Estilos específicos para la página de perfil */
 .profile-header {
     text-align: center;
     margin-bottom: 40px;
