@@ -15,16 +15,15 @@
             </div>
         {% endif %}
     </div>
-
+    <div class="content">
+        {{ escrito.contenido|safe }}
+    </div>
     <p class="meta-info">
         Por: {{ escrito.autor.username }} |
         Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }} |
         Última actualización: {{ escrito.fecha_actualizacion|date:"d M Y H:i" }}
     </p>
-    <div class="content">
-        {# MODIFICADO: Usa el filtro |safe para renderizar el HTML del contenido enriquecido #}
-        {{ escrito.contenido|safe }}
-    </div>
+    
 
     <a href="{% url 'escritura:lista_escritos' %}" class="back-link">← Volver a la lista de escritos</a>
 {% endblock %}
