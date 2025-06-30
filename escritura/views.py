@@ -1,6 +1,23 @@
 # escritura/views.py
 
 from django.shortcuts import render, get_object_or_404, redirect
+
+# AÑADIDO: Vista para la página principal
+def pagina_principal(request):
+    """
+    Renderiza la página de inicio/landing page.
+    Obtiene todos los perfiles que han aceptado ser mostrados públicamente.
+    """
+    # Usamos select_related('user') para optimizar la consulta.
+    # Evita que Django haga una consulta a la base de datos por cada usuario en el bucle de la plantilla.
+    perfiles_publicos = Profile.objects.filter(mostrar_en_comunidad=True).select_related('user')
+
+    contexto = {
+        'perfiles_publicos': perfiles_publicos
+    }
+    return render(request, 'escritura/home.html', contexto)
+
+
 from django.views.generic import DetailView
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required # Decorador para requerir autenticación

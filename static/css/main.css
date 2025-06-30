@@ -560,3 +560,102 @@ hr {
         padding: 0 10px; /* Reducir padding en móviles */
     }
 }
+
+/* Estilos para la página de inicio (home.html) */
+.landing-page { padding: 0; } /* Quita el padding del .container si se usa allí */
+
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1455390582262-044cdead277a?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1971') no-repeat center center/cover;
+    color: white;
+    text-align: center;
+    padding: 100px 20px;
+    /* Asegurarse de que no herede el fondo de .container si está anidado */
+    background-color: transparent !important;
+}
+
+.hero-section .hero-title { /* Especificidad para asegurar que el color se aplique */
+    color: white;
+    font-size: 3em;
+    font-family: 'Playfair Display', serif;
+}
+
+.hero-section .hero-subtitle {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    font-family: 'Lato', sans-serif;
+    color: white; /* Asegurar color blanco para el subtítulo */
+}
+
+.hero-section .large-button { /* Hereda de .button pero con ajustes */
+    padding: 15px 30px;
+    font-size: 1.1em;
+}
+/* Si .button.primary ya tiene los colores deseados, no es necesario repetirlos aquí,
+   a menos que quieras un estilo específico para el botón del hero. */
+
+.about-section, .community-section {
+    padding: 60px 20px;
+    max-width: 900px;
+    margin: 0 auto; /* Centra las secciones */
+    background-color: #FAF7F0; /* Fondo para estas secciones, si es diferente del body */
+    border-radius: 0; /* Si están dentro de .container, podrían heredar su border-radius */
+}
+
+/* El .section-title ya tiene estilos globales, pero si necesitas ajustes: */
+.about-section .section-title,
+.community-section .section-title {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 2.2em;
+    color: #AA775A; /* Heredado, pero se puede especificar */
+    font-family: 'Playfair Display', serif; /* Heredado */
+}
+
+.community-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.user-card {
+    background-color: #FAF7F0; /* Coincide con el fondo de .container */
+    border: 1px solid #E8D8C9; /* Borde suave */
+    border-radius: 8px;
+    width: 200px;
+    text-align: center;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra sutil */
+}
+
+.user-card-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #CC9980; /* Borde con color de acento */
+    margin-bottom: 10px; /* Espacio debajo de la imagen */
+}
+
+.user-card-name {
+    font-size: 1.2em;
+    margin: 10px 0 10px 0; /* Ajuste de margen */
+    color: #6B4F4F; /* Color de nombre de usuario */
+    font-family: 'Playfair Display', serif; /* Fuente para el nombre */
+}
+
+.user-card-bio {
+    font-size: 0.9em;
+    color: #6B4F4F;
+    font-style: italic;
+    font-family: 'Lato', sans-serif; /* Fuente para la bio */
+    line-height: 1.4; /* Mejor legibilidad */
+}
+
+.community-empty {
+    width: 100%;
+    text-align: center;
+    color: #6B4F4F;
+    font-family: 'Lato', sans-serif;
+    padding: 20px 0;
+}

@@ -2,8 +2,12 @@ from django.contrib import admin
 from django.urls import path, include 
 from django.conf import settings # AÑADIDO: Para importar settings
 from django.conf.urls.static import static # AÑADIDO: Para servir archivos media en desarrollo
+from escritura import views # AÑADIDO: Importamos las vistas de nuestra app
 
 urlpatterns = [
+    # AÑADIDO: URL para la página principal
+    path('', views.pagina_principal, name='home'),
+
     path('admin/', admin.site.urls),
     path('escritura/', include('escritura.urls')),
     path('accounts/', include('django.contrib.auth.urls')),

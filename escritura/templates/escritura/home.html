@@ -1,0 +1,44 @@
+{# escritura/templates/escritura/home.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bienvenido al Taller de Escritura{% endblock %}
+
+{% block content %}
+
+<div class="landing-page">
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Taller de Escritura de Cálamo y Papiro</h1>
+            <p class="hero-subtitle">Donde tus historias encuentran su voz y tu creatividad no tiene límites.</p>
+            <a href="{% url 'escritura:registro' %}" class="button primary large-button">Únete a la Comunidad</a>
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="about-section">
+        <h2 class="section-title">¿Qué es Cálamo y Papiro?</h2>
+        <p>Somos más que un taller; somos un refugio para creadores. Un espacio digital seguro y colaborativo diseñado para que escritores de todos los niveles puedan desarrollar sus textos, compartir ideas y recibir retroalimentación constructiva. Creemos en el poder de la comunidad para pulir el talento y en la disciplina de la escritura para dar forma a la imaginación.</p>
+    </section>
+
+    <!-- COMMUNITY SECTION -->
+    <section class="community-section">
+        <h2 class="section-title">Nuestra Comunidad</h2>
+        <div class="community-gallery">
+            {% for perfil in perfiles_publicos %}
+                <div class="user-card">
+                    <img src="{{ perfil.foto_perfil.url }}" alt="Foto de {{ perfil.user.username }}" class="user-card-img">
+                    <h3 class="user-card-name">{{ perfil.user.username }}</h3>
+                    {% if perfil.bio %}
+                        <p class="user-card-bio">"{{ perfil.bio|truncatewords:15 }}"</p>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p class="community-empty">Nuestros miembros son un poco tímidos. ¡Pronto verás aquí los perfiles de nuestra increíble comunidad!</p>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+{% endblock %}
