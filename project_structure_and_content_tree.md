@@ -32,6 +32,7 @@ taller escritura
 │   │   │   ├── confirmar_eliminar_escrito.html
 │   │   │   ├── crear_editar_escrito.html
 │   │   │   ├── detalle_escrito.html
+│   │   │   ├── editar_perfil.html
 │   │   │   ├── home.html
 │   │   │   ├── lista_escritos.html
 │   │   │   ├── perfil_usuario.html
@@ -39,6 +40,8 @@ taller escritura
 ├── static
 │   ├── css
 │   │   ├── main.css
+│   ├── js
+│   │   ├── Main.js
 │   ├── js
 │   │   ├── Main.js
 ├── taller_escritura
@@ -136,9 +139,11 @@ Una plataforma digital centralizada y colaborativa para participantes de tallere
 **taller_escritura** es el "hogar digital" para que los participantes de un taller de escritura desarrollen, organicen y compartan sus textos, y obtengan retroalimentación constructiva de sus pares en un entorno de comunidad y apoyo.
 
 Esta plataforma busca ser la herramienta centralizada donde los escritores pueden gestionar su proceso creativo, beneficiarse del intercambio de ideas y sentirse parte de una comunidad activa.
+Esta plataforma busca ser la herramienta centralizada donde los escritores pueden gestionar su proceso creativo, beneficiarse del intercambio de ideas y sentirse parte de una comunidad activa.
 
 ## ✨ Características
 
+La plataforma cuenta actualmente con las siguientes funcionalidades:
 La plataforma cuenta actualmente con las siguientes funcionalidades:
 
 *   **Autenticación y Perfiles:**
@@ -157,11 +162,35 @@ La plataforma cuenta actualmente con las siguientes funcionalidades:
     *   Diseño responsivo base para una correcta visualización en móviles y escritorio.
     *   Sistema de mensajes para dar feedback al usuario (ej. "Escrito creado con éxito").
     *   ✨ **¡Nuevo!** Los escritos en la lista principal se pueden **expandir y contraer** para facilitar la lectura y reducir el desorden visual.
+*   **Autenticación y Perfiles:**
+    *   Registro, inicio y cierre de sesión de usuarios.
+    *   Modelo `Profile` preparado para futuras ampliaciones (bio, foto).
+    *   Página de perfil de usuario que muestra sus datos y una lista de todos sus escritos.
 
+*   **Gestión Completa de Escritos (CRUD):**
+    *   Creación de nuevos textos con un editor de texto enriquecido (CKEditor).
+    *   Edición de escritos existentes (restringido al autor).
+    *   Eliminación de escritos (restringido al autor, con página de confirmación).
+    *   Control de visibilidad (`Público`, `Privado`, `Borrador`).
+
+*   **Mejoras de UI/UX:**
+    *   Paleta de colores y tipografías consistentes para una estética cuidada.
+    *   Diseño responsivo base para una correcta visualización en móviles y escritorio.
+    *   Sistema de mensajes para dar feedback al usuario (ej. "Escrito creado con éxito").
+    *   ✨ **¡Nuevo!** Los escritos en la lista principal se pueden **expandir y contraer** para facilitar la lectura y reducir el desorden visual.
+
+## ⚙️ Puesta en Marcha (Getting Started)
 ## ⚙️ Puesta en Marcha (Getting Started)
 
 Sigue estos pasos para ejecutar el proyecto en tu entorno local.
+Sigue estos pasos para ejecutar el proyecto en tu entorno local.
 
+**Prerrequisitos:**
+*   Python 3.8+
+*   pip & venv
+*   Git
+
+**Pasos:**
 **Prerrequisitos:**
 *   Python 3.8+
 *   pip & venv
@@ -182,20 +211,31 @@ Sigue estos pasos para ejecutar el proyecto en tu entorno local.
     source venv/bin/activate
 
     # En Windows
+    # En macOS/Linux
+    python3 -m venv venv
+    source venv/bin/activate
+
+    # En Windows
     python -m venv venv
     venv\Scripts\activate
     ```
+    venv\Scripts\activate
+    ```
 
+3.  **Instala las dependencias:**
 3.  **Instala las dependencias:**
     ```bash
     pip install -r requirements.txt
     ```
 
 4.  **Ejecuta las migraciones de la base de datos:**
+
+4.  **Ejecuta las migraciones de la base de datos:**
     ```bash
     python manage.py migrate
     ```
 
+5.  **Crea un superusuario (administrador):**
 5.  **Crea un superusuario (administrador):**
     ```bash
     python manage.py createsuperuser
@@ -236,7 +276,43 @@ El progreso del proyecto y las próximas funcionalidades planeadas.
 Las contribuciones son bienvenidas. Para errores o sugerencias, por favor, abre un *issue*. Para contribuir con código, sigue el flujo estándar de `Fork` -> `Crea una Rama` -> `Pull Request`.
 
 ## 📄 Licencia
+6.  **¡Inicia el servidor!**
+    ```bash
+    python manage.py runserver
+    ```
+    La aplicación estará disponible en `http://127.0.0.1:8000/escritura/`.
 
+## 🗺️ Roadmap (Hoja de Ruta)
+
+El progreso del proyecto y las próximas funcionalidades planeadas.
+
+*   [x] **Fase 1: Fundamentos**
+    *   [x] Autenticación y Perfiles de Usuario básicos.
+    *   [x] CRUD completo para Escritos.
+    *   [x] Sistema de visibilidad (Público, Privado, Borrador).
+    *   [x] Integración de Editor de Texto Enriquecido (CKEditor).
+*   [x] **Fase 2: Usabilidad y Diseño**
+    *   [x] Implementación de plantilla base y estilos CSS globales.
+    *   [x] Diseño responsivo inicial.
+    *   [x] Sistema de Mensajes de Django.
+    *   [x] Funcionalidad para expandir/contraer escritos en la lista.
+*   [ ] **Fase 3: Interacción y Comunidad (Próximos Pasos)**
+    *   [ ] Edición de perfil de usuario (bio, foto de perfil).
+    *   [ ] Sistema de comentarios en los escritos.
+    *   [ ] Paginación en la lista de escritos.
+    *   [ ] Funcionalidad de búsqueda.
+*   [ ] **Fase 4: Funcionalidades Avanzadas**
+    *   [ ] Implementación de etiquetas/categorías para los escritos.
+    *   [ ] Sistema de notificaciones (ej. "Alguien comentó tu escrito").
+    *   [ ] Panel de Control (Dashboard) personalizado para el usuario.
+
+## 🤝 Contribución
+
+Las contribuciones son bienvenidas. Para errores o sugerencias, por favor, abre un *issue*. Para contribuir con código, sigue el flujo estándar de `Fork` -> `Crea una Rama` -> `Pull Request`.
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
 Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
 ```
 
@@ -339,7 +415,7 @@ class EscrituraConfig(AppConfig):
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Escrito # Importamos nuestro modelo Escrito
+from .models import Escrito, Profile # MODIFICADO: Importamos también nuestro modelo Profile
 
 
 # Formulario personalizado para el registro de usuarios
@@ -369,6 +445,29 @@ class EscritoForm(forms.ModelForm):
             'titulo': 'Título del Escrito',
             'contenido': 'Contenido del Texto',
             'estado': 'Visibilidad',
+        }
+
+# AÑADIDO: Formulario para editar el perfil de usuario
+class ProfileForm(forms.ModelForm):
+    """
+    Formulario para que los usuarios editen su propio perfil.
+    """
+    class Meta:
+        model = Profile
+        # Especificamos los campos que el usuario puede editar.
+        # No incluimos el campo 'user' porque no debe ser modificable.
+        fields = ['bio', 'foto_perfil', 'mostrar_en_comunidad']
+        labels = {
+            'bio': 'Tu Biografía',
+            'foto_perfil': 'Cambiar Foto de Perfil',
+            'mostrar_en_comunidad': 'Mostrar mi perfil en la página de la comunidad',
+        }
+        help_texts = {
+            'mostrar_en_comunidad': 'Si marcas esta casilla, otros usuarios podrán ver tu nombre y foto en la página principal.',
+        }
+        # Opcional: Widgets para personalizar la apariencia de los campos
+        widgets = {
+            'bio': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Cuéntanos un poco sobre ti...'}),
         }
 ```
 
@@ -501,8 +600,9 @@ urlpatterns = [
     path('crear/', views.crear_escrito, name='crear_escrito'),
     path('<int:pk>/editar/', views.editar_escrito, name='editar_escrito'),
     path('<int:pk>/eliminar/', views.eliminar_escrito, name='eliminar_escrito'),
-    # AÑADIDO: URL para la página de perfil del usuario
     path('perfil/', views.perfil_usuario, name='perfil_usuario'),
+    # AÑADIDO: URL para la página de edición del perfil
+    path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
 ]
 ```
 
@@ -538,7 +638,7 @@ from django.http import Http404
 from django.contrib import messages
 
 from .models import Escrito, Profile # MODIFICADO: Importamos también el modelo Profile
-from .forms import CustomUserCreationForm, EscritoForm # Importamos nuestros formularios
+from .forms import CustomUserCreationForm, EscritoForm, ProfileForm # MODIFICADO: Importamos ProfileForm
 
 # Vista basada en función para listar escritos públicos
 def lista_escritos(request):
@@ -754,6 +854,30 @@ def perfil_usuario(request):
     }
 
     return render(request, 'escritura/perfil_usuario.html', contexto)
+
+
+# AÑADIDO: Vista para editar el perfil del usuario
+@login_required
+def editar_perfil(request):
+    """
+    Permite al usuario autenticado editar su propio perfil (bio y foto).
+    """
+    if request.method == 'POST':
+        # Al procesar el formulario, pasamos la instancia del perfil a actualizar.
+        # ¡CRÍTICO! Pasamos request.FILES para manejar la subida de la imagen.
+        form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save() # Guarda los cambios en el perfil del usuario.
+            messages.success(request, '¡Tu perfil ha sido actualizado con éxito!')
+            return redirect('escritura:perfil_usuario')
+    else:
+        # Al mostrar el formulario por primera vez, lo inicializamos con los datos actuales del perfil.
+        form = ProfileForm(instance=request.user.profile)
+
+    contexto = {
+        'form': form
+    }
+    return render(request, 'escritura/editar_perfil.html', contexto)
 ```
 
 ---
@@ -1006,6 +1130,34 @@ class Migration(migrations.Migration):
 
 ---
 
+## Archivo: `escritura/templates/escritura/editar_perfil.html`
+
+```html
+{# escritura/templates/escritura/editar_perfil.html #}
+{% extends 'base.html' %}
+
+{% block title %}Editar Mi Perfil{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Editar Mi Perfil</h1>
+
+    {# ¡CRÍTICO! El atributo enctype es necesario para subir archivos (la foto de perfil). #}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <div style="display: flex; gap: 15px; margin-top: 20px;">
+            <button type="submit" class="button primary">Guardar Cambios</button>
+            <a href="{% url 'escritura:perfil_usuario' %}" class="button secondary">Cancelar</a>
+        </div>
+    </form>
+{% endblock %}
+
+```
+
+---
+
 ## Archivo: `escritura/templates/escritura/home.html`
 
 ```html
@@ -1085,8 +1237,27 @@ class Migration(migrations.Migration):
                     >
                     </button>
                     
+                {# MODIFICADO: La clase 'escrito-item' ahora es el contenedor principal para cada tarjeta #}
+                <li class="escrito-item"> 
+                    
+                    {# AÑADIDO: El botón que controlará el estado de expansión/contracción. #}
+                    {# Usamos <button> por accesibilidad. Los atributos aria son para lectores de pantalla. #}
+                    <button 
+                        class="toggle-button" 
+                        aria-expanded="false" 
+                        aria-controls="escrito-content-{{ escrito.pk }}"
+                        title="Expandir/Contraer"
+                    >
+                    </button>
+                    
                     <h2><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
                     
+                    {# MODIFICADO: Envolvemos el contenido en un div para poder controlarlo. #}
+                    {# Le damos un ID único por si necesitamos controlarlo específicamente. #}
+                    <div class="escrito-content" id="escrito-content-{{ escrito.pk }}">
+                        {{ escrito.contenido|safe }} 
+                    </div>
+
                     {# MODIFICADO: Envolvemos el contenido en un div para poder controlarlo. #}
                     {# Le damos un ID único por si necesitamos controlarlo específicamente. #}
                     <div class="escrito-content" id="escrito-content-{{ escrito.pk }}">
@@ -1128,8 +1299,8 @@ class Migration(migrations.Migration):
                 Aún no has añadido una biografía.
             {% endif %}
         </p>
-        {# AÑADIDO: Placeholder para el botón de edición de perfil #}
-        <a href="#" class="button secondary">Editar Perfil</a>
+        {# MODIFICADO: El enlace ahora apunta a la página de edición. #}
+        <a href="{% url 'escritura:editar_perfil' %}" class="button secondary">Editar Perfil</a>
     </div>
 
     <hr> {# Separador visual #}
@@ -1510,40 +1681,57 @@ ul.errorlist {
 }
 
 /* --- AÑADIDO Y MODIFICADO: Estilos para la lista de escritos con expandir/contraer --- */
+
+/* --- AÑADIDO Y MODIFICADO: Estilos para la lista de escritos con expandir/contraer --- */
 .escrito-item {
+    background-color: #FAF7F0;
+    margin-bottom: 20px; /* Más espacio entre items */
+    padding: 20px; /* Más padding interno */
     background-color: #FAF7F0;
     margin-bottom: 20px; /* Más espacio entre items */
     padding: 20px; /* Más padding interno */
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: relative; /* Clave para posicionar el botón de toggle */
+    position: relative; /* Clave para posicionar el botón de toggle */
 }
+
 
 .escrito-item h2 {
     margin-top: 0;
     margin-right: 40px; /* Espacio para que el título no se solape con el botón */
     color: #AA775A;
     font-family: 'Playfair Display', serif;
+    margin-right: 40px; /* Espacio para que el título no se solape con el botón */
+    color: #AA775A;
+    font-family: 'Playfair Display', serif;
 }
+
 
 .escrito-item h2 a {
     text-decoration: none;
     color: #AA775A;
 }
 
+
 .escrito-item h2 a:hover {
     text-decoration: underline;
 }
 
+
 .escrito-item p {
     line-height: 1.6;
     font-family: 'Lato', sans-serif;
+    font-family: 'Lato', sans-serif;
 }
+
 
 .escrito-meta {
     font-size: 0.9em;
     color: #6B4F4F;
+    color: #6B4F4F;
     margin-top: 10px;
+    border-top: 1px solid #E8D8C9;
     border-top: 1px solid #E8D8C9;
     padding-top: 10px;
     font-family: 'Lato', sans-serif;
@@ -1608,7 +1796,79 @@ ul.errorlist {
 
 .toggle-button::before {
     content: '+'; /* Símbolo por defecto (contraído) */
+    font-family: 'Lato', sans-serif;
 }
+
+/* Contenedor del contenido del escrito */
+.escrito-content {
+    max-height: 100px; /* Altura máxima cuando está contraído */
+    overflow: hidden; /* Oculta el texto que se desborda */
+    position: relative; /* Para el efecto de difuminado */
+    transition: max-height 0.4s ease-in-out; /* Transición suave para la altura */
+}
+
+/* Estado expandido (cuando .escrito-item tiene la clase .is-expanded) */
+.escrito-item.is-expanded .escrito-content {
+    max-height: 1500px; /* Un valor grande para asegurar que todo el contenido sea visible */
+}
+
+/* Efecto de difuminado al final del contenido contraído */
+.escrito-content::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(to bottom, transparent, #FAF7F0);
+    transition: opacity 0.4s ease-in-out;
+}
+
+/* Ocultamos el difuminado cuando el contenido está expandido */
+.escrito-item.is-expanded .escrito-content::after {
+    opacity: 0;
+}
+
+/* Botón de Toggle (+/-) */
+.toggle-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 28px;
+    height: 28px;
+    background-color: #E8D8C9;
+    color: #AA775A;
+    border: 1px solid #CC9980;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 1;
+    padding: 0;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.toggle-button:hover {
+    background-color: #CC9980;
+    color: white;
+}
+
+.toggle-button::before {
+    content: '+'; /* Símbolo por defecto (contraído) */
+}
+
+.escrito-item.is-expanded .toggle-button::before {
+    content: '−'; /* Símbolo cuando está expandido (signo menos) */
+}
+
+.escrito-item.is-expanded .toggle-button {
+    transform: rotate(180deg); /* Animación de rotación */
+}
+/* --- Fin de la sección de expandir/contraer --- */
+
 
 .escrito-item.is-expanded .toggle-button::before {
     content: '−'; /* Símbolo cuando está expandido (signo menos) */
@@ -1753,6 +2013,7 @@ ul.errorlist {
 }
 
 /* Estilos específicos para la página de perfil */
+/* Estilos específicos para la página de perfil */
 .profile-header {
     text-align: center;
     margin-bottom: 40px;
@@ -1847,6 +2108,57 @@ hr {
         padding: 0 10px; /* Reducir padding en móviles */
     }
 }
+```
+
+---
+
+## Archivo: `static/js/Main.js`
+
+```javascript
+// static/js/main.js
+
+// Usamos 'DOMContentLoaded' para asegurarnos de que el script se ejecuta
+// solo después de que todo el HTML de la página se haya cargado y parseado.
+// Es una buena práctica para evitar errores de "elemento no encontrado".
+document.addEventListener('DOMContentLoaded', function () {
+
+    // SECCIÓN: Lógica para contraer/expandir escritos en la lista
+    // -----------------------------------------------------------
+
+    // 1. Seleccionamos todos los elementos de la lista de escritos.
+    const escritoItems = document.querySelectorAll('.escrito-item');
+
+    // 2. Iteramos sobre cada elemento de la lista para añadirle la funcionalidad.
+    escritoItems.forEach(item => {
+        // Encontramos el contenido y el botón dentro de cada item.
+        const content = item.querySelector('.escrito-content');
+        const toggleButton = item.querySelector('.toggle-button');
+
+        // Si no encontramos el contenido o el botón, saltamos al siguiente item.
+        if (!content || !toggleButton) return;
+
+        // Por defecto, comprobamos si el contenido es más alto que nuestra altura colapsada.
+        // Si no lo es, no necesitamos el botón, así que lo ocultamos.
+        // `scrollHeight` es la altura total del contenido, `clientHeight` es la altura visible.
+        if (content.scrollHeight <= content.clientHeight) {
+            toggleButton.style.display = 'none';
+        }
+
+        // 3. Añadimos un 'escuchador de eventos' al botón.
+        //    Esto ejecuta una función cada vez que el usuario hace clic en el botón.
+        toggleButton.addEventListener('click', () => {
+            // `classList.toggle` es un método muy útil:
+            // - Si la clase 'is-expanded' existe en el 'item', la quita.
+            // - Si la clase 'is-expanded' no existe, la añade.
+            // Esto nos permite cambiar entre los dos estados con una sola línea.
+            item.classList.toggle('is-expanded');
+
+            // MEJORA DE ACCESIBILIDAD: Actualizamos el atributo aria-expanded.
+            const isExpanded = item.classList.contains('is-expanded');
+            toggleButton.setAttribute('aria-expanded', isExpanded);
+        });
+    });
+});
 
 /* Estilos para la página de inicio (home.html) */
 .landing-page { padding: 0; } /* Quita el padding del .container si se usa allí */
@@ -2344,10 +2656,15 @@ application = get_wsgi_application()
     </main>
 
     <footer class="main-footer"> {# MODIFICADO: Cambiado de <footer> a <footer class="main-footer"> para consistencia #}
+    <footer class="main-footer"> {# MODIFICADO: Cambiado de <footer> a <footer class="main-footer"> para consistencia #}
         <p>© 2025 Taller de Escritura. Todos los derechos reservados.</p>
     </footer>
 
     {% block body_extra %}{% endblock %}
+
+    {# AÑADIDO: Carga del archivo JavaScript principal del sitio. #}
+    {# Se coloca al final del body para no bloquear la renderización del contenido de la página. #}
+    <script src="{% static 'js/main.js' %}"></script>
 
     {# AÑADIDO: Carga del archivo JavaScript principal del sitio. #}
     {# Se coloca al final del body para no bloquear la renderización del contenido de la página. #}
