@@ -15,8 +15,8 @@
                 Aún no has añadido una biografía.
             {% endif %}
         </p>
-        {# AÑADIDO: Placeholder para el botón de edición de perfil #}
-        <a href="#" class="button secondary">Editar Perfil</a>
+        {# MODIFICADO: El enlace ahora apunta a la página de edición. #}
+        <a href="{% url 'escritura:editar_perfil' %}" class="button secondary">Editar Perfil</a>
     </div>
 
     <hr> {# Separador visual #}

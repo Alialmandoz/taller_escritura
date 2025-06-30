@@ -25,7 +25,7 @@ from django.http import Http404
 from django.contrib import messages
 
 from .models import Escrito, Profile # MODIFICADO: Importamos también el modelo Profile
-from .forms import CustomUserCreationForm, EscritoForm # Importamos nuestros formularios
+from .forms import CustomUserCreationForm, EscritoForm, ProfileForm # MODIFICADO: Importamos ProfileForm
 
 # Vista basada en función para listar escritos públicos
 def lista_escritos(request):
@@ -242,3 +242,27 @@ def perfil_usuario(request):
     }
 
     return render(request, 'escritura/perfil_usuario.html', contexto)
+
+
+# AÑADIDO: Vista para editar el perfil del usuario
+@login_required
+def editar_perfil(request):
+    """
+    Permite al usuario autenticado editar su propio perfil (bio y foto).
+    """
+    if request.method == 'POST':
+        # Al procesar el formulario, pasamos la instancia del perfil a actualizar.
+        # ¡CRÍTICO! Pasamos request.FILES para manejar la subida de la imagen.
+        form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save() # Guarda los cambios en el perfil del usuario.
+            messages.success(request, '¡Tu perfil ha sido actualizado con éxito!')
+            return redirect('escritura:perfil_usuario')
+    else:
+        # Al mostrar el formulario por primera vez, lo inicializamos con los datos actuales del perfil.
+        form = ProfileForm(instance=request.user.profile)
+
+    contexto = {
+        'form': form
+    }
+    return render(request, 'escritura/editar_perfil.html', contexto)
