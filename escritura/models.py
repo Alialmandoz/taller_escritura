@@ -39,18 +39,8 @@ class Profile(models.Model):
     Modelo de perfil de usuario extendido.
     Tiene una relación uno a uno con el modelo User de Django.
     """
-    # OneToOneField: Establece una relación "uno a uno" con el modelo User.
-    # Cada User tendrá un (y solo un) Profile asociado.
-    # on_delete=models.CASCADE: Si el usuario es eliminado, su perfil también se eliminará.
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    # TextField: Campo para una biografía personal (opcional, blank=True permite dejarlo vacío).
     bio = models.TextField(blank=True, null=True, verbose_name="Biografía")
-
-    # ImageField: Campo para subir una imagen de perfil.
-    # upload_to='profile_pics/': Las imágenes se guardarán en MEDIA_ROOT/profile_pics/
-    # default='default.jpg': Imagen por defecto si no se sube ninguna.
-    # blank=True, null=True: El campo es opcional.
     foto_perfil = models.ImageField(default='profile_pics/default.jpg', upload_to='profile_pics/', blank=True, null=True, verbose_name="Foto de Perfil")
 
     # AÑADIDO: Campo para el control de privacidad
@@ -68,9 +58,6 @@ class Profile(models.Model):
         return f"Perfil de {self.user.username}"
 
 # AÑADIDO: Señales para crear/actualizar Profile automáticamente con User
-# Las señales permiten que ciertas funciones se ejecuten cuando ocurren eventos
-# específicos en otros modelos (ej. cuando se guarda un User).
-
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     """

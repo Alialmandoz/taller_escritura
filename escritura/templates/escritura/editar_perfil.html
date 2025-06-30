@@ -1,0 +1,20 @@
+{# escritura/templates/escritura/editar_perfil.html #}
+{% extends 'base.html' %}
+
+{% block title %}Editar Mi Perfil{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Editar Mi Perfil</h1>
+
+    {# ¡CRÍTICO! El atributo enctype es necesario para subir archivos (la foto de perfil). #}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <div style="display: flex; gap: 15px; margin-top: 20px;">
+            <button type="submit" class="button primary">Guardar Cambios</button>
+            <a href="{% url 'escritura:perfil_usuario' %}" class="button secondary">Cancelar</a>
+        </div>
+    </form>
+{% endblock %}

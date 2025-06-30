@@ -14,6 +14,7 @@ urlpatterns = [
     path('crear/', views.crear_escrito, name='crear_escrito'),
     path('<int:pk>/editar/', views.editar_escrito, name='editar_escrito'),
     path('<int:pk>/eliminar/', views.eliminar_escrito, name='eliminar_escrito'),
-    # AÑADIDO: URL para la página de perfil del usuario
     path('perfil/', views.perfil_usuario, name='perfil_usuario'),
+    # AÑADIDO: URL para la página de edición del perfil
+    path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
 ]
