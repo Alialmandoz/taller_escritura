@@ -1,6 +1,23 @@
 # escritura/views.py
 
 from django.shortcuts import render, get_object_or_404, redirect
+
+# AÑADIDO: Vista para la página principal
+def pagina_principal(request):
+    """
+    Renderiza la página de inicio/landing page.
+    Obtiene todos los perfiles que han aceptado ser mostrados públicamente.
+    """
+    # Usamos select_related('user') para optimizar la consulta.
+    # Evita que Django haga una consulta a la base de datos por cada usuario en el bucle de la plantilla.
+    perfiles_publicos = Profile.objects.filter(mostrar_en_comunidad=True).select_related('user')
+
+    contexto = {
+        'perfiles_publicos': perfiles_publicos
+    }
+    return render(request, 'escritura/home.html', contexto)
+
+
 from django.views.generic import DetailView
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required # Decorador para requerir autenticación
@@ -16,9 +33,9 @@ def lista_escritos(request):
     Esta vista recupera todos los objetos Escrito cuyo estado sea 'PUBLICO'
     y los pasa a la plantilla para su visualización.
     """
-    # Consulta a la base de datos: Obtiene todos los escritos donde el estado es 'PUBLICO'.
-    # .order_by('-fecha_creacion') asegura que los escritos más recientes aparezcan primero.
-    escritos = Escrito.objects.filter(estado='PUBLICO').order_by('-fecha_creacion')
+    # MODIFICADO: Se optimiza la consulta para incluir los datos del autor y su perfil.
+    # Esto evita múltiples consultas a la base de datos (problema N+1) en la plantilla.
+    escritos = Escrito.objects.filter(estado='PUBLICO').select_related('autor__profile').order_by('-fecha_creacion')
 
     # AÑADIDO PARA DEPURACIÓN: Imprime el queryset para ver qué elementos contiene.
     # Estas líneas te mostrarán en la terminal del servidor qué escritos está recuperando la consulta.
@@ -114,7 +131,7 @@ def crear_escrito(request):
             # Necesitamos pasar el 'pk' del escrito a la URL.
             return redirect('escritura:detalle_escrito', pk=escrito.pk)
     else:
-        # Si la solicitud es GET, muestra un formulario vacío.
+        # Si es GET, muestra un formulario vacío.
         form = EscritoForm()
     
     # Renderiza la plantilla con el formulario (vacío o con errores)
@@ -213,9 +230,10 @@ def perfil_usuario(request):
         # Podrías añadir un mensaje de warning aquí si esto fuera algo que debe ser notado:
         # messages.warning(request, "Tu perfil fue creado automáticamente. Por favor, complétalo.")
 
-    # Recupera TODOS los escritos de este usuario, ordenados por fecha de creación.
-    # No filtramos por estado aquí, ya que es la vista personal del usuario.
-    mis_escritos = Escrito.objects.filter(autor=usuario).order_by('-fecha_creacion')
+    # MODIFICADO: Se optimiza la consulta para evitar el problema N+1.
+    # Usamos `select_related` para traer la información del autor y su perfil
+    # en una única consulta a la base de datos, mejorando drásticamente el rendimiento.
+    mis_escritos = Escrito.objects.filter(autor=usuario).select_related('autor__profile').order_by('-fecha_creacion')
 
     contexto = {
         'usuario': usuario,      # El objeto User

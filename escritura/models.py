@@ -53,6 +53,13 @@ class Profile(models.Model):
     # blank=True, null=True: El campo es opcional.
     foto_perfil = models.ImageField(default='profile_pics/default.jpg', upload_to='profile_pics/', blank=True, null=True, verbose_name="Foto de Perfil")
 
+    # AÑADIDO: Campo para el control de privacidad
+    mostrar_en_comunidad = models.BooleanField(
+        default=False,
+        verbose_name="Mostrar mi perfil en la página de la comunidad",
+        help_text="Marca esta casilla si deseas que tu perfil sea visible en la página principal."
+    )
+
     def __str__(self):
         """
         Representación en string del objeto Profile.
