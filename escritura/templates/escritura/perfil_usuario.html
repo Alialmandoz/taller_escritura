@@ -27,8 +27,36 @@
         <ul class="escrito-list">
             {% for escrito in mis_escritos %}
                 <li class="escrito-item">
-                    <div class="escrito-item-header">
-                        <h2><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
+                    
+                    {# MODIFICADO: Estructura de cabecera re-agrupada #}
+                    <div class="escrito-card-header">
+                        <div class="header-author-info">
+                            <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
+                            <span class="author-name">{{ escrito.autor.username }}</span>
+                        </div>
+                        <div class="header-title-actions">
+                            <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
+                            <button 
+                                class="toggle-button" 
+                                aria-expanded="false" 
+                                aria-controls="escrito-content-perfil-{{ escrito.pk }}"
+                                title="Expandir/Contraer"
+                            >
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="escrito-content" id="escrito-content-perfil-{{ escrito.pk }}">
+                        {{ escrito.contenido|safe }} 
+                    </div>
+
+                    <div class="escrito-footer">
+                        <div class="escrito-meta">
+                            <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
+                            {% if escrito.fecha_creacion != escrito.fecha_actualizacion %}
+                                <p>Última actualización: {{ escrito.fecha_actualizacion|date:"d M Y H:i" }}</p>
+                            {% endif %}
+                        </div>
                         <div class="escrito-status-actions">
                             <span class="escrito-status status-{{ escrito.estado|lower }}">{{ escrito.get_estado_display }}</span>
                             <div class="action-buttons">
@@ -37,13 +65,6 @@
                             </div>
                         </div>
                     </div>
-                    <p>{{ escrito.contenido|truncatechars:150 }}</p>
-                    <div class="escrito-meta">
-                        <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
-                        {% if escrito.estado != 'BORRADOR' %}
-                            <p>Última actualización: {{ escrito.fecha_actualizacion|date:"d M Y H:i" }}</p>
-                        {% endif %}
-                    </div>
                 </li>
             {% endfor %}
         </ul>
@@ -51,93 +72,4 @@
         <p>Aún no has creado ningún escrito. <a href="{% url 'escritura:crear_escrito' %}">¡Empieza a escribir ahora!</a></p>
     {% endif %}
 
-    <style>
-        /* Estilos específicos para la página de perfil */
-        .profile-header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #E8D8C9;
-        }
-        .profile-pic {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%; /* Circular image */
-            object-fit: cover; /* Cover the area, crop if needed */
-            margin-bottom: 15px;
-            border: 3px solid #AA775A;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .profile-bio {
-            font-size: 1.1em;
-            color: #6B4F4F;
-            max-width: 600px;
-            margin: 0 auto 20px auto;
-            line-height: 1.6;
-        }
-        .section-title {
-            text-align: center;
-            margin-top: 40px;
-            margin-bottom: 30px;
-            font-size: 2em;
-            color: #AA775A;
-        }
-        hr {
-            border: none;
-            border-top: 1px dashed #E8D8C9;
-            margin: 40px 0;
-        }
-
-        /* Estilos para los elementos de escritos en la página de perfil */
-        .escrito-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap; /* Permitir que los elementos se envuelvan en pantallas pequeñas */
-            margin-bottom: 10px;
-        }
-        .escrito-item-header h2 {
-            margin: 0;
-            flex-grow: 1; /* Permite que el título ocupe espacio */
-        }
-        .escrito-status-actions {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 10px; /* Para móviles, si el título se envuelve */
-            flex-wrap: wrap;
-        }
-        .escrito-status {
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            font-weight: bold;
-            color: white;
-            text-transform: uppercase;
-        }
-        .status-borrador { background-color: #6c757d; } /* Gray */
-        .status-privado { background-color: #AA775A; } /* Custom Brown */
-        .status-publico { background-color: #28a745; } /* Green */
-
-        .small-button {
-            padding: 5px 10px;
-            font-size: 0.8em;
-        }
-
-        /* Responsive adjustments for profile page */
-        @media (max-width: 600px) {
-            .escrito-item-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .escrito-status-actions {
-                width: 100%; /* Ocupa todo el ancho */
-                justify-content: flex-start; /* Alinear a la izquierda */
-            }
-            .action-buttons {
-                margin-left: 0; /* Eliminar margen si los botones están abajo */
-                margin-top: 10px; /* Espacio entre estado y botones */
-            }
-        }
-    </style>
 {% endblock %}

@@ -174,10 +174,10 @@ form {
     display: flex;
     flex-direction: column;
 }
-p {
+form p {
     margin-bottom: 15px;
 }
-p label {
+form p label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
@@ -222,60 +222,92 @@ ul.errorlist {
     padding: 0;
 }
 
-/* --- AÑADIDO Y MODIFICADO: Estilos para la lista de escritos con expandir/contraer --- */
 .escrito-item {
     background-color: #FAF7F0;
-    margin-bottom: 20px; /* Más espacio entre items */
-    padding: 20px; /* Más padding interno */
+    margin-bottom: 20px;
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: relative; /* Clave para posicionar el botón de toggle */
 }
 
-.escrito-item h2 {
-    margin-top: 0;
-    margin-right: 40px; /* Espacio para que el título no se solape con el botón */
-    color: #AA775A;
+/* AÑADIDO: Nueva cabecera unificada */
+.escrito-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* AÑADIDO: Grupo para info del autor a la izquierda */
+.header-author-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0; /* Evita que el contenedor se desborde si el nombre es largo */
+}
+
+/* AÑADIDO: Grupo para título y acciones a la derecha */
+.header-title-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.author-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #E8D8C9;
+    flex-shrink: 0; /* Evita que la imagen se encoja */
+}
+
+.author-name {
+    font-weight: bold;
+    color: #6B4F4F;
+    font-family: 'Lato', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.escrito-title {
+    margin: 0; /* Quitamos margen del h2 */
     font-family: 'Playfair Display', serif;
-}
-
-.escrito-item h2 a {
-    text-decoration: none;
     color: #AA775A;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.escrito-item h2 a:hover {
+.escrito-title a {
+    text-decoration: none;
+    color: inherit; /* Hereda el color del h2 */
+}
+
+.escrito-title a:hover {
     text-decoration: underline;
 }
 
-.escrito-item p {
+.escrito-meta p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+.escrito-content {
+    max-height: 100px;
+    overflow: hidden;
+    position: relative;
+    transition: max-height 0.4s ease-in-out;
     line-height: 1.6;
     font-family: 'Lato', sans-serif;
 }
 
-.escrito-meta {
-    font-size: 0.9em;
-    color: #6B4F4F;
-    margin-top: 10px;
-    border-top: 1px solid #E8D8C9;
-    padding-top: 10px;
-    font-family: 'Lato', sans-serif;
-}
-
-/* Contenedor del contenido del escrito */
-.escrito-content {
-    max-height: 100px; /* Altura máxima cuando está contraído */
-    overflow: hidden; /* Oculta el texto que se desborda */
-    position: relative; /* Para el efecto de difuminado */
-    transition: max-height 0.4s ease-in-out; /* Transición suave para la altura */
-}
-
-/* Estado expandido (cuando .escrito-item tiene la clase .is-expanded) */
 .escrito-item.is-expanded .escrito-content {
-    max-height: 1500px; /* Un valor grande para asegurar que todo el contenido sea visible */
+    max-height: 1500px;
 }
 
-/* Efecto de difuminado al final del contenido contraído */
 .escrito-content::after {
     content: '';
     position: absolute;
@@ -287,16 +319,11 @@ ul.errorlist {
     transition: opacity 0.4s ease-in-out;
 }
 
-/* Ocultamos el difuminado cuando el contenido está expandido */
 .escrito-item.is-expanded .escrito-content::after {
     opacity: 0;
 }
 
-/* Botón de Toggle (+/-) */
 .toggle-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
     width: 28px;
     height: 28px;
     background-color: #E8D8C9;
@@ -312,6 +339,7 @@ ul.errorlist {
     line-height: 1;
     padding: 0;
     transition: background-color 0.3s, transform 0.3s;
+    flex-shrink: 0;
 }
 
 .toggle-button:hover {
@@ -320,52 +348,71 @@ ul.errorlist {
 }
 
 .toggle-button::before {
-    content: '+'; /* Símbolo por defecto (contraído) */
+    content: '+';
 }
 
 .escrito-item.is-expanded .toggle-button::before {
-    content: '−'; /* Símbolo cuando está expandido (signo menos) */
+    content: '−';
 }
 
 .escrito-item.is-expanded .toggle-button {
-    transform: rotate(180deg); /* Animación de rotación */
+    transform: rotate(180deg);
 }
-/* --- Fin de la sección de expandir/contraer --- */
 
+.escrito-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #E8D8C9;
+    font-size: 0.9em;
+    color: #6B4F4F;
+    font-family: 'Lato', sans-serif;
+}
+
+.escrito-status-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
 
 /* Escrito Detail Specific Styles */
 .header-section {
     display: flex;
-    flex-wrap: wrap; /* Permite que los elementos se envuelvan */
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
 }
 .header-section h1 {
-    flex-grow: 1; /* Permite que el título crezca */
-    margin-right: 10px; /* Espacio entre título y botón */
-    font-family: 'Playfair Display', serif; /* APLICADO: Playfair Display para título de detalle */
+    flex-grow: 1;
+    margin-right: 10px;
+    font-family: 'Playfair Display', serif;
 }
 .action-buttons {
     display: flex;
-    gap: 10px; /* Espacio entre los botones */
+    gap: 10px;
 }
 .content {
     line-height: 1.8;
-    color: #444444; /* Un gris ligeramente más oscuro para el contenido principal */
-    font-family: 'Lato', sans-serif; /* APLICADO: Lato para contenido de detalle */
+    color: #444444;
+    font-family: 'Lato', sans-serif;
 }
 .content p {
-    margin-bottom: 1em; /* Añade un margen inferior a los párrafos para separarlos */
+    margin-bottom: 1em;
 }
 .back-link {
     display: block;
     margin-top: 30px;
     text-align: center;
     text-decoration: none;
-    color: #6B4F4F; /* Enlace de volver */
+    color: #6B4F4F;
     font-weight: bold;
-    font-family: 'Lato', sans-serif; /* APLICADO: Lato para el enlace de volver */
+    font-family: 'Lato', sans-serif;
 }
 .back-link:hover {
     text-decoration: underline;
@@ -376,7 +423,7 @@ ul.errorlist {
     list-style: none;
     padding: 0;
     margin-bottom: 20px;
-    font-family: 'Lato', sans-serif; /* APLICADO: Lato para mensajes */
+    font-family: 'Lato', sans-serif;
 }
 
 .messages li {
@@ -430,38 +477,34 @@ ul.errorlist {
 
 /* Media Queries for Responsiveness */
 
-/* Small devices (phones, 600px and down) - Estilos base ya son para esto */
-
-/* Medium devices (tablets, 600px and up) */
 @media (min-width: 600px) {
     .container {
-        padding: 30px; /* Más padding en pantallas más grandes */
+        padding: 30px;
     }
     .main-header {
         padding: 15px 30px;
     }
     .logo {
-        flex-basis: auto; /* El logo ya no ocupa todo el ancho */
+        flex-basis: auto;
         text-align: left;
         margin-bottom: 0;
     }
     .nav-links {
-        justify-content: flex-end; /* Alinear enlaces a la derecha */
+        justify-content: flex-end;
         width: auto;
     }
 }
 
-/* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
     .container {
-        margin-top: 40px; /* Más margen superior en pantallas grandes */
+        margin-top: 40px;
         margin-bottom: 40px;
     }
     h1 {
-        font-size: 2.5em; /* Aumentar tamaño de h1 en pantallas grandes */
+        font-size: 2.5em;
     }
     .logo a {
-        font-size: 2em; /* Logo más grande */
+        font-size: 2em;
     }
 }
 
@@ -470,15 +513,15 @@ ul.errorlist {
     text-align: center;
     margin-bottom: 40px;
     padding-bottom: 20px;
-    border-bottom: 1px solid #E8D8C9; /* Línea separadora suave */
+    border-bottom: 1px solid #E8D8C9;
 }
 .profile-pic {
     width: 150px;
     height: 150px;
-    border-radius: 50%; /* Imagen circular */
-    object-fit: cover; /* Cubre el área, recorta si es necesario */
+    border-radius: 50%;
+    object-fit: cover;
     margin-bottom: 15px;
-    border: 3px solid #AA775A; /* Borde del color de acento */
+    border: 3px solid #AA775A;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 .profile-bio {
@@ -494,7 +537,7 @@ ul.errorlist {
     margin-bottom: 30px;
     font-size: 2em;
     color: #AA775A;
-    font-family: 'Playfair Display', serif; /* Mantener la fuente de títulos */
+    font-family: 'Playfair Display', serif;
 }
 hr {
     border: none;
@@ -502,26 +545,6 @@ hr {
     margin: 40px 0;
 }
 
-/* Estilos para los elementos de escritos en la página de perfil */
-.escrito-item-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap; /* Permitir que los elementos se envuelvan en pantallas pequeñas */
-    margin-bottom: 10px;
-}
-.escrito-item-header h2 {
-    margin: 0;
-    flex-grow: 1; /* Permite que el título ocupe espacio */
-}
-.escrito-status-actions {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-top: 0; /* Por defecto, sin margen extra */
-    flex-wrap: wrap;
-    justify-content: flex-end; /* Alinear a la derecha por defecto */
-}
 .escrito-status {
     padding: 5px 10px;
     border-radius: 4px;
@@ -529,51 +552,39 @@ hr {
     font-weight: bold;
     color: white;
     text-transform: uppercase;
-    font-family: 'Lato', sans-serif; /* Consistencia en la fuente */
+    font-family: 'Lato', sans-serif;
 }
-/* Colores de estado basados en la paleta */
-.status-borrador { background-color: #6c757d; } /* Gris */
-.status-privado { background-color: #AA775A; } /* Nuestro tono cálido */
-.status-publico { background-color: #28a745; } /* Verde para algo positivo */
+.status-borrador { background-color: #6c757d; }
+.status-privado { background-color: #AA775A; }
+.status-publico { background-color: #28a745; }
 
-.small-button { /* Para los botones de Editar/Eliminar en la lista de perfil */
+.small-button {
     padding: 5px 10px;
     font-size: 0.8em;
 }
 
-/* Responsive adjustments for profile page */
 @media (max-width: 600px) {
-    .escrito-item-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .escrito-status-actions {
-        width: 100%; /* Ocupa todo el ancho */
-        justify-content: flex-start; /* Alinear a la izquierda */
-        margin-top: 10px; /* Espacio entre título y estado/acciones */
-    }
-    .action-buttons {
-        margin-left: 0; /* Eliminar margen si los botones están abajo */
-        margin-top: 0; /* Sin margen extra */
-    }
     .profile-bio {
-        padding: 0 10px; /* Reducir padding en móviles */
+        padding: 0 10px;
+    }
+    /* En pantallas pequeñas, permitimos que la cabecera se envuelva */
+    .escrito-card-header {
+        flex-wrap: wrap;
     }
 }
 
 /* Estilos para la página de inicio (home.html) */
-.landing-page { padding: 0; } /* Quita el padding del .container si se usa allí */
+.landing-page { padding: 0; }
 
 .hero-section {
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1455390582262-044cdead277a?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1971') no-repeat center center/cover;
     color: white;
     text-align: center;
     padding: 100px 20px;
-    /* Asegurarse de que no herede el fondo de .container si está anidado */
     background-color: transparent !important;
 }
 
-.hero-section .hero-title { /* Especificidad para asegurar que el color se aplique */
+.hero-section .hero-title {
     color: white;
     font-size: 3em;
     font-family: 'Playfair Display', serif;
@@ -583,32 +594,29 @@ hr {
     font-size: 1.2em;
     margin-bottom: 30px;
     font-family: 'Lato', sans-serif;
-    color: white; /* Asegurar color blanco para el subtítulo */
+    color: white;
 }
 
-.hero-section .large-button { /* Hereda de .button pero con ajustes */
+.hero-section .large-button {
     padding: 15px 30px;
     font-size: 1.1em;
 }
-/* Si .button.primary ya tiene los colores deseados, no es necesario repetirlos aquí,
-   a menos que quieras un estilo específico para el botón del hero. */
 
 .about-section, .community-section {
     padding: 60px 20px;
     max-width: 900px;
-    margin: 0 auto; /* Centra las secciones */
-    background-color: #FAF7F0; /* Fondo para estas secciones, si es diferente del body */
-    border-radius: 0; /* Si están dentro de .container, podrían heredar su border-radius */
+    margin: 0 auto;
+    background-color: #FAF7F0;
+    border-radius: 0;
 }
 
-/* El .section-title ya tiene estilos globales, pero si necesitas ajustes: */
 .about-section .section-title,
 .community-section .section-title {
     text-align: center;
     margin-bottom: 40px;
     font-size: 2.2em;
-    color: #AA775A; /* Heredado, pero se puede especificar */
-    font-family: 'Playfair Display', serif; /* Heredado */
+    color: #AA775A;
+    font-family: 'Playfair Display', serif;
 }
 
 .community-gallery {
@@ -619,13 +627,13 @@ hr {
 }
 
 .user-card {
-    background-color: #FAF7F0; /* Coincide con el fondo de .container */
-    border: 1px solid #E8D8C9; /* Borde suave */
+    background-color: #FAF7F0;
+    border: 1px solid #E8D8C9;
     border-radius: 8px;
     width: 200px;
     text-align: center;
     padding: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra sutil */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .user-card-img {
@@ -633,23 +641,23 @@ hr {
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #CC9980; /* Borde con color de acento */
-    margin-bottom: 10px; /* Espacio debajo de la imagen */
+    border: 3px solid #CC9980;
+    margin-bottom: 10px;
 }
 
 .user-card-name {
     font-size: 1.2em;
-    margin: 10px 0 10px 0; /* Ajuste de margen */
-    color: #6B4F4F; /* Color de nombre de usuario */
-    font-family: 'Playfair Display', serif; /* Fuente para el nombre */
+    margin: 10px 0 10px 0;
+    color: #6B4F4F;
+    font-family: 'Playfair Display', serif;
 }
 
 .user-card-bio {
     font-size: 0.9em;
     color: #6B4F4F;
     font-style: italic;
-    font-family: 'Lato', sans-serif; /* Fuente para la bio */
-    line-height: 1.4; /* Mejor legibilidad */
+    font-family: 'Lato', sans-serif;
+    line-height: 1.4;
 }
 
 .community-empty {
