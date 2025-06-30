@@ -75,3 +75,34 @@ def save_user_profile(sender, instance, **kwargs):
     Asegura que el Profile asociado al usuario también se guarde.
     """
     instance.profile.save()
+
+
+# AÑADIR AL FINAL DE models.py
+
+class Comentario(models.Model):
+    """
+    Modelo para almacenar los comentarios de un escrito.
+    """
+    # Relación con el escrito: Muchos comentarios pueden pertenecer a un escrito.
+    # on_delete=models.CASCADE: Si se borra un escrito, se borran todos sus comentarios.
+    # related_name='comentarios': Nos permitirá acceder a los comentarios desde un objeto Escrito (ej: mi_escrito.comentarios.all()).
+    escrito = models.ForeignKey(Escrito, on_delete=models.CASCADE, related_name='comentarios')
+
+    # Relación con el autor: Muchos comentarios pueden ser de un mismo usuario.
+    autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comentarios')
+
+    # Contenido del comentario.
+    texto = models.TextField(verbose_name="Texto del Comentario")
+
+    # Fecha de creación. Se guarda automáticamente al crear el comentario.
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # Ordena los comentarios del más antiguo al más reciente por defecto.
+        ordering = ['fecha_creacion']
+        verbose_name = "Comentario"
+        verbose_name_plural = "Comentarios"
+
+    def __str__(self):
+        # Representación en texto para el admin y la depuración.
+        return f'Comentario de {self.autor.username} en "{self.escrito.titulo}"'

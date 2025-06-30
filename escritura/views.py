@@ -24,8 +24,9 @@ from django.contrib.auth.decorators import login_required # Decorador para reque
 from django.http import Http404
 from django.contrib import messages
 
-from .models import Escrito, Profile # MODIFICADO: Importamos también el modelo Profile
-from .forms import CustomUserCreationForm, EscritoForm, ProfileForm # MODIFICADO: Importamos ProfileForm
+# MODIFICADO: Ahora importamos también el modelo y formulario de Comentario
+from .models import Escrito, Profile, Comentario
+from .forms import CustomUserCreationForm, EscritoForm, ProfileForm, ComentarioForm
 
 # Vista basada en función para listar escritos públicos
 def lista_escritos(request):
@@ -56,27 +57,68 @@ def lista_escritos(request):
     return render(request, 'escritura/lista_escritos.html', contexto)
 
 
-# Vista basada en clase para mostrar el detalle de un escrito
+# REEMPLAZAR la clase DetalleEscrito existente en views.py
+
+# MODIFICADO: Ahora importamos también el modelo y formulario de Comentario
+
 class DetalleEscrito(DetailView):
     """
-    Esta vista basada en clase (CBV) se encarga de mostrar los detalles
-    de un único objeto Escrito.
-
-    Usa DetailView de Django para simplificar la lógica de obtención de un objeto.
+    Vista basada en clase (CBV) mejorada para mostrar los detalles de un escrito,
+    sus comentarios, y manejar la publicación de nuevos comentarios.
     """
-    model = Escrito  # Le decimos a DetailView qué modelo debe usar.
-    template_name = 'escritura/detalle_escrito.html' # Ruta a la plantilla para mostrar el detalle.
-    context_object_name = 'escrito' # Nombre de la variable que contendrá el objeto en la plantilla.
+    model = Escrito
+    template_name = 'escritura/detalle_escrito.html'
+    context_object_name = 'escrito'
 
-    def get_queryset(self):
-        """
-        Sobrescribe get_queryset para asegurar que solo se puedan ver
-        escritos que sean públicos.
-        """
-        # Filtra para obtener solo escritos públicos.
-        # Esto añade una capa de seguridad para que los usuarios no puedan acceder
-        # a escritos privados o borradores a través de la URL directa.
-        return Escrito.objects.filter(estado='PUBLICO')
+    def get_context_data(self, **kwargs):
+        # 1. Obtenemos el contexto base de DetailView.
+        context = super().get_context_data(**kwargs)
+
+        # 2. Obtenemos el escrito actual.
+        escrito = self.get_object()
+
+        # 3. Añadimos los comentarios al contexto.
+        # Usamos `select_related` para optimizar la consulta y traer los datos del autor y su perfil
+        # en una sola query, evitando el problema N+1.
+        context['comentarios'] = escrito.comentarios.select_related('autor__profile').all()
+
+        # 4. Añadimos el formulario de comentarios al contexto (si el usuario está autenticado).
+        if self.request.user.is_authenticated:
+            context['comentario_form'] = ComentarioForm()
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        # Esta función se ejecuta solo cuando la página recibe una petición POST (es decir, al enviar un formulario).
+
+        # Verificamos si el usuario está autenticado antes de procesar.
+        if not request.user.is_authenticated:
+            return redirect('login') # O mostrar un error
+
+        # Obtenemos el escrito al que se está comentando.
+        self.object = self.get_object()
+
+        # Creamos una instancia del formulario con los datos enviados (request.POST).
+        form = ComentarioForm(request.POST)
+
+        if form.is_valid():
+            # Si el formulario es válido, creamos el objeto Comentario pero no lo guardamos aún.
+            nuevo_comentario = form.save(commit=False)
+            # Asignamos el escrito y el autor manually.
+            nuevo_comentario.escrito = self.object
+            nuevo_comentario.autor = request.user
+            # Ahora sí, lo guardamos en la base de datos.
+            nuevo_comentario.save()
+            messages.success(request, "Tu comentario ha sido publicado.")
+            # Redirigimos a la misma página para ver el comentario nuevo.
+            return redirect('escritura:detalle_escrito', pk=self.object.pk)
+        else:
+            # Si el formulario no es válido, volvemos a renderizar la página
+            # pero esta vez con el formulario que contiene los errores.
+            context = self.get_context_data()
+            context['comentario_form'] = form # Pasamos el formulario con errores
+            messages.error(request, "Hubo un error al publicar tu comentario. Por favor, revisa el formulario.")
+            return self.render_to_response(context)
 
 
 # Vista para el registro de nuevos usuarios

@@ -2,7 +2,7 @@
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Escrito, Profile # MODIFICADO: Importamos también nuestro modelo Profile
+from .models import Escrito, Profile, Comentario # MODIFICADO: Importamos también nuestro modelo Profile y Comentario
 
 
 # Formulario personalizado para el registro de usuarios
@@ -55,4 +55,28 @@ class ProfileForm(forms.ModelForm):
         # Opcional: Widgets para personalizar la apariencia de los campos
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Cuéntanos un poco sobre ti...'}),
+        }
+
+# AÑADIR AL FINAL DE forms.py
+
+class ComentarioForm(forms.ModelForm):
+    """
+    Formulario para que los usuarios puedan crear nuevos comentarios.
+    """
+    class Meta:
+        model = Comentario
+        # Solo necesitamos que el usuario introduzca el texto.
+        # El autor y el escrito se asignarán automáticamente en la vista.
+        fields = ['texto']
+        widgets = {
+            'texto': forms.Textarea(
+                attrs={
+                    'rows': 3,
+                    'placeholder': 'Escribe tu comentario aquí...',
+                    'class': 'comment-textarea' # Clase para darle estilo si es necesario
+                }
+            ),
+        }
+        labels = {
+            'texto': '' # Ocultamos la etiqueta <label> para un diseño más limpio
         }

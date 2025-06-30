@@ -1,7 +1,8 @@
 # escritura/admin.py
 
 from django.contrib import admin
-from .models import Escrito, Profile # AÑADIDO: Importamos nuestro modelo 'Escrito'y el "profile".
+# MODIFICADO: Importamos también el modelo Comentario
+from .models import Escrito, Profile, Comentario
                              # Es crucial importar el modelo que deseas registrar.
 
 # Register your models here.
@@ -11,3 +12,5 @@ from .models import Escrito, Profile # AÑADIDO: Importamos nuestro modelo 'Escr
 # para tus objetos Escrito, permitiendo una gestión sencilla desde el navegador.
 admin.site.register(Escrito)
 admin.site.register(Profile)
+# AÑADIDO: Registramos el nuevo modelo Comentario
+admin.site.register(Comentario)

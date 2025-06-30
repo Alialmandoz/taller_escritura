@@ -687,3 +687,83 @@ hr {
 .nav-link-button:hover {
     text-decoration: underline;
 }
+
+/* AÑADIR AL FINAL de main.css */
+
+/* --- Estilos para la Sección de Comentarios --- */
+
+.section-divider {
+    border: none;
+    border-top: 1px solid #E8D8C9;
+    margin: 40px 0;
+}
+
+.comments-section .section-title {
+    text-align: left;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+
+.comment-form-container {
+    margin-bottom: 30px;
+    background-color: #F5EFE6;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.comment-form-container textarea {
+    min-height: 80px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.login-prompt {
+    text-align: center;
+    padding: 20px;
+    background-color: #F5EFE6;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.comment-item {
+    background-color: #FAF7F0;
+    border: 1px solid #E8D8C9;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.comment-author-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.author-pic-small {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.comment-author-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.comment-date {
+    font-size: 0.8em;
+    color: #6B4F4F;
+}
+
+.comment-text {
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+}

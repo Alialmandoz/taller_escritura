@@ -24,6 +24,46 @@
         Última actualización: {{ escrito.fecha_actualizacion|date:"d M Y H:i" }}
     </p>
     
+{# AÑADIR este bloque en detalle_escrito.html #}
+
+<hr class="section-divider">
+
+<div class="comments-section">
+    <h2 class="section-title">Comentarios ({{ comentarios.count }})</h2>
+
+    {# Formulario para añadir un nuevo comentario #}
+    {% if user.is_authenticated %}
+        <div class="comment-form-container">
+            <form method="post">
+                {% csrf_token %}
+                {{ comentario_form.as_p }}
+                <button type="submit" class="button primary small-button">Publicar Comentario</button>
+            </form>
+        </div>
+    {% else %}
+        <p class="login-prompt">
+            <a href="{% url 'login' %}?next={{ request.path }}">Inicia sesión</a> para dejar un comentario.
+        </p>
+    {% endif %}
+
+    {# Lista de comentarios existentes #}
+    <div class="comment-list">
+        {% for comentario in comentarios %}
+            <div class="comment-item">
+                <div class="comment-author-header">
+                    <img src="{{ comentario.autor.profile.foto_perfil.url }}" alt="Foto de {{ comentario.autor.username }}" class="author-pic-small">
+                    <div class="author-info">
+                        <span class="comment-author-name">{{ comentario.autor.username }}</span>
+                        <span class="comment-date">{{ comentario.fecha_creacion|date:"d M Y, H:i" }}</span>
+                    </div>
+                </div>
+                <p class="comment-text">{{ comentario.texto|linebreaksbr }}</p>
+            </div>
+        {% empty %}
+            <p>Aún no hay comentarios. ¡Sé el primero en opinar!</p>
+        {% endfor %}
+    </div>
+</div>
 
     <a href="{% url 'escritura:lista_escritos' %}" class="back-link">← Volver a la lista de escritos</a>
 {% endblock %}
