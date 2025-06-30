@@ -1,0 +1,36 @@
+{# taller_escritura/templates/registration/login.html #}
+{% extends 'base.html' %}
+
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Iniciar Sesión</h1>
+
+    {% if form.errors %}
+        <p style="color: red;">Tu nombre de usuario y contraseña no coinciden. Por favor, inténtalo de nuevo.</p>
+    {% endif %}
+
+    {% if next %}
+        {% if user.is_authenticated %}
+            <p>Tu cuenta no tiene acceso a esta página. Para continuar, por favor inicia sesión con una cuenta que tenga acceso.</p>
+        {% else %}
+            <p>Por favor, inicia sesión para ver esta página.</p>
+        {% endif %}
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+        {# CORREGIDO: Añadimos la etiqueta CSRF token. ¡Esto es fundamental para la seguridad! #}
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+        
+        <button type="submit" class="button primary" style="margin-top: 20px;">Iniciar Sesión</button>
+        <input type="hidden" name="next" value="{{ next }}">
+    </form>
+
+    <div style="margin-top: 20px;">
+        <p><a href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a></p>
+        <p>¿No tienes una cuenta? <a href="{% url 'escritura:registro' %}">Regístrate aquí</a>.</p>
+    </div>
+
+{% endblock %}
