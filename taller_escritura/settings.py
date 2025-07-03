@@ -1,33 +1,19 @@
 # taller_escritura/settings.py
-# VERSIÓN FINAL Y ROBUSTA v2 PARA DEPURACIÓN EN RAILWAY
+# VERSIÓN CORRECTA Y ROBUSTA PARA RAILWAY
 
 import os
 from pathlib import Path
 import dj_database_url
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# --- Variables de Entorno y Depuración ---
-# Leemos la SECRET_KEY directamente de las variables de entorno.
-# Si no existe, la app fallará en el arranque, lo cual es bueno porque nos obliga a configurarla.
+# --- Variables de Entorno ---
 SECRET_KEY = os.environ.get('SECRET_KEY')
-
-# DEBUG siempre es False en producción.
 DEBUG = False
 
 # El '*' es una configuración de "confianza en el proxy". En plataformas como Railway,
 # que gestionan el enrutamiento a través de un proxy, esto es una configuración común y segura.
-# Elimina la posibilidad de un error 400 por un dominio mal configurado.
 ALLOWED_HOSTS = ['*']
-
-# --- IMPRESIONES PARA DEPURACIÓN EN LOS LOGS DE RAILWAY ---
-# Estos prints nos ayudarán a verificar si las variables de entorno se están cargando correctamente.
-print("--- SETTINGS.PY LOGS ---")
-print(f"SECRET_KEY loaded: {'Yes' if SECRET_KEY else 'No, CRITICAL ERROR!'}")
-print(f"DATABASE_URL loaded: {'Yes' if os.environ.get('DATABASE_URL') else 'No, this is normal during build, but should be Yes in runtime.'}")
-print(f"ALLOWED_HOSTS set to: {ALLOWED_HOSTS}")
-print("------------------------")
 
 # Application definition
 INSTALLED_APPS = [
@@ -36,18 +22,16 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'whitenoise.runserver_nostatic', # Necesario para que WhiteNoise funcione en desarrollo (aunque DEBUG es False)
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
-    # Tu aplicación
     'escritura',
-    # Apps de terceros
     'ckeditor',
     'ckeditor_uploader',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # WhiteNoise debe ir aquí.
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -128,7 +112,6 @@ LOGOUT_REDIRECT_URL = 'escritura:lista_escritos'
 
 # CKEditor
 CKEDITOR_UPLOAD_PATH = 'uploads/'
-# (La configuración de CKEDITOR_CONFIGS se puede omitir si el default es suficiente)
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': 'Custom',
