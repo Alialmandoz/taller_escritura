@@ -111,10 +111,15 @@ STATIC_ROOT = BASE_DIR / 'staticfiles' # PythonAnywhere necesita esta ruta
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# WhiteNoise Storage
+# Configuración de Almacenamiento para Estáticos y Media
 STORAGES = {
+    # Almacenamiento para archivos estáticos (gestionado por WhiteNoise)
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+    # AÑADIDO: Almacenamiento para archivos por defecto (media, subidos por usuarios)
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
 }
 
