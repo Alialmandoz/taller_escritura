@@ -1,6 +1,6 @@
 # Contenido del Proyecto: taller escritura
 
-**Generado el:** 2025-06-29 22:03:51
+**Generado el:** 2025-06-30 00:41:04
 
 ## Estructura del Proyecto
 
@@ -42,8 +42,6 @@ taller escritura
 │   │   ├── main.css
 │   ├── js
 │   │   ├── Main.js
-│   ├── js
-│   │   ├── Main.js
 ├── taller_escritura
 │   ├── __init__.py
 │   ├── asgi.py
@@ -52,6 +50,8 @@ taller escritura
 │   ├── wsgi.py
 │   ├── templates
 │   │   ├── base.html
+│   │   ├── registration
+│   │   │   ├── login.html
 ```
 
 ---
@@ -139,29 +139,11 @@ Una plataforma digital centralizada y colaborativa para participantes de tallere
 **taller_escritura** es el "hogar digital" para que los participantes de un taller de escritura desarrollen, organicen y compartan sus textos, y obtengan retroalimentación constructiva de sus pares en un entorno de comunidad y apoyo.
 
 Esta plataforma busca ser la herramienta centralizada donde los escritores pueden gestionar su proceso creativo, beneficiarse del intercambio de ideas y sentirse parte de una comunidad activa.
-Esta plataforma busca ser la herramienta centralizada donde los escritores pueden gestionar su proceso creativo, beneficiarse del intercambio de ideas y sentirse parte de una comunidad activa.
 
 ## ✨ Características
 
 La plataforma cuenta actualmente con las siguientes funcionalidades:
-La plataforma cuenta actualmente con las siguientes funcionalidades:
 
-*   **Autenticación y Perfiles:**
-    *   Registro, inicio y cierre de sesión de usuarios.
-    *   Modelo `Profile` preparado para futuras ampliaciones (bio, foto).
-    *   Página de perfil de usuario que muestra sus datos y una lista de todos sus escritos.
-
-*   **Gestión Completa de Escritos (CRUD):**
-    *   Creación de nuevos textos con un editor de texto enriquecido (CKEditor).
-    *   Edición de escritos existentes (restringido al autor).
-    *   Eliminación de escritos (restringido al autor, con página de confirmación).
-    *   Control de visibilidad (`Público`, `Privado`, `Borrador`).
-
-*   **Mejoras de UI/UX:**
-    *   Paleta de colores y tipografías consistentes para una estética cuidada.
-    *   Diseño responsivo base para una correcta visualización en móviles y escritorio.
-    *   Sistema de mensajes para dar feedback al usuario (ej. "Escrito creado con éxito").
-    *   ✨ **¡Nuevo!** Los escritos en la lista principal se pueden **expandir y contraer** para facilitar la lectura y reducir el desorden visual.
 *   **Autenticación y Perfiles:**
     *   Registro, inicio y cierre de sesión de usuarios.
     *   Modelo `Profile` preparado para futuras ampliaciones (bio, foto).
@@ -180,17 +162,9 @@ La plataforma cuenta actualmente con las siguientes funcionalidades:
     *   ✨ **¡Nuevo!** Los escritos en la lista principal se pueden **expandir y contraer** para facilitar la lectura y reducir el desorden visual.
 
 ## ⚙️ Puesta en Marcha (Getting Started)
-## ⚙️ Puesta en Marcha (Getting Started)
 
 Sigue estos pasos para ejecutar el proyecto en tu entorno local.
-Sigue estos pasos para ejecutar el proyecto en tu entorno local.
 
-**Prerrequisitos:**
-*   Python 3.8+
-*   pip & venv
-*   Git
-
-**Pasos:**
 **Prerrequisitos:**
 *   Python 3.8+
 *   pip & venv
@@ -211,31 +185,20 @@ Sigue estos pasos para ejecutar el proyecto en tu entorno local.
     source venv/bin/activate
 
     # En Windows
-    # En macOS/Linux
-    python3 -m venv venv
-    source venv/bin/activate
-
-    # En Windows
     python -m venv venv
     venv\Scripts\activate
     ```
-    venv\Scripts\activate
-    ```
 
-3.  **Instala las dependencias:**
 3.  **Instala las dependencias:**
     ```bash
     pip install -r requirements.txt
     ```
 
 4.  **Ejecuta las migraciones de la base de datos:**
-
-4.  **Ejecuta las migraciones de la base de datos:**
     ```bash
     python manage.py migrate
     ```
 
-5.  **Crea un superusuario (administrador):**
 5.  **Crea un superusuario (administrador):**
     ```bash
     python manage.py createsuperuser
@@ -276,43 +239,7 @@ El progreso del proyecto y las próximas funcionalidades planeadas.
 Las contribuciones son bienvenidas. Para errores o sugerencias, por favor, abre un *issue*. Para contribuir con código, sigue el flujo estándar de `Fork` -> `Crea una Rama` -> `Pull Request`.
 
 ## 📄 Licencia
-6.  **¡Inicia el servidor!**
-    ```bash
-    python manage.py runserver
-    ```
-    La aplicación estará disponible en `http://127.0.0.1:8000/escritura/`.
 
-## 🗺️ Roadmap (Hoja de Ruta)
-
-El progreso del proyecto y las próximas funcionalidades planeadas.
-
-*   [x] **Fase 1: Fundamentos**
-    *   [x] Autenticación y Perfiles de Usuario básicos.
-    *   [x] CRUD completo para Escritos.
-    *   [x] Sistema de visibilidad (Público, Privado, Borrador).
-    *   [x] Integración de Editor de Texto Enriquecido (CKEditor).
-*   [x] **Fase 2: Usabilidad y Diseño**
-    *   [x] Implementación de plantilla base y estilos CSS globales.
-    *   [x] Diseño responsivo inicial.
-    *   [x] Sistema de Mensajes de Django.
-    *   [x] Funcionalidad para expandir/contraer escritos en la lista.
-*   [ ] **Fase 3: Interacción y Comunidad (Próximos Pasos)**
-    *   [ ] Edición de perfil de usuario (bio, foto de perfil).
-    *   [ ] Sistema de comentarios en los escritos.
-    *   [ ] Paginación en la lista de escritos.
-    *   [ ] Funcionalidad de búsqueda.
-*   [ ] **Fase 4: Funcionalidades Avanzadas**
-    *   [ ] Implementación de etiquetas/categorías para los escritos.
-    *   [ ] Sistema de notificaciones (ej. "Alguien comentó tu escrito").
-    *   [ ] Panel de Control (Dashboard) personalizado para el usuario.
-
-## 🤝 Contribución
-
-Las contribuciones son bienvenidas. Para errores o sugerencias, por favor, abre un *issue*. Para contribuir con código, sigue el flujo estándar de `Fork` -> `Crea una Rama` -> `Pull Request`.
-
-## 📄 Licencia
-
-Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
 Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
 ```
 
@@ -517,18 +444,8 @@ class Profile(models.Model):
     Modelo de perfil de usuario extendido.
     Tiene una relación uno a uno con el modelo User de Django.
     """
-    # OneToOneField: Establece una relación "uno a uno" con el modelo User.
-    # Cada User tendrá un (y solo un) Profile asociado.
-    # on_delete=models.CASCADE: Si el usuario es eliminado, su perfil también se eliminará.
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    # TextField: Campo para una biografía personal (opcional, blank=True permite dejarlo vacío).
     bio = models.TextField(blank=True, null=True, verbose_name="Biografía")
-
-    # ImageField: Campo para subir una imagen de perfil.
-    # upload_to='profile_pics/': Las imágenes se guardarán en MEDIA_ROOT/profile_pics/
-    # default='default.jpg': Imagen por defecto si no se sube ninguna.
-    # blank=True, null=True: El campo es opcional.
     foto_perfil = models.ImageField(default='profile_pics/default.jpg', upload_to='profile_pics/', blank=True, null=True, verbose_name="Foto de Perfil")
 
     # AÑADIDO: Campo para el control de privacidad
@@ -546,9 +463,6 @@ class Profile(models.Model):
         return f"Perfil de {self.user.username}"
 
 # AÑADIDO: Señales para crear/actualizar Profile automáticamente con User
-# Las señales permiten que ciertas funciones se ejecuten cuando ocurren eventos
-# específicos en otros modelos (ej. cuando se guarda un User).
-
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     """
@@ -646,9 +560,9 @@ def lista_escritos(request):
     Esta vista recupera todos los objetos Escrito cuyo estado sea 'PUBLICO'
     y los pasa a la plantilla para su visualización.
     """
-    # Consulta a la base de datos: Obtiene todos los escritos donde el estado es 'PUBLICO'.
-    # .order_by('-fecha_creacion') asegura que los escritos más recientes aparezcan primero.
-    escritos = Escrito.objects.filter(estado='PUBLICO').order_by('-fecha_creacion')
+    # MODIFICADO: Se optimiza la consulta para incluir los datos del autor y su perfil.
+    # Esto evita múltiples consultas a la base de datos (problema N+1) en la plantilla.
+    escritos = Escrito.objects.filter(estado='PUBLICO').select_related('autor__profile').order_by('-fecha_creacion')
 
     # AÑADIDO PARA DEPURACIÓN: Imprime el queryset para ver qué elementos contiene.
     # Estas líneas te mostrarán en la terminal del servidor qué escritos está recuperando la consulta.
@@ -744,7 +658,7 @@ def crear_escrito(request):
             # Necesitamos pasar el 'pk' del escrito a la URL.
             return redirect('escritura:detalle_escrito', pk=escrito.pk)
     else:
-        # Si la solicitud es GET, muestra un formulario vacío.
+        # Si es GET, muestra un formulario vacío.
         form = EscritoForm()
     
     # Renderiza la plantilla con el formulario (vacío o con errores)
@@ -843,9 +757,10 @@ def perfil_usuario(request):
         # Podrías añadir un mensaje de warning aquí si esto fuera algo que debe ser notado:
         # messages.warning(request, "Tu perfil fue creado automáticamente. Por favor, complétalo.")
 
-    # Recupera TODOS los escritos de este usuario, ordenados por fecha de creación.
-    # No filtramos por estado aquí, ya que es la vista personal del usuario.
-    mis_escritos = Escrito.objects.filter(autor=usuario).order_by('-fecha_creacion')
+    # MODIFICADO: Se optimiza la consulta para evitar el problema N+1.
+    # Usamos `select_related` para traer la información del autor y su perfil
+    # en una única consulta a la base de datos, mejorando drásticamente el rendimiento.
+    mis_escritos = Escrito.objects.filter(autor=usuario).select_related('autor__profile').order_by('-fecha_creacion')
 
     contexto = {
         'usuario': usuario,      # El objeto User
@@ -987,7 +902,7 @@ class Migration(migrations.Migration):
 ## Archivo: `escritura/migrations/0004_profile_mostrar_en_comunidad.py`
 
 ```python
-# Generated by Django 5.2.3 on 2025-06-30 00:07
+# Generated by Django 5.2.3 on 2025-06-30 02:38
 
 from django.db import migrations, models
 
@@ -995,18 +910,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("escritura", "0003_alter_escrito_contenido"),
+        ('escritura', '0003_alter_escrito_contenido'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name="profile",
-            name="mostrar_en_comunidad",
-            field=models.BooleanField(
-                default=False,
-                help_text="Marca esta casilla si deseas que tu perfil sea visible en la página principal.",
-                verbose_name="Mostrar mi perfil en la página de la comunidad",
-            ),
+            model_name='profile',
+            name='mostrar_en_comunidad',
+            field=models.BooleanField(default=False, help_text='Marca esta casilla si deseas que tu perfil sea visible en la página principal.', verbose_name='Mostrar mi perfil en la página de la comunidad'),
         ),
     ]
 
@@ -1224,49 +1135,34 @@ class Migration(migrations.Migration):
     {% if escritos %}
         <ul class="escrito-list">
             {% for escrito in escritos %}
-                {# MODIFICADO: La clase 'escrito-item' ahora es el contenedor principal para cada tarjeta #}
                 <li class="escrito-item"> 
                     
-                    {# AÑADIDO: El botón que controlará el estado de expansión/contracción. #}
-                    {# Usamos <button> por accesibilidad. Los atributos aria son para lectores de pantalla. #}
-                    <button 
-                        class="toggle-button" 
-                        aria-expanded="false" 
-                        aria-controls="escrito-content-{{ escrito.pk }}"
-                        title="Expandir/Contraer"
-                    >
-                    </button>
+                    {# MODIFICADO: Estructura de cabecera re-agrupada #}
+                    <div class="escrito-card-header">
+                        <div class="header-author-info">
+                            <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
+                            <span class="author-name">{{ escrito.autor.username }}</span>
+                        </div>
+                        <div class="header-title-actions">
+                            <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
+                            <button 
+                                class="toggle-button" 
+                                aria-expanded="false" 
+                                aria-controls="escrito-content-{{ escrito.pk }}"
+                                title="Expandir/Contraer"
+                            >
+                            </button>
+                        </div>
+                    </div>
                     
-                {# MODIFICADO: La clase 'escrito-item' ahora es el contenedor principal para cada tarjeta #}
-                <li class="escrito-item"> 
-                    
-                    {# AÑADIDO: El botón que controlará el estado de expansión/contracción. #}
-                    {# Usamos <button> por accesibilidad. Los atributos aria son para lectores de pantalla. #}
-                    <button 
-                        class="toggle-button" 
-                        aria-expanded="false" 
-                        aria-controls="escrito-content-{{ escrito.pk }}"
-                        title="Expandir/Contraer"
-                    >
-                    </button>
-                    
-                    <h2><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
-                    
-                    {# MODIFICADO: Envolvemos el contenido en un div para poder controlarlo. #}
-                    {# Le damos un ID único por si necesitamos controlarlo específicamente. #}
                     <div class="escrito-content" id="escrito-content-{{ escrito.pk }}">
                         {{ escrito.contenido|safe }} 
                     </div>
 
-                    {# MODIFICADO: Envolvemos el contenido en un div para poder controlarlo. #}
-                    {# Le damos un ID único por si necesitamos controlarlo específicamente. #}
-                    <div class="escrito-content" id="escrito-content-{{ escrito.pk }}">
-                        {{ escrito.contenido|safe }} 
-                    </div>
-
-                    <div class="escrito-meta">
-                        <p>Por: {{ escrito.autor.username }}</p>
-                        <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
+                    <div class="escrito-footer">
+                        <div class="escrito-meta">
+                            <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
+                        </div>
                     </div>
                 </li>
             {% endfor %}
@@ -1311,8 +1207,36 @@ class Migration(migrations.Migration):
         <ul class="escrito-list">
             {% for escrito in mis_escritos %}
                 <li class="escrito-item">
-                    <div class="escrito-item-header">
-                        <h2><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
+                    
+                    {# MODIFICADO: Estructura de cabecera re-agrupada #}
+                    <div class="escrito-card-header">
+                        <div class="header-author-info">
+                            <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
+                            <span class="author-name">{{ escrito.autor.username }}</span>
+                        </div>
+                        <div class="header-title-actions">
+                            <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
+                            <button 
+                                class="toggle-button" 
+                                aria-expanded="false" 
+                                aria-controls="escrito-content-perfil-{{ escrito.pk }}"
+                                title="Expandir/Contraer"
+                            >
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="escrito-content" id="escrito-content-perfil-{{ escrito.pk }}">
+                        {{ escrito.contenido|safe }} 
+                    </div>
+
+                    <div class="escrito-footer">
+                        <div class="escrito-meta">
+                            <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
+                            {% if escrito.fecha_creacion != escrito.fecha_actualizacion %}
+                                <p>Última actualización: {{ escrito.fecha_actualizacion|date:"d M Y H:i" }}</p>
+                            {% endif %}
+                        </div>
                         <div class="escrito-status-actions">
                             <span class="escrito-status status-{{ escrito.estado|lower }}">{{ escrito.get_estado_display }}</span>
                             <div class="action-buttons">
@@ -1321,13 +1245,6 @@ class Migration(migrations.Migration):
                             </div>
                         </div>
                     </div>
-                    <p>{{ escrito.contenido|truncatechars:150 }}</p>
-                    <div class="escrito-meta">
-                        <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
-                        {% if escrito.estado != 'BORRADOR' %}
-                            <p>Última actualización: {{ escrito.fecha_actualizacion|date:"d M Y H:i" }}</p>
-                        {% endif %}
-                    </div>
                 </li>
             {% endfor %}
         </ul>
@@ -1335,97 +1252,7 @@ class Migration(migrations.Migration):
         <p>Aún no has creado ningún escrito. <a href="{% url 'escritura:crear_escrito' %}">¡Empieza a escribir ahora!</a></p>
     {% endif %}
 
-    <style>
-        /* Estilos específicos para la página de perfil */
-        .profile-header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #E8D8C9;
-        }
-        .profile-pic {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%; /* Circular image */
-            object-fit: cover; /* Cover the area, crop if needed */
-            margin-bottom: 15px;
-            border: 3px solid #AA775A;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        .profile-bio {
-            font-size: 1.1em;
-            color: #6B4F4F;
-            max-width: 600px;
-            margin: 0 auto 20px auto;
-            line-height: 1.6;
-        }
-        .section-title {
-            text-align: center;
-            margin-top: 40px;
-            margin-bottom: 30px;
-            font-size: 2em;
-            color: #AA775A;
-        }
-        hr {
-            border: none;
-            border-top: 1px dashed #E8D8C9;
-            margin: 40px 0;
-        }
-
-        /* Estilos para los elementos de escritos en la página de perfil */
-        .escrito-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap; /* Permitir que los elementos se envuelvan en pantallas pequeñas */
-            margin-bottom: 10px;
-        }
-        .escrito-item-header h2 {
-            margin: 0;
-            flex-grow: 1; /* Permite que el título ocupe espacio */
-        }
-        .escrito-status-actions {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-top: 10px; /* Para móviles, si el título se envuelve */
-            flex-wrap: wrap;
-        }
-        .escrito-status {
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 0.8em;
-            font-weight: bold;
-            color: white;
-            text-transform: uppercase;
-        }
-        .status-borrador { background-color: #6c757d; } /* Gray */
-        .status-privado { background-color: #AA775A; } /* Custom Brown */
-        .status-publico { background-color: #28a745; } /* Green */
-
-        .small-button {
-            padding: 5px 10px;
-            font-size: 0.8em;
-        }
-
-        /* Responsive adjustments for profile page */
-        @media (max-width: 600px) {
-            .escrito-item-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .escrito-status-actions {
-                width: 100%; /* Ocupa todo el ancho */
-                justify-content: flex-start; /* Alinear a la izquierda */
-            }
-            .action-buttons {
-                margin-left: 0; /* Eliminar margen si los botones están abajo */
-                margin-top: 10px; /* Espacio entre estado y botones */
-            }
-        }
-    </style>
 {% endblock %}
-
 ```
 
 ---
@@ -1632,10 +1459,10 @@ form {
     display: flex;
     flex-direction: column;
 }
-p {
+form p {
     margin-bottom: 15px;
 }
-p label {
+form p label {
     display: block;
     margin-bottom: 5px;
     font-weight: bold;
@@ -1680,239 +1507,197 @@ ul.errorlist {
     padding: 0;
 }
 
-/* --- AÑADIDO Y MODIFICADO: Estilos para la lista de escritos con expandir/contraer --- */
-
-/* --- AÑADIDO Y MODIFICADO: Estilos para la lista de escritos con expandir/contraer --- */
 .escrito-item {
     background-color: #FAF7F0;
-    margin-bottom: 20px; /* Más espacio entre items */
-    padding: 20px; /* Más padding interno */
-    background-color: #FAF7F0;
-    margin-bottom: 20px; /* Más espacio entre items */
-    padding: 20px; /* Más padding interno */
+    margin-bottom: 20px;
+    padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: relative; /* Clave para posicionar el botón de toggle */
-    position: relative; /* Clave para posicionar el botón de toggle */
 }
 
-
-.escrito-item h2 {
-    margin-top: 0;
-    margin-right: 40px; /* Espacio para que el título no se solape con el botón */
-    color: #AA775A;
-    font-family: 'Playfair Display', serif;
-    margin-right: 40px; /* Espacio para que el título no se solape con el botón */
-    color: #AA775A;
-    font-family: 'Playfair Display', serif;
+/* AÑADIDO: Nueva cabecera unificada */
+.escrito-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
 }
 
+/* AÑADIDO: Grupo para info del autor a la izquierda */
+.header-author-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0; /* Evita que el contenedor se desborde si el nombre es largo */
+}
 
-.escrito-item h2 a {
+/* AÑADIDO: Grupo para título y acciones a la derecha */
+.header-title-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.author-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #E8D8C9;
+    flex-shrink: 0; /* Evita que la imagen se encoja */
+}
+
+.author-name {
+    font-weight: bold;
+    color: #6B4F4F;
+    font-family: 'Lato', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.escrito-title {
+    margin: 0; /* Quitamos margen del h2 */
+    font-family: 'Playfair Display', serif;
+    color: #AA775A;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.escrito-title a {
     text-decoration: none;
-    color: #AA775A;
+    color: inherit; /* Hereda el color del h2 */
 }
 
-
-.escrito-item h2 a:hover {
+.escrito-title a:hover {
     text-decoration: underline;
 }
 
+.escrito-meta p {
+    margin: 0;
+    line-height: 1.4;
+}
 
-.escrito-item p {
+.escrito-content {
+    max-height: 100px;
+    overflow: hidden;
+    position: relative;
+    transition: max-height 0.4s ease-in-out;
     line-height: 1.6;
     font-family: 'Lato', sans-serif;
-    font-family: 'Lato', sans-serif;
 }
 
+.escrito-item.is-expanded .escrito-content {
+    max-height: 1500px;
+}
 
-.escrito-meta {
+.escrito-content::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(to bottom, transparent, #FAF7F0);
+    transition: opacity 0.4s ease-in-out;
+}
+
+.escrito-item.is-expanded .escrito-content::after {
+    opacity: 0;
+}
+
+.toggle-button {
+    width: 28px;
+    height: 28px;
+    background-color: #E8D8C9;
+    color: #AA775A;
+    border: 1px solid #CC9980;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 1;
+    padding: 0;
+    transition: background-color 0.3s, transform 0.3s;
+    flex-shrink: 0;
+}
+
+.toggle-button:hover {
+    background-color: #CC9980;
+    color: white;
+}
+
+.toggle-button::before {
+    content: '+';
+}
+
+.escrito-item.is-expanded .toggle-button::before {
+    content: '−';
+}
+
+.escrito-item.is-expanded .toggle-button {
+    transform: rotate(180deg);
+}
+
+.escrito-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #E8D8C9;
     font-size: 0.9em;
     color: #6B4F4F;
-    color: #6B4F4F;
-    margin-top: 10px;
-    border-top: 1px solid #E8D8C9;
-    border-top: 1px solid #E8D8C9;
-    padding-top: 10px;
     font-family: 'Lato', sans-serif;
 }
 
-/* Contenedor del contenido del escrito */
-.escrito-content {
-    max-height: 100px; /* Altura máxima cuando está contraído */
-    overflow: hidden; /* Oculta el texto que se desborda */
-    position: relative; /* Para el efecto de difuminado */
-    transition: max-height 0.4s ease-in-out; /* Transición suave para la altura */
-}
-
-/* Estado expandido (cuando .escrito-item tiene la clase .is-expanded) */
-.escrito-item.is-expanded .escrito-content {
-    max-height: 1500px; /* Un valor grande para asegurar que todo el contenido sea visible */
-}
-
-/* Efecto de difuminado al final del contenido contraído */
-.escrito-content::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 30px;
-    background: linear-gradient(to bottom, transparent, #FAF7F0);
-    transition: opacity 0.4s ease-in-out;
-}
-
-/* Ocultamos el difuminado cuando el contenido está expandido */
-.escrito-item.is-expanded .escrito-content::after {
-    opacity: 0;
-}
-
-/* Botón de Toggle (+/-) */
-.toggle-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 28px;
-    height: 28px;
-    background-color: #E8D8C9;
-    color: #AA775A;
-    border: 1px solid #CC9980;
-    border-radius: 50%;
-    cursor: pointer;
+.escrito-status-actions {
     display: flex;
-    justify-content: center;
     align-items: center;
-    font-size: 20px;
-    font-weight: bold;
-    line-height: 1;
-    padding: 0;
-    transition: background-color 0.3s, transform 0.3s;
+    gap: 15px;
+    flex-wrap: wrap;
 }
-
-.toggle-button:hover {
-    background-color: #CC9980;
-    color: white;
-}
-
-.toggle-button::before {
-    content: '+'; /* Símbolo por defecto (contraído) */
-    font-family: 'Lato', sans-serif;
-}
-
-/* Contenedor del contenido del escrito */
-.escrito-content {
-    max-height: 100px; /* Altura máxima cuando está contraído */
-    overflow: hidden; /* Oculta el texto que se desborda */
-    position: relative; /* Para el efecto de difuminado */
-    transition: max-height 0.4s ease-in-out; /* Transición suave para la altura */
-}
-
-/* Estado expandido (cuando .escrito-item tiene la clase .is-expanded) */
-.escrito-item.is-expanded .escrito-content {
-    max-height: 1500px; /* Un valor grande para asegurar que todo el contenido sea visible */
-}
-
-/* Efecto de difuminado al final del contenido contraído */
-.escrito-content::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 30px;
-    background: linear-gradient(to bottom, transparent, #FAF7F0);
-    transition: opacity 0.4s ease-in-out;
-}
-
-/* Ocultamos el difuminado cuando el contenido está expandido */
-.escrito-item.is-expanded .escrito-content::after {
-    opacity: 0;
-}
-
-/* Botón de Toggle (+/-) */
-.toggle-button {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    width: 28px;
-    height: 28px;
-    background-color: #E8D8C9;
-    color: #AA775A;
-    border: 1px solid #CC9980;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 20px;
-    font-weight: bold;
-    line-height: 1;
-    padding: 0;
-    transition: background-color 0.3s, transform 0.3s;
-}
-
-.toggle-button:hover {
-    background-color: #CC9980;
-    color: white;
-}
-
-.toggle-button::before {
-    content: '+'; /* Símbolo por defecto (contraído) */
-}
-
-.escrito-item.is-expanded .toggle-button::before {
-    content: '−'; /* Símbolo cuando está expandido (signo menos) */
-}
-
-.escrito-item.is-expanded .toggle-button {
-    transform: rotate(180deg); /* Animación de rotación */
-}
-/* --- Fin de la sección de expandir/contraer --- */
-
-
-.escrito-item.is-expanded .toggle-button::before {
-    content: '−'; /* Símbolo cuando está expandido (signo menos) */
-}
-
-.escrito-item.is-expanded .toggle-button {
-    transform: rotate(180deg); /* Animación de rotación */
-}
-/* --- Fin de la sección de expandir/contraer --- */
-
 
 /* Escrito Detail Specific Styles */
 .header-section {
     display: flex;
-    flex-wrap: wrap; /* Permite que los elementos se envuelvan */
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
 }
 .header-section h1 {
-    flex-grow: 1; /* Permite que el título crezca */
-    margin-right: 10px; /* Espacio entre título y botón */
-    font-family: 'Playfair Display', serif; /* APLICADO: Playfair Display para título de detalle */
+    flex-grow: 1;
+    margin-right: 10px;
+    font-family: 'Playfair Display', serif;
 }
 .action-buttons {
     display: flex;
-    gap: 10px; /* Espacio entre los botones */
+    gap: 10px;
 }
 .content {
     line-height: 1.8;
-    color: #444444; /* Un gris ligeramente más oscuro para el contenido principal */
-    font-family: 'Lato', sans-serif; /* APLICADO: Lato para contenido de detalle */
+    color: #444444;
+    font-family: 'Lato', sans-serif;
 }
 .content p {
-    margin-bottom: 1em; /* Añade un margen inferior a los párrafos para separarlos */
+    margin-bottom: 1em;
 }
 .back-link {
     display: block;
     margin-top: 30px;
     text-align: center;
     text-decoration: none;
-    color: #6B4F4F; /* Enlace de volver */
+    color: #6B4F4F;
     font-weight: bold;
-    font-family: 'Lato', sans-serif; /* APLICADO: Lato para el enlace de volver */
+    font-family: 'Lato', sans-serif;
 }
 .back-link:hover {
     text-decoration: underline;
@@ -1923,7 +1708,7 @@ ul.errorlist {
     list-style: none;
     padding: 0;
     margin-bottom: 20px;
-    font-family: 'Lato', sans-serif; /* APLICADO: Lato para mensajes */
+    font-family: 'Lato', sans-serif;
 }
 
 .messages li {
@@ -1977,56 +1762,51 @@ ul.errorlist {
 
 /* Media Queries for Responsiveness */
 
-/* Small devices (phones, 600px and down) - Estilos base ya son para esto */
-
-/* Medium devices (tablets, 600px and up) */
 @media (min-width: 600px) {
     .container {
-        padding: 30px; /* Más padding en pantallas más grandes */
+        padding: 30px;
     }
     .main-header {
         padding: 15px 30px;
     }
     .logo {
-        flex-basis: auto; /* El logo ya no ocupa todo el ancho */
+        flex-basis: auto;
         text-align: left;
         margin-bottom: 0;
     }
     .nav-links {
-        justify-content: flex-end; /* Alinear enlaces a la derecha */
+        justify-content: flex-end;
         width: auto;
     }
 }
 
-/* Large devices (desktops, 992px and up) */
 @media (min-width: 992px) {
     .container {
-        margin-top: 40px; /* Más margen superior en pantallas grandes */
+        margin-top: 40px;
         margin-bottom: 40px;
     }
     h1 {
-        font-size: 2.5em; /* Aumentar tamaño de h1 en pantallas grandes */
+        font-size: 2.5em;
     }
     .logo a {
-        font-size: 2em; /* Logo más grande */
+        font-size: 2em;
     }
 }
 
-/* Estilos específicos para la página de perfil */
 /* Estilos específicos para la página de perfil */
 .profile-header {
     text-align: center;
     margin-bottom: 40px;
     padding-bottom: 20px;
-    border-bottom: 1px solid #E8D8C9; /* Línea separadora suave */
+    border-bottom: 1px solid #E8D8C9;
 }
 .profile-pic {
     width: 150px;
     height: 150px;
-    border-radius: 50%; /* Imagen circular */
-    object-fit: cover; /* Cubre el área, recorta si es necesario */
+    border-radius: 50%;
+    object-fit: cover;
     margin-bottom: 15px;
-    border: 3px solid #AA775A; /* Borde del color de acento */
+    border: 3px solid #AA775A;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 .profile-bio {
@@ -2042,7 +1822,7 @@ ul.errorlist {
     margin-bottom: 30px;
     font-size: 2em;
     color: #AA775A;
-    font-family: 'Playfair Display', serif; /* Mantener la fuente de títulos */
+    font-family: 'Playfair Display', serif;
 }
 hr {
     border: none;
@@ -2050,26 +1830,6 @@ hr {
     margin: 40px 0;
 }
 
-/* Estilos para los elementos de escritos en la página de perfil */
-.escrito-item-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap; /* Permitir que los elementos se envuelvan en pantallas pequeñas */
-    margin-bottom: 10px;
-}
-.escrito-item-header h2 {
-    margin: 0;
-    flex-grow: 1; /* Permite que el título ocupe espacio */
-}
-.escrito-status-actions {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-top: 0; /* Por defecto, sin margen extra */
-    flex-wrap: wrap;
-    justify-content: flex-end; /* Alinear a la derecha por defecto */
-}
 .escrito-status {
     padding: 5px 10px;
     border-radius: 4px;
@@ -2077,102 +1837,39 @@ hr {
     font-weight: bold;
     color: white;
     text-transform: uppercase;
-    font-family: 'Lato', sans-serif; /* Consistencia en la fuente */
+    font-family: 'Lato', sans-serif;
 }
-/* Colores de estado basados en la paleta */
-.status-borrador { background-color: #6c757d; } /* Gris */
-.status-privado { background-color: #AA775A; } /* Nuestro tono cálido */
-.status-publico { background-color: #28a745; } /* Verde para algo positivo */
+.status-borrador { background-color: #6c757d; }
+.status-privado { background-color: #AA775A; }
+.status-publico { background-color: #28a745; }
 
-.small-button { /* Para los botones de Editar/Eliminar en la lista de perfil */
+.small-button {
     padding: 5px 10px;
     font-size: 0.8em;
 }
 
-/* Responsive adjustments for profile page */
 @media (max-width: 600px) {
-    .escrito-item-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    .escrito-status-actions {
-        width: 100%; /* Ocupa todo el ancho */
-        justify-content: flex-start; /* Alinear a la izquierda */
-        margin-top: 10px; /* Espacio entre título y estado/acciones */
-    }
-    .action-buttons {
-        margin-left: 0; /* Eliminar margen si los botones están abajo */
-        margin-top: 0; /* Sin margen extra */
-    }
     .profile-bio {
-        padding: 0 10px; /* Reducir padding en móviles */
+        padding: 0 10px;
+    }
+    /* En pantallas pequeñas, permitimos que la cabecera se envuelva */
+    .escrito-card-header {
+        flex-wrap: wrap;
     }
 }
-```
-
----
-
-## Archivo: `static/js/Main.js`
-
-```javascript
-// static/js/main.js
-
-// Usamos 'DOMContentLoaded' para asegurarnos de que el script se ejecuta
-// solo después de que todo el HTML de la página se haya cargado y parseado.
-// Es una buena práctica para evitar errores de "elemento no encontrado".
-document.addEventListener('DOMContentLoaded', function () {
-
-    // SECCIÓN: Lógica para contraer/expandir escritos en la lista
-    // -----------------------------------------------------------
-
-    // 1. Seleccionamos todos los elementos de la lista de escritos.
-    const escritoItems = document.querySelectorAll('.escrito-item');
-
-    // 2. Iteramos sobre cada elemento de la lista para añadirle la funcionalidad.
-    escritoItems.forEach(item => {
-        // Encontramos el contenido y el botón dentro de cada item.
-        const content = item.querySelector('.escrito-content');
-        const toggleButton = item.querySelector('.toggle-button');
-
-        // Si no encontramos el contenido o el botón, saltamos al siguiente item.
-        if (!content || !toggleButton) return;
-
-        // Por defecto, comprobamos si el contenido es más alto que nuestra altura colapsada.
-        // Si no lo es, no necesitamos el botón, así que lo ocultamos.
-        // `scrollHeight` es la altura total del contenido, `clientHeight` es la altura visible.
-        if (content.scrollHeight <= content.clientHeight) {
-            toggleButton.style.display = 'none';
-        }
-
-        // 3. Añadimos un 'escuchador de eventos' al botón.
-        //    Esto ejecuta una función cada vez que el usuario hace clic en el botón.
-        toggleButton.addEventListener('click', () => {
-            // `classList.toggle` es un método muy útil:
-            // - Si la clase 'is-expanded' existe en el 'item', la quita.
-            // - Si la clase 'is-expanded' no existe, la añade.
-            // Esto nos permite cambiar entre los dos estados con una sola línea.
-            item.classList.toggle('is-expanded');
-
-            // MEJORA DE ACCESIBILIDAD: Actualizamos el atributo aria-expanded.
-            const isExpanded = item.classList.contains('is-expanded');
-            toggleButton.setAttribute('aria-expanded', isExpanded);
-        });
-    });
-});
 
 /* Estilos para la página de inicio (home.html) */
-.landing-page { padding: 0; } /* Quita el padding del .container si se usa allí */
+.landing-page { padding: 0; }
 
 .hero-section {
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1455390582262-044cdead277a?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1971') no-repeat center center/cover;
     color: white;
     text-align: center;
     padding: 100px 20px;
-    /* Asegurarse de que no herede el fondo de .container si está anidado */
     background-color: transparent !important;
 }
 
-.hero-section .hero-title { /* Especificidad para asegurar que el color se aplique */
+.hero-section .hero-title {
     color: white;
     font-size: 3em;
     font-family: 'Playfair Display', serif;
@@ -2182,32 +1879,29 @@ document.addEventListener('DOMContentLoaded', function () {
     font-size: 1.2em;
     margin-bottom: 30px;
     font-family: 'Lato', sans-serif;
-    color: white; /* Asegurar color blanco para el subtítulo */
+    color: white;
 }
 
-.hero-section .large-button { /* Hereda de .button pero con ajustes */
+.hero-section .large-button {
     padding: 15px 30px;
     font-size: 1.1em;
 }
-/* Si .button.primary ya tiene los colores deseados, no es necesario repetirlos aquí,
-   a menos que quieras un estilo específico para el botón del hero. */
 
 .about-section, .community-section {
     padding: 60px 20px;
     max-width: 900px;
-    margin: 0 auto; /* Centra las secciones */
-    background-color: #FAF7F0; /* Fondo para estas secciones, si es diferente del body */
-    border-radius: 0; /* Si están dentro de .container, podrían heredar su border-radius */
+    margin: 0 auto;
+    background-color: #FAF7F0;
+    border-radius: 0;
 }
 
-/* El .section-title ya tiene estilos globales, pero si necesitas ajustes: */
 .about-section .section-title,
 .community-section .section-title {
     text-align: center;
     margin-bottom: 40px;
     font-size: 2.2em;
-    color: #AA775A; /* Heredado, pero se puede especificar */
-    font-family: 'Playfair Display', serif; /* Heredado */
+    color: #AA775A;
+    font-family: 'Playfair Display', serif;
 }
 
 .community-gallery {
@@ -2218,13 +1912,13 @@ document.addEventListener('DOMContentLoaded', function () {
 }
 
 .user-card {
-    background-color: #FAF7F0; /* Coincide con el fondo de .container */
-    border: 1px solid #E8D8C9; /* Borde suave */
+    background-color: #FAF7F0;
+    border: 1px solid #E8D8C9;
     border-radius: 8px;
     width: 200px;
     text-align: center;
     padding: 20px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05); /* Sombra sutil */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 .user-card-img {
@@ -2232,23 +1926,23 @@ document.addEventListener('DOMContentLoaded', function () {
     height: 100px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #CC9980; /* Borde con color de acento */
-    margin-bottom: 10px; /* Espacio debajo de la imagen */
+    border: 3px solid #CC9980;
+    margin-bottom: 10px;
 }
 
 .user-card-name {
     font-size: 1.2em;
-    margin: 10px 0 10px 0; /* Ajuste de margen */
-    color: #6B4F4F; /* Color de nombre de usuario */
-    font-family: 'Playfair Display', serif; /* Fuente para el nombre */
+    margin: 10px 0 10px 0;
+    color: #6B4F4F;
+    font-family: 'Playfair Display', serif;
 }
 
 .user-card-bio {
     font-size: 0.9em;
     color: #6B4F4F;
     font-style: italic;
-    font-family: 'Lato', sans-serif; /* Fuente para la bio */
-    line-height: 1.4; /* Mejor legibilidad */
+    font-family: 'Lato', sans-serif;
+    line-height: 1.4;
 }
 
 .community-empty {
@@ -2257,6 +1951,26 @@ document.addEventListener('DOMContentLoaded', function () {
     color: #6B4F4F;
     font-family: 'Lato', sans-serif;
     padding: 20px 0;
+}
+
+/* AÑADIDO: Estilos para que el botón de logout parezca un enlace en la barra de navegación */
+.nav-link-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    font-family: inherit; /* Hereda la fuente de su contenedor (ul.nav-links) */
+    
+    /* Replicamos los estilos de .nav-links a */
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1em; /* Asegura que el tamaño de fuente sea el mismo */
+}
+
+.nav-link-button:hover {
+    text-decoration: underline;
 }
 ```
 
@@ -2626,7 +2340,15 @@ application = get_wsgi_application()
                     <li><span class="welcome-message">Hola, {{ user.username }}!</span></li>
                     {# AÑADIDO: Enlace a la página de perfil #}
                     <li><a href="{% url 'escritura:perfil_usuario' %}">Mi Perfil</a></li>
-                    <li><a href="{% url 'logout' %}">Cerrar Sesión</a></li>
+                    
+                    {# MODIFICADO: Reemplazamos el enlace <a> por un formulario <form> #}
+                    <li>
+                        <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-link-button">Cerrar Sesión</button>
+                        </form>
+                    </li>
+                    
                     <li><a href="{% url 'escritura:crear_escrito' %}" class="button primary">+ Crear Nuevo Escrito</a></li>
                 {% else %}
                     <li><a href="{% url 'login' %}" class="button">Iniciar Sesión</a></li>
@@ -2656,7 +2378,6 @@ application = get_wsgi_application()
     </main>
 
     <footer class="main-footer"> {# MODIFICADO: Cambiado de <footer> a <footer class="main-footer"> para consistencia #}
-    <footer class="main-footer"> {# MODIFICADO: Cambiado de <footer> a <footer class="main-footer"> para consistencia #}
         <p>© 2025 Taller de Escritura. Todos los derechos reservados.</p>
     </footer>
 
@@ -2665,12 +2386,51 @@ application = get_wsgi_application()
     {# AÑADIDO: Carga del archivo JavaScript principal del sitio. #}
     {# Se coloca al final del body para no bloquear la renderización del contenido de la página. #}
     <script src="{% static 'js/main.js' %}"></script>
-
-    {# AÑADIDO: Carga del archivo JavaScript principal del sitio. #}
-    {# Se coloca al final del body para no bloquear la renderización del contenido de la página. #}
-    <script src="{% static 'js/main.js' %}"></script>
 </body>
 </html>
+```
+
+---
+
+## Archivo: `taller_escritura/templates/registration/login.html`
+
+```html
+{# taller_escritura/templates/registration/login.html #}
+{% extends 'base.html' %}
+
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Iniciar Sesión</h1>
+
+    {% if form.errors %}
+        <p style="color: red;">Tu nombre de usuario y contraseña no coinciden. Por favor, inténtalo de nuevo.</p>
+    {% endif %}
+
+    {% if next %}
+        {% if user.is_authenticated %}
+            <p>Tu cuenta no tiene acceso a esta página. Para continuar, por favor inicia sesión con una cuenta que tenga acceso.</p>
+        {% else %}
+            <p>Por favor, inicia sesión para ver esta página.</p>
+        {% endif %}
+    {% endif %}
+
+    <form method="post" action="{% url 'login' %}">
+        {# CORREGIDO: Añadimos la etiqueta CSRF token. ¡Esto es fundamental para la seguridad! #}
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+        
+        <button type="submit" class="button primary" style="margin-top: 20px;">Iniciar Sesión</button>
+        <input type="hidden" name="next" value="{{ next }}">
+    </form>
+
+    <div style="margin-top: 20px;">
+        <p><a href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a></p>
+        <p>¿No tienes una cuenta? <a href="{% url 'escritura:registro' %}">Regístrate aquí</a>.</p>
+    </div>
+
+{% endblock %}
 ```
 
 ---
