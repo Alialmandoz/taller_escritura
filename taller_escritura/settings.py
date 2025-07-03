@@ -59,9 +59,18 @@ WSGI_APPLICATION = 'taller_escritura.wsgi.application'
 
 # --- Base de Datos (Leída directamente de Railway) ---
 import dj_database_url
+
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600)
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3', # Un motor por defecto
+        'NAME': 'dummy_db_for_build', # Un nombre cualquiera
+    }
 }
+
+# Sobrescribe con la base de datos de producción si la URL está disponible
+db_from_env = dj_database_url.config(conn_max_age=600)
+if db_from_env:
+    DATABASES['default'] = db_from_env
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
