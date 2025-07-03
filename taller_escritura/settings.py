@@ -22,7 +22,7 @@ else:
     # --- AJUSTES DE DESARROLLO (LOCAL) ---
     SECRET_KEY = 'django-insecure-una-clave-local-que-no-importa-mucho'
     DEBUG = True
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'devivan.pythonanywhere.com']
 
 # Application definition
 INSTALLED_APPS = [
