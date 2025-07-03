@@ -1,16 +1,23 @@
 # taller_escritura/settings.py
-# VERSIÓN SIMPLIFICADA PARA RAILWAY
+# VERSIÓN FINAL Y ROBUSTA PARA RAILWAY
 
 import os
 from pathlib import Path
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- Variables de Entorno (Leídas directamente de Railway) ---
-# En producción, estas variables SIEMPRE deben existir.
-SECRET_KEY = os.environ['SECRET_KEY']
-DEBUG = False # En producción, DEBUG siempre es False.
-ALLOWED_HOSTS = [os.environ['RAILWAY_PUBLIC_DOMAIN']] # Leemos directamente el dominio público de Railway.
+SECRET_KEY = os.environ.get('SECRET_KEY')
+DEBUG = False
+
+# Railway proporciona el dominio público en esta variable.
+# Usamos '*' como fallback solo durante la fase de build para evitar errores.
+RAILWAY_PUBLIC_DOMAIN = os.environ.get('RAILWAY_PUBLIC_DOMAIN')
+if RAILWAY_PUBLIC_DOMAIN:
+    ALLOWED_HOSTS = [RAILWAY_PUBLIC_DOMAIN]
+else:
+    ALLOWED_HOSTS = ['*'] # Permite cualquier host solo durante el build
 
 # Application definition
 INSTALLED_APPS = [
@@ -19,7 +26,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'whitenoise.runserver_nostatic', # Para servir estáticos con WhiteNoise
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'escritura',
     'ckeditor',
@@ -28,7 +35,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', # WhiteNoise
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -57,20 +64,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'taller_escritura.wsgi.application'
 
-# --- Base de Datos (Leída directamente de Railway) ---
-import dj_database_url
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Un motor por defecto
-        'NAME': 'dummy_db_for_build', # Un nombre cualquiera
+# --- Base de Datos (Configuración Robusta) ---
+# Si DATABASE_URL existe (en la fase 'web'), la usamos.
+# Si no (en la fase 'release'/'build'), usamos una SQLite en memoria.
+DATABASE_URL = os.environ.get('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:', # Base de datos en memoria para la fase de build
+        }
     }
-}
-
-# Sobrescribe con la base de datos de producción si la URL está disponible
-db_from_env = dj_database_url.config(conn_max_age=600)
-if db_from_env:
-    DATABASES['default'] = db_from_env
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -108,4 +114,3 @@ LOGOUT_REDIRECT_URL = 'escritura:lista_escritos'
 
 # CKEditor
 CKEDITOR_UPLOAD_PATH = 'uploads/'
-# (La configuración de CKEDITOR_CONFIGS se puede omitir si el default es suficiente)
