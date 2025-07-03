@@ -107,6 +107,12 @@ USE_TZ = True
 
 # Static & Media files
 STATIC_URL = 'static/'
+
+# AÑADIDO: Le dice a Django que busque archivos estáticos también en la carpeta 'static' de la raíz.
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
+
 STATIC_ROOT = BASE_DIR / 'staticfiles' # PythonAnywhere necesita esta ruta
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
