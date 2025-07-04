@@ -65,8 +65,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'DevIvan.mysql.pythonanywhere-services.com',  # <-- REEMPLAZA 'DevIvan' con tu usuario
         'USER': 'DevIvan',                     # <-- REEMPLAZA 'DevIvan' con tu usuario
-        'PASSWORD': 'tu-contraseña-de-la-db',  # <-- REEMPLAZA ESTO
-        'HOST': 'sql159753', # <-- REEMPLAZA 'DevIvan' con tu usuario
+        'PASSWORD': 'sql159753',  # <-- REEMPLAZA ESTO
+        'HOST': 'DevIvan', # <-- REEMPLAZA 'DevIvan' con tu usuario
     }
 }
 
