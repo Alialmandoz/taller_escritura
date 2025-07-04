@@ -8,11 +8,14 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- CONFIGURACIÓN DE PRODUCCIÓN FIJA ---
-# Todos los valores están directamente en el código.
-# Esto es menos flexible, pero más directo para PythonAnywhere si las variables de entorno son un problema.
 
-SECRET_KEY = 'qacek+8@n@kc1^1617rz0@jg@_+70v5j(74ki#jb-xa-ez&int' # <-- ¡REEMPLAZA ESTO!
+# MODIFICADO: Clave secreta segura y única para tu proyecto.
+SECRET_KEY = '***REDACTED***'
+
+# DEBUG debe ser False en producción por seguridad.
 DEBUG = False
+
+# MODIFICADO: Host permitido para tu aplicación.
 ALLOWED_HOSTS = ['devivan.pythonanywhere.com']
 
 # Application definition
@@ -59,16 +62,18 @@ TEMPLATES = [
 WSGI_APPLICATION = 'taller_escritura.wsgi.application'
 
 # --- BASE DE DATOS DE PRODUCCIÓN (MYSQL EN PYTHONANYWHERE) ---
-# Rellena estos valores con los datos de tu pestaña "Databases" en PythonAnywhere.
+# MODIFICADO: Rellenado con las credenciales exactas de tu cuenta de PythonAnywhere.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'DevIvan$db_taller_escritura',  # <-- REEMPLAZA 'DevIvan' con tu usuario
-        'USER': 'DevIvan',                     # <-- REEMPLAZA 'DevIvan' con tu usuario
-        'PASSWORD': '***REDACTED***',  # <-- REEMPLAZA ESTO
-        'HOST': 'DevIvan.mysql.pythonanywhere-services.com', # <-- REEMPLAZA 'DevIvan' con tu usuario
+        'NAME': 'DevIvan$db_taller_escritura',
+        'USER': 'DevIvan',
+        'PASSWORD': '***REDACTED***', # AÑADIDA: Tu contraseña de la base de datos.
+        'HOST': 'DevIvan.mysql.pythonanywhere-services.com',
+        'PORT': '3306',
     }
 }
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -85,9 +90,10 @@ USE_I18N = True
 USE_TZ = True
 
 # Static & Media files
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+# Rutas para que PythonAnywhere encuentre tus archivos estáticos y de medios
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -105,7 +111,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'escritura:lista_escritos'
 LOGOUT_REDIRECT_URL = 'escritura:lista_escritos'
 
-# CKEditor
+# CKEditor Configuración
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_CONFIGS = {
     'default': {
