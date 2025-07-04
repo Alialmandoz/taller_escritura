@@ -1,6 +1,6 @@
 # Contenido del Proyecto: taller escritura
 
-**Generado el:** 2025-07-04 11:48:44
+**Generado el:** 2025-07-04 12:29:16
 
 ## Estructura del Proyecto
 
@@ -291,8 +291,6 @@ a s g i r e f = = 3 . 8 . 1 
  s q l p a r s e = = 0 . 5 . 3 
  
  t z d a t a = = 2 0 2 5 . 2 
- 
- w h i t e n o i s e = = 6 . 9 . 0 
  
  
 ```
@@ -2350,7 +2348,7 @@ application = get_asgi_application()
 
 ```python
 # taller_escritura/settings.py
-# VERSIÓN ROBUSTA Y FLEXIBLE PARA DESARROLLO LOCAL Y PYTHONANYWHERE
+# VERSIÓN FINAL AUTOSUFICIENTE PARA PYTHONANYWHERE
 
 import os
 from pathlib import Path
@@ -2358,22 +2356,13 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# --- La Clave de la Flexibilidad: La Variable de Entorno 'ENVIRONMENT' ---
-# En PythonAnywhere, definiremos una variable de entorno llamada 'ENVIRONMENT' con el valor 'production'.
-# Si esta variable no existe, asumiremos que estamos en desarrollo local.
-IS_PRODUCTION = os.environ.get('ENVIRONMENT') == 'production'
+# --- CONFIGURACIÓN DE PRODUCCIÓN FIJA ---
+# Todos los valores están directamente en el código.
+# Esto es menos flexible, pero más directo para PythonAnywhere si las variables de entorno son un problema.
 
-if IS_PRODUCTION:
-    # --- AJUSTES DE PRODUCCIÓN (PYTHONANYWHERE) ---
-    # Estas variables las configuraremos en PythonAnywhere.
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    DEBUG = False
-    ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')] # Ej: 'tu-usuario.pythonanywhere.com'
-else:
-    # --- AJUSTES DE DESARROLLO (LOCAL) ---
-    SECRET_KEY = 'django-insecure-una-clave-local-que-no-importa-mucho'
-    DEBUG = True
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'devivan.pythonanywhere.com']
+SECRET_KEY = 'pon-aqui-tu-clave-secreta-larga-y-aleatoria' # <-- ¡REEMPLAZA ESTO!
+DEBUG = False
+ALLOWED_HOSTS = ['devivan.pythonanywhere.com']
 
 # Application definition
 INSTALLED_APPS = [
@@ -2382,7 +2371,6 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'escritura',
     'ckeditor',
@@ -2391,7 +2379,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -2420,27 +2407,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'taller_escritura.wsgi.application'
 
-# --- Configuración de Base de Datos ---
-if IS_PRODUCTION:
-    # --- BASE DE DATOS DE PRODUCCIÓN (MYSQL EN PYTHONANYWHERE) ---
-    # PythonAnywhere nos dará estos datos para poner en las variables de entorno.
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.environ.get('DB_NAME'),
-            'USER': os.environ.get('DB_USER'),
-            'PASSWORD': os.environ.get('DB_PASSWORD'),
-            'HOST': os.environ.get('DB_HOST'),
-        }
+# --- BASE DE DATOS DE PRODUCCIÓN (MYSQL EN PYTHONANYWHERE) ---
+# Rellena estos valores con los datos de tu pestaña "Databases" en PythonAnywhere.
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'DevIvan$db_taller_escritura',  # <-- REEMPLAZA 'DevIvan' con tu usuario
+        'USER': 'DevIvan',                     # <-- REEMPLAZA 'DevIvan' con tu usuario
+        'PASSWORD': 'tu-contraseña-de-la-db',  # <-- REEMPLAZA ESTO
+        'HOST': 'DevIvan.mysql.pythonanywhere-services.com', # <-- REEMPLAZA 'DevIvan' con tu usuario
     }
-else:
-    # --- BASE DE DATOS DE DESARROLLO (SQLITE LOCAL) ---
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -2458,23 +2435,16 @@ USE_TZ = True
 
 # Static & Media files
 STATIC_URL = 'static/'
-
-# AÑADIDO: Le dice a Django que busque archivos estáticos también en la carpeta 'static' de la raíz.
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
-
-STATIC_ROOT = BASE_DIR / 'staticfiles' # PythonAnywhere necesita esta ruta
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Configuración de Almacenamiento para Estáticos y Media
+# Configuración de Almacenamiento Simplificada
 STORAGES = {
-    # Almacenamiento para archivos estáticos (gestionado por WhiteNoise)
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
-    # AÑADIDO: Almacenamiento para archivos por defecto (media, subidos por usuarios)
     "default": {
         "BACKEND": "django.core.files.storage.FileSystemStorage",
     },
