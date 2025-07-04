@@ -1,5 +1,5 @@
 # taller_escritura/settings.py
-# VERSIÓN FINAL PARA PYTHONANYWHERE - SIN WHITENOISE
+# VERSIÓN FINAL PARA PYTHONANYWHERE - CON DOMINIO FIJO
 
 import os
 from pathlib import Path
@@ -8,13 +8,16 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- La Clave de la Flexibilidad: La Variable de Entorno 'ENVIRONMENT' ---
+# En PythonAnywhere, definiremos una variable de entorno llamada 'ENVIRONMENT' con el valor 'production'.
+# Si esta variable no existe, asumiremos que estamos en desarrollo local.
 IS_PRODUCTION = os.environ.get('ENVIRONMENT') == 'production'
 
 if IS_PRODUCTION:
     # --- AJUSTES DE PRODUCCIÓN (PYTHONANYWHERE) ---
     SECRET_KEY = os.environ.get('SECRET_KEY')
     DEBUG = False
-    ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')]
+    # MODIFICADO: Añadimos el dominio directamente a la lista.
+    ALLOWED_HOSTS = ['devivan.pythonanywhere.com'] 
 else:
     # --- AJUSTES DE DESARROLLO (LOCAL) ---
     SECRET_KEY = 'django-insecure-una-clave-local-que-no-importa-mucho'
@@ -28,7 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles', # Django manejará los estáticos
+    'django.contrib.staticfiles',
     'escritura',
     'ckeditor',
     'ckeditor_uploader',
@@ -36,7 +39,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # ELIMINADO: 'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -67,6 +69,7 @@ WSGI_APPLICATION = 'taller_escritura.wsgi.application'
 
 # --- Configuración de Base de Datos ---
 if IS_PRODUCTION:
+    # --- BASE DE DATOS DE PRODUCCIÓN (MYSQL EN PYTHONANYWHERE) ---
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -77,6 +80,7 @@ if IS_PRODUCTION:
         }
     }
 else:
+    # --- BASE DE DATOS DE DESARROLLO (SQLITE LOCAL) ---
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -85,7 +89,6 @@ else:
     }
 
 # Password validation
-# ... (El resto del archivo no cambia) ...
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -93,6 +96,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# Internationalization
 LANGUAGE_CODE = 'es-es'
 TIME_ZONE = 'America/Mexico_City'
 USE_I18N = True
@@ -105,8 +109,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# ELIMINADO: El diccionario STORAGES complejo. Django usará sus valores por defecto, que son los correctos ahora.
-# Esto es opcional, pero lo quito para máxima limpieza. Si lo dejas, no pasa nada.
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'escritura:lista_escritos'
