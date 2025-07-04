@@ -1,12 +1,15 @@
 {# escritura/templates/escritura/perfil_usuario.html #}
 {% extends 'base.html' %}
-{% load static %} {# Asegúrate de cargar static para las imágenes #}
+{% load static %}
 
 {% block title %}Perfil de {{ usuario.username }}{% endblock %}
 
 {% block content %}
     <div class="profile-header">
-        <img src="{{ perfil.foto_perfil.url }}" alt="Foto de perfil de {{ usuario.username }}" class="profile-pic">
+        {# MODIFICADO: Añadimos una condición para la imagen de perfil #}
+        {% if perfil and perfil.foto_perfil %}
+            <img src="{{ perfil.foto_perfil.url }}" alt="Foto de perfil de {{ usuario.username }}" class="profile-pic">
+        {% endif %}
         <h1 class="page-title">{{ usuario.username }}</h1>
         <p class="profile-bio">
             {% if perfil.bio %}
@@ -15,7 +18,6 @@
                 Aún no has añadido una biografía.
             {% endif %}
         </p>
-        {# MODIFICADO: El enlace ahora apunta a la página de edición. #}
         <a href="{% url 'escritura:editar_perfil' %}" class="button secondary">Editar Perfil</a>
     </div>
 
@@ -27,27 +29,29 @@
         <ul class="escrito-list">
             {% for escrito in mis_escritos %}
                 <li class="escrito-item">
-                    
-                    {# MODIFICADO: Estructura de cabecera re-agrupada #}
+
                     <div class="escrito-card-header">
                         <div class="header-author-info">
-                            <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
+                             {# MODIFICADO: Replicamos la misma lógica segura para la imagen #}
+                            {% if escrito.autor.profile and escrito.autor.profile.foto_perfil %}
+                                <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
+                            {% endif %}
                             <span class="author-name">{{ escrito.autor.username }}</span>
                         </div>
                         <div class="header-title-actions">
                             <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
-                            <button 
-                                class="toggle-button" 
-                                aria-expanded="false" 
+                            <button
+                                class="toggle-button"
+                                aria-expanded="false"
                                 aria-controls="escrito-content-perfil-{{ escrito.pk }}"
                                 title="Expandir/Contraer"
                             >
                             </button>
                         </div>
                     </div>
-                    
+
                     <div class="escrito-content" id="escrito-content-perfil-{{ escrito.pk }}">
-                        {{ escrito.contenido|safe }} 
+                        {{ escrito.contenido|safe }}
                     </div>
 
                     <div class="escrito-footer">
