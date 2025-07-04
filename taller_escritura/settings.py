@@ -63,10 +63,10 @@ WSGI_APPLICATION = 'taller_escritura.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'DevIvan.mysql.pythonanywhere-services.com',  # <-- REEMPLAZA 'DevIvan' con tu usuario
+        'NAME': 'DevIvan$db_taller_escritura',  # <-- REEMPLAZA 'DevIvan' con tu usuario
         'USER': 'DevIvan',                     # <-- REEMPLAZA 'DevIvan' con tu usuario
         'PASSWORD': '***REDACTED***',  # <-- REEMPLAZA ESTO
-        'HOST': 'DevIvan', # <-- REEMPLAZA 'DevIvan' con tu usuario
+        'HOST': 'DevIvan.mysql.pythonanywhere-services.com', # <-- REEMPLAZA 'DevIvan' con tu usuario
     }
 }
 
