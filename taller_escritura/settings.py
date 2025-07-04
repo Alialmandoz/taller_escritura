@@ -1,5 +1,5 @@
 # taller_escritura/settings.py
-# VERSIÓN FINAL PARA PYTHONANYWHERE - CON DOMINIO FIJO
+# VERSIÓN FINAL AUTOSUFICIENTE PARA PYTHONANYWHERE
 
 import os
 from pathlib import Path
@@ -7,22 +7,13 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# --- La Clave de la Flexibilidad: La Variable de Entorno 'ENVIRONMENT' ---
-# En PythonAnywhere, definiremos una variable de entorno llamada 'ENVIRONMENT' con el valor 'production'.
-# Si esta variable no existe, asumiremos que estamos en desarrollo local.
-IS_PRODUCTION = os.environ.get('ENVIRONMENT') == 'production'
+# --- CONFIGURACIÓN DE PRODUCCIÓN FIJA ---
+# Todos los valores están directamente en el código.
+# Esto es menos flexible, pero más directo para PythonAnywhere si las variables de entorno son un problema.
 
-if IS_PRODUCTION:
-    # --- AJUSTES DE PRODUCCIÓN (PYTHONANYWHERE) ---
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    DEBUG = False
-    # MODIFICADO: Añadimos el dominio directamente a la lista.
-    ALLOWED_HOSTS = ['devivan.pythonanywhere.com'] 
-else:
-    # --- AJUSTES DE DESARROLLO (LOCAL) ---
-    SECRET_KEY = 'django-insecure-una-clave-local-que-no-importa-mucho'
-    DEBUG = True
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+SECRET_KEY = 'pon-aqui-tu-clave-secreta-larga-y-aleatoria' # <-- ¡REEMPLAZA ESTO!
+DEBUG = False
+ALLOWED_HOSTS = ['devivan.pythonanywhere.com']
 
 # Application definition
 INSTALLED_APPS = [
@@ -67,26 +58,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'taller_escritura.wsgi.application'
 
-# --- Configuración de Base de Datos ---
-if IS_PRODUCTION:
-    # --- BASE DE DATOS DE PRODUCCIÓN (MYSQL EN PYTHONANYWHERE) ---
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': os.environ.get('DB_NAME'),
-            'USER': os.environ.get('DB_USER'),
-            'PASSWORD': os.environ.get('DB_PASSWORD'),
-            'HOST': os.environ.get('DB_HOST'),
-        }
+# --- BASE DE DATOS DE PRODUCCIÓN (MYSQL EN PYTHONANYWHERE) ---
+# Rellena estos valores con los datos de tu pestaña "Databases" en PythonAnywhere.
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'DevIvan$db_taller_escritura',  # <-- REEMPLAZA 'DevIvan' con tu usuario
+        'USER': 'DevIvan',                     # <-- REEMPLAZA 'DevIvan' con tu usuario
+        'PASSWORD': 'tu-contraseña-de-la-db',  # <-- REEMPLAZA ESTO
+        'HOST': 'DevIvan.mysql.pythonanywhere-services.com', # <-- REEMPLAZA 'DevIvan' con tu usuario
     }
-else:
-    # --- BASE DE DATOS DE DESARROLLO (SQLITE LOCAL) ---
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -109,8 +91,17 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Configuración de Almacenamiento Simplificada
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+}
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'escritura:lista_escritos'
 LOGOUT_REDIRECT_URL = 'escritura:lista_escritos'
 
