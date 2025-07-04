@@ -11,7 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Todos los valores están directamente en el código.
 # Esto es menos flexible, pero más directo para PythonAnywhere si las variables de entorno son un problema.
 
-SECRET_KEY = 'pon-aqui-tu-clave-secreta-larga-y-aleatoria' # <-- ¡REEMPLAZA ESTO!
+SECRET_KEY = 'qacek+8@n@kc1^1617rz0@jg@_+70v5j(74ki#jb-xa-ez&int' # <-- ¡REEMPLAZA ESTO!
 DEBUG = False
 ALLOWED_HOSTS = ['devivan.pythonanywhere.com']
 
@@ -63,10 +63,10 @@ WSGI_APPLICATION = 'taller_escritura.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'DevIvan$db_taller_escritura',  # <-- REEMPLAZA 'DevIvan' con tu usuario
+        'NAME': 'DevIvan.mysql.pythonanywhere-services.com',  # <-- REEMPLAZA 'DevIvan' con tu usuario
         'USER': 'DevIvan',                     # <-- REEMPLAZA 'DevIvan' con tu usuario
         'PASSWORD': 'tu-contraseña-de-la-db',  # <-- REEMPLAZA ESTO
-        'HOST': 'DevIvan.mysql.pythonanywhere-services.com', # <-- REEMPLAZA 'DevIvan' con tu usuario
+        'HOST': 'sql159753', # <-- REEMPLAZA 'DevIvan' con tu usuario
     }
 }
 
