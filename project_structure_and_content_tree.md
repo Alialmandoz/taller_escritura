@@ -1,13 +1,12 @@
 # Contenido del Proyecto: taller escritura
 
-**Generado el:** 2025-06-30 00:41:04
+**Generado el:** 2025-07-04 11:48:44
 
 ## Estructura del Proyecto
 
 ```text
 taller escritura
 ├── .gitignore
-├── Beige Ivory Watercolor Minimalist Productivity New Blog Instagram Post.png
 ├── Desglose de Funcionalidades de la App.txt
 ├── README.md
 ├── manage.py
@@ -26,6 +25,7 @@ taller escritura
 │   │   ├── 0002_profile.py
 │   │   ├── 0003_alter_escrito_contenido.py
 │   │   ├── 0004_profile_mostrar_en_comunidad.py
+│   │   ├── 0005_comentario.py
 │   │   ├── __init__.py
 │   ├── templates
 │   │   ├── escritura
@@ -59,10 +59,6 @@ taller escritura
 ## Archivo: `.gitignore`
 
 [Contenido de '.gitignore' omitido (Extensión no listada: )]
-
-## Archivo: `Beige Ivory Watercolor Minimalist Productivity New Blog Instagram Post.png`
-
-[Contenido de 'Beige Ivory Watercolor Minimalist Productivity New Blog Instagram Post.png' omitido (Extensión no listada: .png)]
 
 ## Archivo: `Desglose de Funcionalidades de la App.txt`
 
@@ -282,13 +278,23 @@ a s g i r e f = = 3 . 8 . 1 
  
  D j a n g o = = 5 . 2 . 3 
  
+ d j a n g o - c k e d i t o r = = 6 . 7 . 3 
+ 
+ d j a n g o - j s - a s s e t = = 3 . 1 . 2 
+ 
+ m y s q l c l i e n t = = 2 . 2 . 7 
+ 
+ p a c k a g i n g = = 2 5 . 0 
+ 
  p i l l o w = = 1 1 . 2 . 1 
  
  s q l p a r s e = = 0 . 5 . 3 
  
  t z d a t a = = 2 0 2 5 . 2 
  
- d j a n g o - c k e d i t o r = = 6 . 7 . 3 
+ w h i t e n o i s e = = 6 . 9 . 0 
+ 
+ 
 ```
 
 ---
@@ -307,7 +313,8 @@ a s g i r e f = = 3 . 8 . 1 
 # escritura/admin.py
 
 from django.contrib import admin
-from .models import Escrito, Profile # AÑADIDO: Importamos nuestro modelo 'Escrito'y el "profile".
+# MODIFICADO: Importamos también el modelo Comentario
+from .models import Escrito, Profile, Comentario
                              # Es crucial importar el modelo que deseas registrar.
 
 # Register your models here.
@@ -317,6 +324,8 @@ from .models import Escrito, Profile # AÑADIDO: Importamos nuestro modelo 'Escr
 # para tus objetos Escrito, permitiendo una gestión sencilla desde el navegador.
 admin.site.register(Escrito)
 admin.site.register(Profile)
+# AÑADIDO: Registramos el nuevo modelo Comentario
+admin.site.register(Comentario)
 ```
 
 ---
@@ -342,7 +351,7 @@ class EscrituraConfig(AppConfig):
 
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Escrito, Profile # MODIFICADO: Importamos también nuestro modelo Profile
+from .models import Escrito, Profile, Comentario # MODIFICADO: Importamos también nuestro modelo Profile y Comentario
 
 
 # Formulario personalizado para el registro de usuarios
@@ -395,6 +404,30 @@ class ProfileForm(forms.ModelForm):
         # Opcional: Widgets para personalizar la apariencia de los campos
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Cuéntanos un poco sobre ti...'}),
+        }
+
+# AÑADIR AL FINAL DE forms.py
+
+class ComentarioForm(forms.ModelForm):
+    """
+    Formulario para que los usuarios puedan crear nuevos comentarios.
+    """
+    class Meta:
+        model = Comentario
+        # Solo necesitamos que el usuario introduzca el texto.
+        # El autor y el escrito se asignarán automáticamente en la vista.
+        fields = ['texto']
+        widgets = {
+            'texto': forms.Textarea(
+                attrs={
+                    'rows': 3,
+                    'placeholder': 'Escribe tu comentario aquí...',
+                    'class': 'comment-textarea' # Clase para darle estilo si es necesario
+                }
+            ),
+        }
+        labels = {
+            'texto': '' # Ocultamos la etiqueta <label> para un diseño más limpio
         }
 ```
 
@@ -480,6 +513,37 @@ def save_user_profile(sender, instance, **kwargs):
     Asegura que el Profile asociado al usuario también se guarde.
     """
     instance.profile.save()
+
+
+# AÑADIR AL FINAL DE models.py
+
+class Comentario(models.Model):
+    """
+    Modelo para almacenar los comentarios de un escrito.
+    """
+    # Relación con el escrito: Muchos comentarios pueden pertenecer a un escrito.
+    # on_delete=models.CASCADE: Si se borra un escrito, se borran todos sus comentarios.
+    # related_name='comentarios': Nos permitirá acceder a los comentarios desde un objeto Escrito (ej: mi_escrito.comentarios.all()).
+    escrito = models.ForeignKey(Escrito, on_delete=models.CASCADE, related_name='comentarios')
+
+    # Relación con el autor: Muchos comentarios pueden ser de un mismo usuario.
+    autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comentarios')
+
+    # Contenido del comentario.
+    texto = models.TextField(verbose_name="Texto del Comentario")
+
+    # Fecha de creación. Se guarda automáticamente al crear el comentario.
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # Ordena los comentarios del más antiguo al más reciente por defecto.
+        ordering = ['fecha_creacion']
+        verbose_name = "Comentario"
+        verbose_name_plural = "Comentarios"
+
+    def __str__(self):
+        # Representación en texto para el admin y la depuración.
+        return f'Comentario de {self.autor.username} en "{self.escrito.titulo}"'
 ```
 
 ---
@@ -551,8 +615,9 @@ from django.contrib.auth.decorators import login_required # Decorador para reque
 from django.http import Http404
 from django.contrib import messages
 
-from .models import Escrito, Profile # MODIFICADO: Importamos también el modelo Profile
-from .forms import CustomUserCreationForm, EscritoForm, ProfileForm # MODIFICADO: Importamos ProfileForm
+# MODIFICADO: Ahora importamos también el modelo y formulario de Comentario
+from .models import Escrito, Profile, Comentario
+from .forms import CustomUserCreationForm, EscritoForm, ProfileForm, ComentarioForm
 
 # Vista basada en función para listar escritos públicos
 def lista_escritos(request):
@@ -583,27 +648,68 @@ def lista_escritos(request):
     return render(request, 'escritura/lista_escritos.html', contexto)
 
 
-# Vista basada en clase para mostrar el detalle de un escrito
+# REEMPLAZAR la clase DetalleEscrito existente en views.py
+
+# MODIFICADO: Ahora importamos también el modelo y formulario de Comentario
+
 class DetalleEscrito(DetailView):
     """
-    Esta vista basada en clase (CBV) se encarga de mostrar los detalles
-    de un único objeto Escrito.
-
-    Usa DetailView de Django para simplificar la lógica de obtención de un objeto.
+    Vista basada en clase (CBV) mejorada para mostrar los detalles de un escrito,
+    sus comentarios, y manejar la publicación de nuevos comentarios.
     """
-    model = Escrito  # Le decimos a DetailView qué modelo debe usar.
-    template_name = 'escritura/detalle_escrito.html' # Ruta a la plantilla para mostrar el detalle.
-    context_object_name = 'escrito' # Nombre de la variable que contendrá el objeto en la plantilla.
+    model = Escrito
+    template_name = 'escritura/detalle_escrito.html'
+    context_object_name = 'escrito'
 
-    def get_queryset(self):
-        """
-        Sobrescribe get_queryset para asegurar que solo se puedan ver
-        escritos que sean públicos.
-        """
-        # Filtra para obtener solo escritos públicos.
-        # Esto añade una capa de seguridad para que los usuarios no puedan acceder
-        # a escritos privados o borradores a través de la URL directa.
-        return Escrito.objects.filter(estado='PUBLICO')
+    def get_context_data(self, **kwargs):
+        # 1. Obtenemos el contexto base de DetailView.
+        context = super().get_context_data(**kwargs)
+
+        # 2. Obtenemos el escrito actual.
+        escrito = self.get_object()
+
+        # 3. Añadimos los comentarios al contexto.
+        # Usamos `select_related` para optimizar la consulta y traer los datos del autor y su perfil
+        # en una sola query, evitando el problema N+1.
+        context['comentarios'] = escrito.comentarios.select_related('autor__profile').all()
+
+        # 4. Añadimos el formulario de comentarios al contexto (si el usuario está autenticado).
+        if self.request.user.is_authenticated:
+            context['comentario_form'] = ComentarioForm()
+
+        return context
+
+    def post(self, request, *args, **kwargs):
+        # Esta función se ejecuta solo cuando la página recibe una petición POST (es decir, al enviar un formulario).
+
+        # Verificamos si el usuario está autenticado antes de procesar.
+        if not request.user.is_authenticated:
+            return redirect('login') # O mostrar un error
+
+        # Obtenemos el escrito al que se está comentando.
+        self.object = self.get_object()
+
+        # Creamos una instancia del formulario con los datos enviados (request.POST).
+        form = ComentarioForm(request.POST)
+
+        if form.is_valid():
+            # Si el formulario es válido, creamos el objeto Comentario pero no lo guardamos aún.
+            nuevo_comentario = form.save(commit=False)
+            # Asignamos el escrito y el autor manually.
+            nuevo_comentario.escrito = self.object
+            nuevo_comentario.autor = request.user
+            # Ahora sí, lo guardamos en la base de datos.
+            nuevo_comentario.save()
+            messages.success(request, "Tu comentario ha sido publicado.")
+            # Redirigimos a la misma página para ver el comentario nuevo.
+            return redirect('escritura:detalle_escrito', pk=self.object.pk)
+        else:
+            # Si el formulario no es válido, volvemos a renderizar la página
+            # pero esta vez con el formulario que contiene los errores.
+            context = self.get_context_data()
+            context['comentario_form'] = form # Pasamos el formulario con errores
+            messages.error(request, "Hubo un error al publicar tu comentario. Por favor, revisa el formulario.")
+            return self.render_to_response(context)
 
 
 # Vista para el registro de nuevos usuarios
@@ -925,6 +1031,67 @@ class Migration(migrations.Migration):
 
 ---
 
+## Archivo: `escritura/migrations/0005_comentario.py`
+
+```python
+# Generated by Django 5.2.3 on 2025-06-30 03:54
+
+import django.db.models.deletion
+from django.conf import settings
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ("escritura", "0004_profile_mostrar_en_comunidad"),
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name="Comentario",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("texto", models.TextField(verbose_name="Texto del Comentario")),
+                ("fecha_creacion", models.DateTimeField(auto_now_add=True)),
+                (
+                    "autor",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="comentarios",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "escrito",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="comentarios",
+                        to="escritura.escrito",
+                    ),
+                ),
+            ],
+            options={
+                "verbose_name": "Comentario",
+                "verbose_name_plural": "Comentarios",
+                "ordering": ["fecha_creacion"],
+            },
+        ),
+    ]
+
+```
+
+---
+
 ## Archivo: `escritura/migrations/__init__.py`
 
 ```python
@@ -1034,6 +1201,46 @@ class Migration(migrations.Migration):
         Última actualización: {{ escrito.fecha_actualizacion|date:"d M Y H:i" }}
     </p>
     
+{# AÑADIR este bloque en detalle_escrito.html #}
+
+<hr class="section-divider">
+
+<div class="comments-section">
+    <h2 class="section-title">Comentarios ({{ comentarios.count }})</h2>
+
+    {# Formulario para añadir un nuevo comentario #}
+    {% if user.is_authenticated %}
+        <div class="comment-form-container">
+            <form method="post">
+                {% csrf_token %}
+                {{ comentario_form.as_p }}
+                <button type="submit" class="button primary small-button">Publicar Comentario</button>
+            </form>
+        </div>
+    {% else %}
+        <p class="login-prompt">
+            <a href="{% url 'login' %}?next={{ request.path }}">Inicia sesión</a> para dejar un comentario.
+        </p>
+    {% endif %}
+
+    {# Lista de comentarios existentes #}
+    <div class="comment-list">
+        {% for comentario in comentarios %}
+            <div class="comment-item">
+                <div class="comment-author-header">
+                    <img src="{{ comentario.autor.profile.foto_perfil.url }}" alt="Foto de {{ comentario.autor.username }}" class="author-pic-small">
+                    <div class="author-info">
+                        <span class="comment-author-name">{{ comentario.autor.username }}</span>
+                        <span class="comment-date">{{ comentario.fecha_creacion|date:"d M Y, H:i" }}</span>
+                    </div>
+                </div>
+                <p class="comment-text">{{ comentario.texto|linebreaksbr }}</p>
+            </div>
+        {% empty %}
+            <p>Aún no hay comentarios. ¡Sé el primero en opinar!</p>
+        {% endfor %}
+    </div>
+</div>
 
     <a href="{% url 'escritura:lista_escritos' %}" class="back-link">← Volver a la lista de escritos</a>
 {% endblock %}
@@ -1972,6 +2179,86 @@ hr {
 .nav-link-button:hover {
     text-decoration: underline;
 }
+
+/* AÑADIR AL FINAL de main.css */
+
+/* --- Estilos para la Sección de Comentarios --- */
+
+.section-divider {
+    border: none;
+    border-top: 1px solid #E8D8C9;
+    margin: 40px 0;
+}
+
+.comments-section .section-title {
+    text-align: left;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+
+.comment-form-container {
+    margin-bottom: 30px;
+    background-color: #F5EFE6;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.comment-form-container textarea {
+    min-height: 80px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.login-prompt {
+    text-align: center;
+    padding: 20px;
+    background-color: #F5EFE6;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.comment-item {
+    background-color: #FAF7F0;
+    border: 1px solid #E8D8C9;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.comment-author-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.author-pic-small {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.comment-author-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.comment-date {
+    font-size: 0.8em;
+    color: #6B4F4F;
+}
+
+.comment-text {
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+}
 ```
 
 ---
@@ -2063,58 +2350,48 @@ application = get_asgi_application()
 
 ```python
 # taller_escritura/settings.py
+# VERSIÓN ROBUSTA Y FLEXIBLE PARA DESARROLLO LOCAL Y PYTHONANYWHERE
 
-"""
-Django settings for taller_escritura project.
-
-Generated by 'django-admin startproject' using Django 5.0.6.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/5.0/topics/settings/
-
-For the full list of settings and their values, see
-https://docs.djangoproject.com/en/5.0/ref/settings/
-"""
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# --- La Clave de la Flexibilidad: La Variable de Entorno 'ENVIRONMENT' ---
+# En PythonAnywhere, definiremos una variable de entorno llamada 'ENVIRONMENT' con el valor 'production'.
+# Si esta variable no existe, asumiremos que estamos en desarrollo local.
+IS_PRODUCTION = os.environ.get('ENVIRONMENT') == 'production'
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-@e^$b!8n*5s15x_p2j9!%h^b-z53%^v^#o7*g8y-n0%k(t19h+' # ¡ADVERTENCIA! Cambia esto por una clave única y segura en producción.
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True # Durante el desarrollo, True es útil para ver errores detallados.
-             # En producción, esto DEBE ser False para seguridad y rendimiento.
-
-ALLOWED_HOSTS = [] # En desarrollo, suele estar vacío o contener '127.0.0.1', 'localhost'.
-                   # En producción, aquí irán los dominios de tu sitio web (ej: ['taller-escritura.com', 'www.taller-escritura.com']).
-
+if IS_PRODUCTION:
+    # --- AJUSTES DE PRODUCCIÓN (PYTHONANYWHERE) ---
+    # Estas variables las configuraremos en PythonAnywhere.
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    DEBUG = False
+    ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')] # Ej: 'tu-usuario.pythonanywhere.com'
+else:
+    # --- AJUSTES DE DESARROLLO (LOCAL) ---
+    SECRET_KEY = 'django-insecure-una-clave-local-que-no-importa-mucho'
+    DEBUG = True
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'devivan.pythonanywhere.com']
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
-    # AÑADIDO: Tu aplicación personalizada 'escritura'.
-    # Es crucial añadirla aquí para que Django sepa que existe y la cargue.
     'escritura',
-    # AÑADIDO: Apps de CKEditor
     'ckeditor',
-    'ckeditor_uploader', # Necesario para subir imágenes
+    'ckeditor_uploader',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -2123,13 +2400,13 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'taller_escritura.urls' # Define dónde están las URLs principales de tu proyecto.
+ROOT_URLCONF = 'taller_escritura.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'taller_escritura/templates'], # MODIFICADO: Añade la ruta al directorio de plantillas globales.
-        'APP_DIRS': True, # Esto le dice a Django que busque plantillas dentro de las carpetas 'templates' de cada aplicación en INSTALLED_APPS.
+        'DIRS': [BASE_DIR / 'taller_escritura/templates'],
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -2143,95 +2420,75 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'taller_escritura.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/5.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3', # La base de datos predeterminada para desarrollo (SQLite).
-                                          # Fácil de usar, pero para producción se recomienda PostgreSQL o MySQL.
+# --- Configuración de Base de Datos ---
+if IS_PRODUCTION:
+    # --- BASE DE DATOS DE PRODUCCIÓN (MYSQL EN PYTHONANYWHERE) ---
+    # PythonAnywhere nos dará estos datos para poner en las variables de entorno.
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': os.environ.get('DB_NAME'),
+            'USER': os.environ.get('DB_USER'),
+            'PASSWORD': os.environ.get('DB_PASSWORD'),
+            'HOST': os.environ.get('DB_HOST'),
+        }
     }
-}
-
+else:
+    # --- BASE DE DATOS DE DESARROLLO (SQLITE LOCAL) ---
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Password validation
-# https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/5.0/topics/i18n/
-
-# MODIFICADO: Define el idioma predeterminado de tu aplicación.
-# 'es-es' para español de España. Puedes usar 'es-mx' para México, 'es-ar' para Argentina, etc.
 LANGUAGE_CODE = 'es-es'
-
-# MODIFICADO: Define la zona horaria predeterminada de tu aplicación.
-# Es crucial para manejar correctamente fechas y horas.
-# Puedes encontrar una lista completa de zonas horarias aquí:
-# https://en.wikipedia.org/wiki/List_of_tz_database_time_zones (columna TZ database name)
 TIME_ZONE = 'America/Mexico_City'
+USE_I18N = True
+USE_TZ = True
 
-USE_I18N = True # Habilita el sistema de internacionalización de Django.
+# Static & Media files
+STATIC_URL = 'static/'
 
-USE_TZ = True # Habilita el soporte para zonas horarias en los datetimes.
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = 'static/' # La URL base para servir archivos estáticos.
-
-# AÑADIDO: Where Django's staticfiles app will look for additional static files.
-# This is for project-wide static files, not specific to an app.
+# AÑADIDO: Le dice a Django que busque archivos estáticos también en la carpeta 'static' de la raíz.
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
+STATIC_ROOT = BASE_DIR / 'staticfiles' # PythonAnywhere necesita esta ruta
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField' # Tipo de campo predeterminado para claves primarias automáticas.
+# Configuración de Almacenamiento para Estáticos y Media
+STORAGES = {
+    # Almacenamiento para archivos estáticos (gestionado por WhiteNoise)
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+    # AÑADIDO: Almacenamiento para archivos por defecto (media, subidos por usuarios)
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+}
 
-
-# Configuración para archivos de medios (subidos por los usuarios)
-MEDIA_URL = '/media/' # La URL base para acceder a los archivos de medios en el navegador.
-MEDIA_ROOT = BASE_DIR / 'media' # La ruta absoluta en el sistema de archivos donde Django guardará los archivos.
-
-# Puedes crear una imagen de "perfil por defecto" aquí.
-# Por ejemplo: taller_escritura/media/profile_pics/default.jpg
-# Asegúrate de crear el directorio 'media' en la raíz de tu proyecto.
-
-LOGIN_REDIRECT_URL = 'escritura:lista_escritos' 
-
-# URL a la que redirigir después de un cierre de sesión exitoso.
-# También redirigimos a la lista de escritos públicos, o podrías tener una página de "gracias por visitar".
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGIN_REDIRECT_URL = 'escritura:lista_escritos'
 LOGOUT_REDIRECT_URL = 'escritura:lista_escritos'
 
-# AÑADIDO: Configuración específica para django-ckeditor
-CKEDITOR_UPLOAD_PATH = 'uploads/' # Las imágenes subidas desde el editor se guardarán en MEDIA_ROOT/uploads/
-
-# Opcional: Configuración de la barra de herramientas de CKEditor
-# Puedes personalizar qué botones aparecen en el editor.
+# CKEditor
+CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_CONFIGS = {
     'default': {
-        'toolbar': 'Custom', # Define una barra de herramientas personalizada
+        'toolbar': 'Custom',
         'toolbar_Custom': [
             ['Bold', 'Italic', 'Underline', 'Strike', '-', 'Subscript', 'Superscript'],
             ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', 'Blockquote', 'CreateDiv'],
@@ -2241,12 +2498,11 @@ CKEDITOR_CONFIGS = {
             ['Styles', 'Format', 'Font', 'FontSize'],
             ['TextColor', 'BGColor'],
             ['Maximize', 'ShowBlocks', '-', 'About'],
-            ['Source'] # Botón para ver el código fuente HTML
+            ['Source']
         ],
-        'width': '100%', # Opcional: Ancho del editor
-        'height': 300,   # Opcional: Alto del editor
-        'extraPlugins': 'codesnippet', # Ejemplo: Añadir un plugin para snippets de código
-        # Más opciones en: https://ckeditor.com/docs/ckeditor4/latest/api/CKEDITOR_config.html
+        'width': '100%',
+        'height': 300,
+        'extraPlugins': 'codesnippet',
     }
 }
 ```
@@ -2440,7 +2696,6 @@ application = get_wsgi_application()
 *(Binarios, errores de codificación/lectura, o errores inesperados durante el procesamiento)*
 
 - `.gitignore (Extensión no listada)`
-- `Beige Ivory Watercolor Minimalist Productivity New Blog Instagram Post.png (Extensión no listada)`
 
 ## Lista de Archivos Omitidos por Tamaño Excesivo
 

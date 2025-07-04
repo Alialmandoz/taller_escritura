@@ -1,5 +1,5 @@
 # taller_escritura/settings.py
-# VERSIÓN ROBUSTA Y FLEXIBLE PARA DESARROLLO LOCAL Y PYTHONANYWHERE
+# VERSIÓN FINAL PARA PYTHONANYWHERE - SIN WHITENOISE
 
 import os
 from pathlib import Path
@@ -8,21 +8,18 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- La Clave de la Flexibilidad: La Variable de Entorno 'ENVIRONMENT' ---
-# En PythonAnywhere, definiremos una variable de entorno llamada 'ENVIRONMENT' con el valor 'production'.
-# Si esta variable no existe, asumiremos que estamos en desarrollo local.
 IS_PRODUCTION = os.environ.get('ENVIRONMENT') == 'production'
 
 if IS_PRODUCTION:
     # --- AJUSTES DE PRODUCCIÓN (PYTHONANYWHERE) ---
-    # Estas variables las configuraremos en PythonAnywhere.
     SECRET_KEY = os.environ.get('SECRET_KEY')
     DEBUG = False
-    ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')] # Ej: 'tu-usuario.pythonanywhere.com'
+    ALLOWED_HOSTS = [os.environ.get('ALLOWED_HOSTS')]
 else:
     # --- AJUSTES DE DESARROLLO (LOCAL) ---
     SECRET_KEY = 'django-insecure-una-clave-local-que-no-importa-mucho'
     DEBUG = True
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'devivan.pythonanywhere.com']
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Application definition
 INSTALLED_APPS = [
@@ -31,8 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'whitenoise.runserver_nostatic',
-    'django.contrib.staticfiles',
+    'django.contrib.staticfiles', # Django manejará los estáticos
     'escritura',
     'ckeditor',
     'ckeditor_uploader',
@@ -40,7 +36,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # ELIMINADO: 'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -71,8 +67,6 @@ WSGI_APPLICATION = 'taller_escritura.wsgi.application'
 
 # --- Configuración de Base de Datos ---
 if IS_PRODUCTION:
-    # --- BASE DE DATOS DE PRODUCCIÓN (MYSQL EN PYTHONANYWHERE) ---
-    # PythonAnywhere nos dará estos datos para poner en las variables de entorno.
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -83,7 +77,6 @@ if IS_PRODUCTION:
         }
     }
 else:
-    # --- BASE DE DATOS DE DESARROLLO (SQLITE LOCAL) ---
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
@@ -92,6 +85,7 @@ else:
     }
 
 # Password validation
+# ... (El resto del archivo no cambia) ...
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -99,7 +93,6 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-# Internationalization
 LANGUAGE_CODE = 'es-es'
 TIME_ZONE = 'America/Mexico_City'
 USE_I18N = True
@@ -107,28 +100,15 @@ USE_TZ = True
 
 # Static & Media files
 STATIC_URL = 'static/'
-
-# AÑADIDO: Le dice a Django que busque archivos estáticos también en la carpeta 'static' de la raíz.
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
-
-STATIC_ROOT = BASE_DIR / 'staticfiles' # PythonAnywhere necesita esta ruta
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Configuración de Almacenamiento para Estáticos y Media (Simplificado)
-# Ya no usamos el manifest de whitenoise para compatibilidad máxima.
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    },
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-}
-
+# ELIMINADO: El diccionario STORAGES complejo. Django usará sus valores por defecto, que son los correctos ahora.
+# Esto es opcional, pero lo quito para máxima limpieza. Si lo dejas, no pasa nada.
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 LOGIN_REDIRECT_URL = 'escritura:lista_escritos'
 LOGOUT_REDIRECT_URL = 'escritura:lista_escritos'
 
