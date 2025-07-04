@@ -9,28 +9,37 @@
     {% if escritos %}
         <ul class="escrito-list">
             {% for escrito in escritos %}
-                <li class="escrito-item"> 
-                    
-                    {# MODIFICADO: Estructura de cabecera re-agrupada #}
+                <li class="escrito-item">
+
                     <div class="escrito-card-header">
                         <div class="header-author-info">
-                            <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
+                            {# MODIFICADO: Añadimos una condición para la imagen de perfil #}
+                            {# 1. Verificamos que el perfil del autor exista. #}
+                            {% if escrito.autor.profile %}
+                                {# 2. Verificamos que el campo foto_perfil TENGA un archivo asociado. #}
+                                {% if escrito.autor.profile.foto_perfil %}
+                                    <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
+                                {% else %}
+                                    {# Opcional: Puedes poner una imagen genérica si no hay foto #}
+                                    {# <img class="author-pic" src="{% static 'images/avatar_generico.png' %}" alt="Avatar genérico"> #}
+                                {% endif %}
+                            {% endif %}
                             <span class="author-name">{{ escrito.autor.username }}</span>
                         </div>
                         <div class="header-title-actions">
                             <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
-                            <button 
-                                class="toggle-button" 
-                                aria-expanded="false" 
+                            <button
+                                class="toggle-button"
+                                aria-expanded="false"
                                 aria-controls="escrito-content-{{ escrito.pk }}"
                                 title="Expandir/Contraer"
                             >
                             </button>
                         </div>
                     </div>
-                    
+
                     <div class="escrito-content" id="escrito-content-{{ escrito.pk }}">
-                        {{ escrito.contenido|safe }} 
+                        {{ escrito.contenido|safe }}
                     </div>
 
                     <div class="escrito-footer">
