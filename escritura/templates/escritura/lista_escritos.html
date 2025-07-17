@@ -1,9 +1,9 @@
 {# escritura/templates/escritura/lista_escritos.html #}
-{% extends 'base.html' %} {# Extends the base template #}
+{% extends 'base.html' %} {# Extiende la plantilla base #}
 
-{% block title %}Lista de Escritos Públicos{% endblock %} {# Sets the specific title for this page #}
+{% block title %}Lista de Escritos Públicos{% endblock %} {# Define el título específico para esta página #}
 
-{% block content %} {# This content will be inserted into the 'content' block in base.html #}
+{% block content %} {# Este contenido se insertará en el bloque 'content' de base.html #}
     <h1 class="page-title">Escritos Públicos del Taller</h1>
 
     {% if escritos %}
@@ -13,28 +13,13 @@
 
                     <div class="escrito-card-header">
                         <div class="header-author-info">
-                            {# MODIFICADO: Añadimos una condición para la imagen de perfil #}
-                            {# 1. Verificamos que el perfil del autor exista. #}
-                            {% if escrito.autor.profile %}
-                                {# 2. Verificamos que el campo foto_perfil TENGA un archivo asociado. #}
-                                {% if escrito.autor.profile.foto_perfil %}
-                                    <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
-                                {% else %}
-                                    {# Opcional: Puedes poner una imagen genérica si no hay foto #}
-                                    {# <img class="author-pic" src="{% static 'images/avatar_generico.png' %}" alt="Avatar genérico"> #}
-                                {% endif %}
+                            {% if escrito.autor.profile and escrito.autor.profile.foto_perfil %}
+                                <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
                             {% endif %}
                             <span class="author-name">{{ escrito.autor.username }}</span>
                         </div>
                         <div class="header-title-actions">
                             <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
-                            <button
-                                class="toggle-button"
-                                aria-expanded="false"
-                                aria-controls="escrito-content-{{ escrito.pk }}"
-                                title="Expandir/Contraer"
-                            >
-                            </button>
                         </div>
                     </div>
 
@@ -46,6 +31,17 @@
                         <div class="escrito-meta">
                             <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
                         </div>
+                        
+                        <!-- Contenedor Unificado para todas las acciones -->
+                        <div class="card-actions-container">
+                            <button
+                                class="toggle-button"
+                                aria-expanded="false"
+                                aria-controls="escrito-content-{{ escrito.pk }}"
+                                title="Expandir/Contraer"
+                            >
+                            </button>
+                        </div>
                     </div>
                 </li>
             {% endfor %}
@@ -53,4 +49,4 @@
     {% else %}
         <p>No hay escritos públicos disponibles en este momento.</p>
     {% endif %}
-{% endblock %}
+{% endblock %}```

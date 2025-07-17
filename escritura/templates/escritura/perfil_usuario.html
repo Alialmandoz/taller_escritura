@@ -6,7 +6,6 @@
 
 {% block content %}
     <div class="profile-header">
-        {# MODIFICADO: Añadimos una condición para la imagen de perfil #}
         {% if perfil and perfil.foto_perfil %}
             <img src="{{ perfil.foto_perfil.url }}" alt="Foto de perfil de {{ usuario.username }}" class="profile-pic">
         {% endif %}
@@ -32,7 +31,6 @@
 
                     <div class="escrito-card-header">
                         <div class="header-author-info">
-                             {# MODIFICADO: Replicamos la misma lógica segura para la imagen #}
                             {% if escrito.autor.profile and escrito.autor.profile.foto_perfil %}
                                 <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
                             {% endif %}
@@ -40,13 +38,6 @@
                         </div>
                         <div class="header-title-actions">
                             <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
-                            <button
-                                class="toggle-button"
-                                aria-expanded="false"
-                                aria-controls="escrito-content-perfil-{{ escrito.pk }}"
-                                title="Expandir/Contraer"
-                            >
-                            </button>
                         </div>
                     </div>
 
@@ -61,12 +52,19 @@
                                 <p>Última actualización: {{ escrito.fecha_actualizacion|date:"d M Y H:i" }}</p>
                             {% endif %}
                         </div>
-                        <div class="escrito-status-actions">
+
+                        <!-- Contenedor Unificado para todas las acciones -->
+                        <div class="card-actions-container">
                             <span class="escrito-status status-{{ escrito.estado|lower }}">{{ escrito.get_estado_display }}</span>
-                            <div class="action-buttons">
-                                <a href="{% url 'escritura:editar_escrito' pk=escrito.pk %}" class="button warning small-button">Editar</a>
-                                <a href="{% url 'escritura:eliminar_escrito' pk=escrito.pk %}" class="button danger small-button">Eliminar</a>
-                            </div>
+                            <a href="{% url 'escritura:editar_escrito' pk=escrito.pk %}" class="button warning small-button">Editar</a>
+                            <a href="{% url 'escritura:eliminar_escrito' pk=escrito.pk %}" class="button danger small-button">Eliminar</a>
+                            <button
+                                class="toggle-button"
+                                aria-expanded="false"
+                                aria-controls="escrito-content-perfil-{{ escrito.pk }}"
+                                title="Expandir/Contraer"
+                            >
+                            </button>
                         </div>
                     </div>
                 </li>

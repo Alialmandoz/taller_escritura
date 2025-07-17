@@ -37,13 +37,6 @@
                         </div>
                         <div class="header-title-actions">
                             <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
-                            <button
-                                class="toggle-button"
-                                aria-expanded="false"
-                                aria-controls="escrito-content-perfil-{{ escrito.pk }}"
-                                title="Expandir/Contraer"
-                            >
-                            </button>
                         </div>
                     </div>
 
@@ -55,8 +48,17 @@
                         <div class="escrito-meta">
                             <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
                         </div>
-                        <div class="escrito-status-actions">
+                        
+                        <!-- Contenedor Unificado para todas las acciones -->
+                        <div class="card-actions-container">
                             <span class="escrito-status status-{{ escrito.estado|lower }}">{{ escrito.get_estado_display }}</span>
+                            <button
+                                class="toggle-button"
+                                aria-expanded="false"
+                                aria-controls="escrito-content-perfil-{{ escrito.pk }}"
+                                title="Expandir/Contraer"
+                            >
+                            </button>
                         </div>
                     </div>
                 </li>
