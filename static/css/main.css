@@ -276,9 +276,12 @@ ul.errorlist {
     margin: 0; /* Quitamos margen del h2 */
     font-family: 'Playfair Display', serif;
     color: #AA775A;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* MODIFICADO: Permitir que el título ocupe varias líneas */
+    white-space: normal;
+    word-wrap: break-word; /* Para navegadores antiguos */
+    overflow-wrap: break-word; /* Estándar moderno */
+    overflow: visible; /* Asegura que no se corte */
+    text-overflow: clip; /* Evita los puntos suspensivos */
 }
 
 .escrito-title a {
