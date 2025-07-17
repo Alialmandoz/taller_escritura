@@ -28,11 +28,13 @@
         <div class="community-gallery">
             {% for perfil in perfiles_publicos %}
                 <div class="user-card">
-                    <img src="{{ perfil.foto_perfil.url }}" alt="Foto de {{ perfil.user.username }}" class="user-card-img">
-                    <h3 class="user-card-name">{{ perfil.user.username }}</h3>
-                    {% if perfil.bio %}
-                        <p class="user-card-bio">"{{ perfil.bio|truncatewords:15 }}"</p>
-                    {% endif %}
+                    <a href="{% url 'escritura:perfil_publico' user_id=perfil.user.id %}" class="user-card-link">
+                        <img src="{{ perfil.foto_perfil.url }}" alt="Foto de {{ perfil.user.username }}" class="user-card-img">
+                        <h3 class="user-card-name">{{ perfil.user.username }}</h3>
+                        {% if perfil.bio %}
+                            <p class="user-card-bio">"{{ perfil.bio|truncatewords:15 }}"</p>
+                        {% endif %}
+                    </a>
                 </div>
             {% empty %}
                 <p class="community-empty">Nuestros miembros son un poco tímidos. ¡Pronto verás aquí los perfiles de nuestra increíble comunidad!</p>

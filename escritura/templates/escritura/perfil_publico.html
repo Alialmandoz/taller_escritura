@@ -1,0 +1,69 @@
+{# escritura/templates/escritura/perfil_publico.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Perfil de {{ usuario_perfil.username }}{% endblock %}
+
+{% block content %}
+    <div class="profile-header">
+        {% if usuario_perfil.profile and usuario_perfil.profile.foto_perfil %}
+            <img src="{{ usuario_perfil.profile.foto_perfil.url }}" alt="Foto de perfil de {{ usuario_perfil.username }}" class="profile-pic">
+        {% endif %}
+        <h1 class="page-title">{{ usuario_perfil.username }}</h1>
+        <p class="profile-bio">
+            {% if usuario_perfil.profile.bio %}
+                {{ usuario_perfil.profile.bio }}
+            {% else %}
+                Este autor aún no ha añadido una biografía.
+            {% endif %}
+        </p>
+    </div>
+
+    <hr> {# Separador visual #}
+
+    <h2 class="section-title">Escritos Públicos de {{ usuario_perfil.username }}</h2>
+
+    {% if escritos %}
+        <ul class="escrito-list">
+            {% for escrito in escritos %}
+                <li class="escrito-item">
+
+                    <div class="escrito-card-header">
+                        <div class="header-author-info">
+                            {% if escrito.autor.profile and escrito.autor.profile.foto_perfil %}
+                                <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
+                            {% endif %}
+                            <span class="author-name">{{ escrito.autor.username }}</span>
+                        </div>
+                        <div class="header-title-actions">
+                            <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
+                            <button
+                                class="toggle-button"
+                                aria-expanded="false"
+                                aria-controls="escrito-content-perfil-{{ escrito.pk }}"
+                                title="Expandir/Contraer"
+                            >
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="escrito-content" id="escrito-content-perfil-{{ escrito.pk }}">
+                        {{ escrito.contenido|safe }}
+                    </div>
+
+                    <div class="escrito-footer">
+                        <div class="escrito-meta">
+                            <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
+                        </div>
+                        <div class="escrito-status-actions">
+                            <span class="escrito-status status-{{ escrito.estado|lower }}">{{ escrito.get_estado_display }}</span>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Este autor aún no ha publicado ningún escrito.</p>
+    {% endif %}
+
+{% endblock %}
