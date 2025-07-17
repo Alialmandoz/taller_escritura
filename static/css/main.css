@@ -228,30 +228,27 @@ ul.errorlist {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    position: relative; /* <-- AÑADIDO: Esta es la pieza clave. */
+    position: relative; /* Contexto de posicionamiento por si se necesitan insignias, etc. */
 }
 
-/* AÑADIDO: Nueva cabecera unificada */
 .escrito-card-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start; /* MODIFICADO: Alinea los elementos al inicio (arriba) */
+    align-items: flex-start;
     gap: 15px;
     margin-bottom: 15px;
 }
 
-/* AÑADIDO: Grupo para info del autor a la izquierda */
 .header-author-info {
     display: flex;
     align-items: center;
     gap: 10px;
-    min-width: 0; /* Evita que el contenedor se desborde si el nombre es largo */
+    min-width: 0;
 }
 
-/* AÑADIDO: Grupo para título y acciones a la derecha */
 .header-title-actions {
     display: flex;
-    align-items: flex-start; /* MODIFICADO: Alinea los elementos al inicio (arriba) */
+    align-items: flex-start;
     gap: 15px;
 }
 
@@ -261,7 +258,7 @@ ul.errorlist {
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #E8D8C9;
-    flex-shrink: 0; /* Evita que la imagen se encoja */
+    flex-shrink: 0;
 }
 
 .author-name {
@@ -282,12 +279,12 @@ ul.errorlist {
     overflow-wrap: break-word;
     overflow: visible;
     text-overflow: clip;
-    flex-grow: 1; /* <-- ¡LA LÍNEA CLAVE! */
+    flex-grow: 1; /* Permite que el título ocupe el espacio sobrante en la cabecera */
 }
 
 .escrito-title a {
     text-decoration: none;
-    color: inherit; /* Hereda el color del h2 */
+    color: inherit;
 }
 
 .escrito-title a:hover {
@@ -328,13 +325,6 @@ ul.errorlist {
 }
 
 .toggle-button {
-    /* --- Posicionamiento Absoluto --- */
-    position: absolute;
-    bottom: 15px; /* Distancia desde la parte inferior */
-    right: 20px;  /* Distancia desde la derecha */
-    z-index: 2;   /* Asegura que esté por encima de otros elementos si es necesario */
-
-    /* --- Estilos visuales (la mayoría ya los tenías) --- */
     width: 28px;
     height: 28px;
     background-color: #E8D8C9;
@@ -350,7 +340,7 @@ ul.errorlist {
     line-height: 1;
     padding: 0;
     transition: background-color 0.3s, transform 0.3s;
-    flex-shrink: 0;
+    flex-shrink: 0; /* Evita que el botón se encoja */
 }
 
 .toggle-button:hover {
@@ -372,7 +362,7 @@ ul.errorlist {
 
 .escrito-footer {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* <-- CLAVE: Empuja la meta-info y las acciones a los extremos */
     align-items: center;
     flex-wrap: wrap;
     gap: 15px;
@@ -384,12 +374,13 @@ ul.errorlist {
     font-family: 'Lato', sans-serif;
 }
 
-.escrito-status-actions {
+/* Contenedor unificado para botones de acción en el footer */
+.card-actions-container {
     display: flex;
     align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
+    gap: 10px; /* Espacio entre los botones y/o el estado */
 }
+
 
 /* Escrito Detail Specific Styles */
 .header-section {
@@ -679,27 +670,22 @@ hr {
     padding: 20px 0;
 }
 
-/* AÑADIDO: Estilos para que el botón de logout parezca un enlace en la barra de navegación */
 .nav-link-button {
     background: none;
     border: none;
     padding: 0;
     margin: 0;
     cursor: pointer;
-    font-family: inherit; /* Hereda la fuente de su contenedor (ul.nav-links) */
-    
-    /* Replicamos los estilos de .nav-links a */
+    font-family: inherit;
     color: white;
     text-decoration: none;
     font-weight: bold;
-    font-size: 1em; /* Asegura que el tamaño de fuente sea el mismo */
+    font-size: 1em;
 }
 
 .nav-link-button:hover {
     text-decoration: underline;
 }
-
-/* AÑADIR AL FINAL de main.css */
 
 /* --- Estilos para la Sección de Comentarios --- */
 
