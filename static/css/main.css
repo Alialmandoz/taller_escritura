@@ -228,13 +228,14 @@ ul.errorlist {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative; /* <-- AÑADIDO: Esta es la pieza clave. */
 }
 
 /* AÑADIDO: Nueva cabecera unificada */
 .escrito-card-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start; /* MODIFICADO: Alinea los elementos al inicio (arriba) */
     gap: 15px;
     margin-bottom: 15px;
 }
@@ -250,7 +251,7 @@ ul.errorlist {
 /* AÑADIDO: Grupo para título y acciones a la derecha */
 .header-title-actions {
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* MODIFICADO: Alinea los elementos al inicio (arriba) */
     gap: 15px;
 }
 
@@ -273,15 +274,15 @@ ul.errorlist {
 }
 
 .escrito-title {
-    margin: 0; /* Quitamos margen del h2 */
+    margin: 0;
     font-family: 'Playfair Display', serif;
     color: #AA775A;
-    /* MODIFICADO: Permitir que el título ocupe varias líneas */
     white-space: normal;
-    word-wrap: break-word; /* Para navegadores antiguos */
-    overflow-wrap: break-word; /* Estándar moderno */
-    overflow: visible; /* Asegura que no se corte */
-    text-overflow: clip; /* Evita los puntos suspensivos */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow: visible;
+    text-overflow: clip;
+    flex-grow: 1; /* <-- ¡LA LÍNEA CLAVE! */
 }
 
 .escrito-title a {
@@ -327,6 +328,13 @@ ul.errorlist {
 }
 
 .toggle-button {
+    /* --- Posicionamiento Absoluto --- */
+    position: absolute;
+    bottom: 15px; /* Distancia desde la parte inferior */
+    right: 20px;  /* Distancia desde la derecha */
+    z-index: 2;   /* Asegura que esté por encima de otros elementos si es necesario */
+
+    /* --- Estilos visuales (la mayoría ya los tenías) --- */
     width: 28px;
     height: 28px;
     background-color: #E8D8C9;
