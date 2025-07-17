@@ -1,6 +1,6 @@
 # Contenido del Proyecto: taller escritura
 
-**Generado el:** 2025-07-04 12:29:16
+**Generado el:** 2025-07-17 00:11:34
 
 ## Estructura del Proyecto
 
@@ -8,6 +8,7 @@
 taller escritura
 ├── .gitignore
 ├── Desglose de Funcionalidades de la App.txt
+├── GEMINI.md
 ├── README.md
 ├── manage.py
 ├── requirements.txt
@@ -35,16 +36,18 @@ taller escritura
 │   │   │   ├── editar_perfil.html
 │   │   │   ├── home.html
 │   │   │   ├── lista_escritos.html
+│   │   │   ├── perfil_publico.html
 │   │   │   ├── perfil_usuario.html
 │   │   │   ├── registro.html
 ├── static
 │   ├── css
 │   │   ├── main.css
 │   ├── js
-│   │   ├── Main.js
+│   │   ├── main.js
 ├── taller_escritura
 │   ├── __init__.py
 │   ├── asgi.py
+│   ├── local_settings.py
 │   ├── settings.py
 │   ├── urls.py
 │   ├── wsgi.py
@@ -115,6 +118,53 @@ Implicación técnica: Principalmente CSS (media queries), posiblemente uso de u
 Modalidad Oscura (Dark Mode): Opción para cambiar el tema visual de la aplicación.
 Implicación técnica: CSS (variables), JavaScript, y almacenamiento de preferencia (ej. en Profile o sesiones).
 
+```
+
+---
+
+## Archivo: `GEMINI.md`
+
+```markdown
+# MODO: ASISTENTE EXPERTO EN ARQUITECTURA DE SOFTWARE
+
+### ROL Y MISIÓN PRINCIPAL
+Actúa como un "Arquitecto de Software Senior y Mentor Técnico". Tu misión principal es guiar al usuario de forma interactiva en la definición, diseño y andamiaje de un proyecto de software desde cero. Tu objetivo final no es solo escribir código, sino asegurar que el proyecto nazca sobre una base de principios de ingeniería de software robustos, escalables y mantenibles. Eres un experto en patrones de diseño, arquitecturas limpias (Clean Architecture), Domain-Driven Design (DDD), y metodologías de desarrollo modernas.
+
+### PROTOCOLO DE INTERACCIÓN OBLIGATORIO
+Tu interacción con el usuario debe seguir ESTRICTAMENTE los siguientes pasos secuenciales. No avances al siguiente paso sin haber completado y obtenido la aprobación explícita del usuario en el paso actual.
+
+1.  **FASE DE DESCUBRIMIENTO (Discovery Phase):**
+    *   **Objetivo:** Comprender a fondo el problema de negocio y los requerimientos funcionales y no funcionales.
+    *   **Acción:** Realiza preguntas clave para clarificar el propósito de la aplicación, el público objetivo, los casos de uso principales, las expectativas de carga (usuarios concurrentes, volumen de datos), y las restricciones (presupuesto, tecnología existente, plazos).
+    *   **Prohibición:** NO sugieras ninguna tecnología o arquitectura en esta fase. Concéntrate únicamente en el "qué" y el "porqué".
+
+2.  **FASE DE DISEÑO ARQUITECTÓNICO (Architectural Design Phase):**
+    *   **Objetivo:** Proponer una arquitectura de alto nivel que cumpla con los requisitos no funcionales (escalabilidad, rendimiento, seguridad, mantenibilidad).
+    *   **Acción:** Basado en la fase anterior, presenta 2-3 opciones de estilos arquitectónicos (ej: Microservicios, Arquitectura Hexagonal, Monolito Modular). Para CADA opción, explica de forma concisa:
+        *   **Pros:** Ventajas específicas para este proyecto.
+        *   **Contras:** Desventajas y posibles complejidades.
+        *   **Justificación:** Por qué es una opción viable.
+    *   **Recomendación:** Ofrece una recomendación fundamentada sobre cuál opción consideras la más adecuada y espera la decisión del usuario.
+
+3.  **FASE DE SELECCIÓN TECNOLÓGICA (Tech Stack Selection Phase):**
+    *   **Objetivo:** Definir el stack tecnológico completo.
+    *   **Acción:** Una vez la arquitectura esté aprobada, sugiere un stack tecnológico (lenguajes, frameworks, bases de datos, proveedores de nube, etc.) que se alinee con la arquitectura elegida. Justifica cada elección basándote en factores como el ecosistema, la comunidad, el rendimiento y la facilidad de contratación de talento.
+
+4.  **FASE DE ANDAMIAJE Y ESTRUCTURA (Scaffolding & Structuring Phase):**
+    *   **Objetivo:** Generar la estructura de directorios y el código inicial.
+    *   **Acción:** Proporciona una estructura de carpetas y archivos detallada y lógica, coherente con la arquitectura definida (ej: `src/core`, `src/infrastructure`, `src/api`). Genera el código "boilerplate" esencial para los módulos principales, incluyendo configuraciones iniciales, puntos de entrada de la API y ejemplos de capas de dominio/aplicación/infraestructura. El código debe ser IMPECABLE, comentado donde sea necesario y seguir las mejores prácticas del lenguaje.
+
+### PRINCIPIOS GUÍA Y RESTRICCIONES
+*   **Mentalidad de Mantenibilidad:** Prioriza la claridad sobre la astucia. El código y la estructura deben ser fácilmente comprensibles por otros desarrolladores.
+*   **Abstracción y Desacoplamiento:** Aplica rigurosamente los principios SOLID y el desacoplamiento entre capas.
+*   **Seguridad por Defecto:** Incorpora consideraciones de seguridad desde el inicio del diseño.
+*   **Obsesión por el "Porqué":** NUNCA sugieras algo sin explicar la razón fundamental detrás de ello, conectándolo directamente con los objetivos del proyecto.
+*   **NO Generar Soluciones Monolíticas Simplistas:** A menos que sea explícitamente justificado y aprobado por el usuario, evita proponer soluciones de un solo archivo o sin una separación clara de responsabilidades.
+
+### FORMATOS DE SALIDA
+*   **Estructuras de Directorios:** Utiliza formato de árbol de texto (tree-like structure).
+*   **Diagramas:** Cuando sea necesario, utiliza la sintaxis de Mermaid para generar diagramas de arquitectura.
+*   **Código:** Siempre dentro de bloques de código con el identificador de lenguaje correcto (ej: ```python ... ```).
 ```
 
 ---
@@ -579,6 +629,8 @@ urlpatterns = [
     path('perfil/', views.perfil_usuario, name='perfil_usuario'),
     # AÑADIDO: URL para la página de edición del perfil
     path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
+    # AÑADIDO: URL para el perfil público de un usuario
+    path('perfil/<int:user_id>/', views.perfil_publico, name='perfil_publico'),
 ]
 ```
 
@@ -608,7 +660,7 @@ def pagina_principal(request):
 
 
 from django.views.generic import DetailView
-from django.contrib.auth import login
+from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required # Decorador para requerir autenticación
 from django.http import Http404
 from django.contrib import messages
@@ -616,6 +668,8 @@ from django.contrib import messages
 # MODIFICADO: Ahora importamos también el modelo y formulario de Comentario
 from .models import Escrito, Profile, Comentario
 from .forms import CustomUserCreationForm, EscritoForm, ProfileForm, ComentarioForm
+
+User = get_user_model()
 
 # Vista basada en función para listar escritos públicos
 def lista_escritos(request):
@@ -897,6 +951,30 @@ def editar_perfil(request):
         'form': form
     }
     return render(request, 'escritura/editar_perfil.html', contexto)
+
+
+# AÑADIDO: Vista para el perfil público de un usuario
+def perfil_publico(request, user_id):
+    """
+    Muestra el perfil público de un usuario específico a cualquier visitante.
+    - user_id: La clave primaria (ID) del usuario cuyo perfil se quiere ver.
+    """
+    # Usamos select_related para optimizar y traer los datos del perfil en una sola consulta.
+    # Si el usuario no existe o no quiere ser mostrado, devolvemos un 404.
+    usuario_perfil = get_object_or_404(
+        User.objects.select_related('profile'),
+        pk=user_id,
+        profile__mostrar_en_comunidad=True
+    )
+
+    # Filtramos solo los escritos que son públicos.
+    escritos_publicos = Escrito.objects.filter(autor=usuario_perfil, estado='PUBLICO')
+
+    contexto = {
+        'usuario_perfil': usuario_perfil,
+        'escritos': escritos_publicos
+    }
+    return render(request, 'escritura/perfil_publico.html', contexto)
 ```
 
 ---
@@ -1307,11 +1385,13 @@ class Migration(migrations.Migration):
         <div class="community-gallery">
             {% for perfil in perfiles_publicos %}
                 <div class="user-card">
-                    <img src="{{ perfil.foto_perfil.url }}" alt="Foto de {{ perfil.user.username }}" class="user-card-img">
-                    <h3 class="user-card-name">{{ perfil.user.username }}</h3>
-                    {% if perfil.bio %}
-                        <p class="user-card-bio">"{{ perfil.bio|truncatewords:15 }}"</p>
-                    {% endif %}
+                    <a href="{% url 'escritura:perfil_publico' user_id=perfil.user.id %}" class="user-card-link">
+                        <img src="{{ perfil.foto_perfil.url }}" alt="Foto de {{ perfil.user.username }}" class="user-card-img">
+                        <h3 class="user-card-name">{{ perfil.user.username }}</h3>
+                        {% if perfil.bio %}
+                            <p class="user-card-bio">"{{ perfil.bio|truncatewords:15 }}"</p>
+                        {% endif %}
+                    </a>
                 </div>
             {% empty %}
                 <p class="community-empty">Nuestros miembros son un poco tímidos. ¡Pronto verás aquí los perfiles de nuestra increíble comunidad!</p>
@@ -1340,28 +1420,37 @@ class Migration(migrations.Migration):
     {% if escritos %}
         <ul class="escrito-list">
             {% for escrito in escritos %}
-                <li class="escrito-item"> 
-                    
-                    {# MODIFICADO: Estructura de cabecera re-agrupada #}
+                <li class="escrito-item">
+
                     <div class="escrito-card-header">
                         <div class="header-author-info">
-                            <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
+                            {# MODIFICADO: Añadimos una condición para la imagen de perfil #}
+                            {# 1. Verificamos que el perfil del autor exista. #}
+                            {% if escrito.autor.profile %}
+                                {# 2. Verificamos que el campo foto_perfil TENGA un archivo asociado. #}
+                                {% if escrito.autor.profile.foto_perfil %}
+                                    <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
+                                {% else %}
+                                    {# Opcional: Puedes poner una imagen genérica si no hay foto #}
+                                    {# <img class="author-pic" src="{% static 'images/avatar_generico.png' %}" alt="Avatar genérico"> #}
+                                {% endif %}
+                            {% endif %}
                             <span class="author-name">{{ escrito.autor.username }}</span>
                         </div>
                         <div class="header-title-actions">
                             <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
-                            <button 
-                                class="toggle-button" 
-                                aria-expanded="false" 
+                            <button
+                                class="toggle-button"
+                                aria-expanded="false"
                                 aria-controls="escrito-content-{{ escrito.pk }}"
                                 title="Expandir/Contraer"
                             >
                             </button>
                         </div>
                     </div>
-                    
+
                     <div class="escrito-content" id="escrito-content-{{ escrito.pk }}">
-                        {{ escrito.contenido|safe }} 
+                        {{ escrito.contenido|safe }}
                     </div>
 
                     <div class="escrito-footer">
@@ -1380,18 +1469,97 @@ class Migration(migrations.Migration):
 
 ---
 
+## Archivo: `escritura/templates/escritura/perfil_publico.html`
+
+```html
+{# escritura/templates/escritura/perfil_publico.html #}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Perfil de {{ usuario_perfil.username }}{% endblock %}
+
+{% block content %}
+    <div class="profile-header">
+        {% if usuario_perfil.profile and usuario_perfil.profile.foto_perfil %}
+            <img src="{{ usuario_perfil.profile.foto_perfil.url }}" alt="Foto de perfil de {{ usuario_perfil.username }}" class="profile-pic">
+        {% endif %}
+        <h1 class="page-title">{{ usuario_perfil.username }}</h1>
+        <p class="profile-bio">
+            {% if usuario_perfil.profile.bio %}
+                {{ usuario_perfil.profile.bio }}
+            {% else %}
+                Este autor aún no ha añadido una biografía.
+            {% endif %}
+        </p>
+    </div>
+
+    <hr> {# Separador visual #}
+
+    <h2 class="section-title">Escritos Públicos de {{ usuario_perfil.username }}</h2>
+
+    {% if escritos %}
+        <ul class="escrito-list">
+            {% for escrito in escritos %}
+                <li class="escrito-item">
+
+                    <div class="escrito-card-header">
+                        <div class="header-author-info">
+                            {% if escrito.autor.profile and escrito.autor.profile.foto_perfil %}
+                                <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
+                            {% endif %}
+                            <span class="author-name">{{ escrito.autor.username }}</span>
+                        </div>
+                        <div class="header-title-actions">
+                            <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
+                            <button
+                                class="toggle-button"
+                                aria-expanded="false"
+                                aria-controls="escrito-content-perfil-{{ escrito.pk }}"
+                                title="Expandir/Contraer"
+                            >
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="escrito-content" id="escrito-content-perfil-{{ escrito.pk }}">
+                        {{ escrito.contenido|safe }}
+                    </div>
+
+                    <div class="escrito-footer">
+                        <div class="escrito-meta">
+                            <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
+                        </div>
+                        <div class="escrito-status-actions">
+                            <span class="escrito-status status-{{ escrito.estado|lower }}">{{ escrito.get_estado_display }}</span>
+                        </div>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Este autor aún no ha publicado ningún escrito.</p>
+    {% endif %}
+
+{% endblock %}
+```
+
+---
+
 ## Archivo: `escritura/templates/escritura/perfil_usuario.html`
 
 ```html
 {# escritura/templates/escritura/perfil_usuario.html #}
 {% extends 'base.html' %}
-{% load static %} {# Asegúrate de cargar static para las imágenes #}
+{% load static %}
 
 {% block title %}Perfil de {{ usuario.username }}{% endblock %}
 
 {% block content %}
     <div class="profile-header">
-        <img src="{{ perfil.foto_perfil.url }}" alt="Foto de perfil de {{ usuario.username }}" class="profile-pic">
+        {# MODIFICADO: Añadimos una condición para la imagen de perfil #}
+        {% if perfil and perfil.foto_perfil %}
+            <img src="{{ perfil.foto_perfil.url }}" alt="Foto de perfil de {{ usuario.username }}" class="profile-pic">
+        {% endif %}
         <h1 class="page-title">{{ usuario.username }}</h1>
         <p class="profile-bio">
             {% if perfil.bio %}
@@ -1400,7 +1568,6 @@ class Migration(migrations.Migration):
                 Aún no has añadido una biografía.
             {% endif %}
         </p>
-        {# MODIFICADO: El enlace ahora apunta a la página de edición. #}
         <a href="{% url 'escritura:editar_perfil' %}" class="button secondary">Editar Perfil</a>
     </div>
 
@@ -1412,27 +1579,29 @@ class Migration(migrations.Migration):
         <ul class="escrito-list">
             {% for escrito in mis_escritos %}
                 <li class="escrito-item">
-                    
-                    {# MODIFICADO: Estructura de cabecera re-agrupada #}
+
                     <div class="escrito-card-header">
                         <div class="header-author-info">
-                            <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
+                             {# MODIFICADO: Replicamos la misma lógica segura para la imagen #}
+                            {% if escrito.autor.profile and escrito.autor.profile.foto_perfil %}
+                                <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
+                            {% endif %}
                             <span class="author-name">{{ escrito.autor.username }}</span>
                         </div>
                         <div class="header-title-actions">
                             <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
-                            <button 
-                                class="toggle-button" 
-                                aria-expanded="false" 
+                            <button
+                                class="toggle-button"
+                                aria-expanded="false"
                                 aria-controls="escrito-content-perfil-{{ escrito.pk }}"
                                 title="Expandir/Contraer"
                             >
                             </button>
                         </div>
                     </div>
-                    
+
                     <div class="escrito-content" id="escrito-content-perfil-{{ escrito.pk }}">
-                        {{ escrito.contenido|safe }} 
+                        {{ escrito.contenido|safe }}
                     </div>
 
                     <div class="escrito-footer">
@@ -1724,7 +1893,7 @@ ul.errorlist {
 .escrito-card-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start; /* MODIFICADO: Alinea los elementos al inicio (arriba) */
     gap: 15px;
     margin-bottom: 15px;
 }
@@ -1740,8 +1909,9 @@ ul.errorlist {
 /* AÑADIDO: Grupo para título y acciones a la derecha */
 .header-title-actions {
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* MODIFICADO: Alinea los elementos al inicio (arriba) */
     gap: 15px;
+    flex-wrap: wrap; /* AÑADIDO: Permite que los elementos se envuelvan en varias líneas */
 }
 
 .author-pic {
@@ -1766,9 +1936,12 @@ ul.errorlist {
     margin: 0; /* Quitamos margen del h2 */
     font-family: 'Playfair Display', serif;
     color: #AA775A;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    /* MODIFICADO: Permitir que el título ocupe varias líneas */
+    white-space: normal;
+    word-wrap: break-word; /* Para navegadores antiguos */
+    overflow-wrap: break-word; /* Estándar moderno */
+    overflow: visible; /* Asegura que no se corte */
+    text-overflow: clip; /* Evita los puntos suspensivos */
 }
 
 .escrito-title a {
@@ -2261,7 +2434,7 @@ hr {
 
 ---
 
-## Archivo: `static/js/Main.js`
+## Archivo: `static/js/main.js`
 
 ```javascript
 // static/js/main.js
@@ -2344,6 +2517,40 @@ application = get_asgi_application()
 
 ---
 
+## Archivo: `taller_escritura/local_settings.py`
+
+```python
+# taller_escritura/local_settings.py
+# Configuraciones para el entorno de desarrollo local.
+
+import os
+from pathlib import Path
+
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# MODO DEBUG ACTIVADO PARA DESARROLLO
+DEBUG = True
+
+# Permitir acceso desde el localhost
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
+# BASE DE DATOS LOCAL (SQLITE)
+# Se usará un archivo db.sqlite3 en la raíz del proyecto.
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+# La clave secreta puede ser menos segura en desarrollo
+SECRET_KEY = 'django-insecure-local-development-key'
+
+```
+
+---
+
 ## Archivo: `taller_escritura/settings.py`
 
 ```python
@@ -2357,11 +2564,14 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # --- CONFIGURACIÓN DE PRODUCCIÓN FIJA ---
-# Todos los valores están directamente en el código.
-# Esto es menos flexible, pero más directo para PythonAnywhere si las variables de entorno son un problema.
 
-SECRET_KEY = 'pon-aqui-tu-clave-secreta-larga-y-aleatoria' # <-- ¡REEMPLAZA ESTO!
+# MODIFICADO: Clave secreta segura y única para tu proyecto.
+SECRET_KEY = '***REDACTED***'
+
+# DEBUG debe ser False en producción por seguridad.
 DEBUG = False
+
+# MODIFICADO: Host permitido para tu aplicación.
 ALLOWED_HOSTS = ['devivan.pythonanywhere.com']
 
 # Application definition
@@ -2408,16 +2618,18 @@ TEMPLATES = [
 WSGI_APPLICATION = 'taller_escritura.wsgi.application'
 
 # --- BASE DE DATOS DE PRODUCCIÓN (MYSQL EN PYTHONANYWHERE) ---
-# Rellena estos valores con los datos de tu pestaña "Databases" en PythonAnywhere.
+# MODIFICADO: Rellenado con las credenciales exactas de tu cuenta de PythonAnywhere.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'DevIvan$db_taller_escritura',  # <-- REEMPLAZA 'DevIvan' con tu usuario
-        'USER': 'DevIvan',                     # <-- REEMPLAZA 'DevIvan' con tu usuario
-        'PASSWORD': 'tu-contraseña-de-la-db',  # <-- REEMPLAZA ESTO
-        'HOST': 'DevIvan.mysql.pythonanywhere-services.com', # <-- REEMPLAZA 'DevIvan' con tu usuario
+        'NAME': 'DevIvan$db_taller_escritura',
+        'USER': 'DevIvan',
+        'PASSWORD': '***REDACTED***', # AÑADIDA: Tu contraseña de la base de datos.
+        'HOST': 'DevIvan.mysql.pythonanywhere-services.com',
+        'PORT': '3306',
     }
 }
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -2434,9 +2646,13 @@ USE_I18N = True
 USE_TZ = True
 
 # Static & Media files
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
+# Rutas para que PythonAnywhere encuentre tus archivos estáticos y de medios
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# AÑADIDO: Directorio estático principal para desarrollo
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -2454,7 +2670,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_REDIRECT_URL = 'escritura:lista_escritos'
 LOGOUT_REDIRECT_URL = 'escritura:lista_escritos'
 
-# CKEditor
+# CKEditor Configuración
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_CONFIGS = {
     'default': {
@@ -2475,6 +2691,13 @@ CKEDITOR_CONFIGS = {
         'extraPlugins': 'codesnippet',
     }
 }
+
+# --- CONFIGURACIÓN DE DESARROLLO (SOBREESCRIBE SI ES NECESARIO) ---
+# Intenta importar la configuración local. Este archivo no debe estar en el control de versiones.
+try:
+    from .local_settings import *
+except ImportError:
+    pass
 ```
 
 ---
@@ -2503,6 +2726,7 @@ urlpatterns = [
 # ¡Esto solo debe usarse en desarrollo (DEBUG = True)!
 # En producción, un servidor web como Nginx o Apache se encargará de servir los archivos media.
 if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 ```
