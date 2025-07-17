@@ -19,4 +19,5 @@ urlpatterns = [
 # ¡Esto solo debe usarse en desarrollo (DEBUG = True)!
 # En producción, un servidor web como Nginx o Apache se encargará de servir los archivos media.
 if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

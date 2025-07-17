@@ -19,7 +19,7 @@ def pagina_principal(request):
 
 
 from django.views.generic import DetailView
-from django.contrib.auth import login
+from django.contrib.auth import login, get_user_model
 from django.contrib.auth.decorators import login_required # Decorador para requerir autenticación
 from django.http import Http404
 from django.contrib import messages
@@ -27,6 +27,8 @@ from django.contrib import messages
 # MODIFICADO: Ahora importamos también el modelo y formulario de Comentario
 from .models import Escrito, Profile, Comentario
 from .forms import CustomUserCreationForm, EscritoForm, ProfileForm, ComentarioForm
+
+User = get_user_model()
 
 # Vista basada en función para listar escritos públicos
 def lista_escritos(request):
@@ -308,3 +310,27 @@ def editar_perfil(request):
         'form': form
     }
     return render(request, 'escritura/editar_perfil.html', contexto)
+
+
+# AÑADIDO: Vista para el perfil público de un usuario
+def perfil_publico(request, user_id):
+    """
+    Muestra el perfil público de un usuario específico a cualquier visitante.
+    - user_id: La clave primaria (ID) del usuario cuyo perfil se quiere ver.
+    """
+    # Usamos select_related para optimizar y traer los datos del perfil en una sola consulta.
+    # Si el usuario no existe o no quiere ser mostrado, devolvemos un 404.
+    usuario_perfil = get_object_or_404(
+        User.objects.select_related('profile'),
+        pk=user_id,
+        profile__mostrar_en_comunidad=True
+    )
+
+    # Filtramos solo los escritos que son públicos.
+    escritos_publicos = Escrito.objects.filter(autor=usuario_perfil, estado='PUBLICO')
+
+    contexto = {
+        'usuario_perfil': usuario_perfil,
+        'escritos': escritos_publicos
+    }
+    return render(request, 'escritura/perfil_publico.html', contexto)
