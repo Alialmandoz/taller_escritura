@@ -24,6 +24,8 @@
                 <a href="{% url 'home' %}">Taller de Escritura de Cálamo y Papiro</a>
             </div>
             <ul class="nav-links">
+                <li><a href="{% url 'escritura:lista_escritos' %}">Escritos</a></li>
+                
                 {% if user.is_authenticated %}
                     <li><span class="welcome-message">Hola, {{ user.username }}!</span></li>
                     {# AÑADIDO: Enlace a la página de perfil #}
@@ -45,6 +47,10 @@
             </ul>
         </nav>
     </header>
+
+    {% block breadcrumbs %}
+        {# Este bloque será sobrescrito por plantillas hijas cuando necesiten breadcrumbs #}
+    {% endblock %}
 
     <main class="container">
         {# AÑADIDO: Bloque para mostrar mensajes del sistema de Django #}

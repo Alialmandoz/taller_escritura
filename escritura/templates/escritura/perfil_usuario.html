@@ -61,9 +61,11 @@
                             <button
                                 class="toggle-button"
                                 aria-expanded="false"
-                                aria-controls="escrito-content-perfil-{{ escrito.pk }}"
+                                aria-controls="escrito-content-perfil-{{ escrito.pk }}" {# Asegúrate que el ID del escrito es correcto para cada plantilla #}
                                 title="Expandir/Contraer"
                             >
+                                <span class="button-text">Leer más</span>
+                                <span class="button-icon"></span>
                             </button>
                         </div>
                     </div>
