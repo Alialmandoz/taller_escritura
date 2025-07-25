@@ -92,35 +92,40 @@ a:hover {
     background-color: #c82333; /* Rojo más oscuro al pasar el ratón */
 }
 
-/* Header Styles */
+/* MODIFICADO: Header Styles */
 .main-header {
-    background-color: #CC9980; /* Nuevo color de fondo para el encabezado (marrón rojizo claro) */
+    background-color: #CC9980;
     color: white;
-    padding: 15px 20px; /* Ajuste de padding para móviles */
+    padding: 20px; /* Aumentamos el padding para dar más aire */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Centramos todo por defecto */
 }
 
-.main-nav {
+/* NUEVO: Contenedor principal del header */
+.header-content {
     display: flex;
-    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px; /* Límite opcional para el ancho de la navegación */
-    margin: 0 auto;
+    flex-direction: column; /* Apilamos logo y nav verticalmente */
+    align-items: center; /* Centramos los items apilados */
+    gap: 15px; /* Espacio entre el logo y la barra de navegación */
+    width: 100%;
 }
 
-.logo {
-    flex-basis: 100%; /* El logo ocupa todo el ancho en móviles */
-    text-align: center;
-    margin-bottom: 10px;
-}
 .logo a {
     color: white;
-    font-size: 1.8em; /* Tamaño de fuente ligeramente más grande para el logo */
+    font-size: 2.2em; /* Hacemos el logo más grande */
     font-weight: bold;
     text-decoration: none;
-    display: block; /* Asegura que el enlace ocupe todo el espacio del logo */
-    font-family: 'Playfair Display', serif; /* APLICADO: Playfair Display para el logo */
+    display: block;
+    font-family: 'Playfair Display', serif;
+}
+
+/* NUEVO: Contenedor de la navegación (enlaces + CTA) */
+.main-nav {
+    display: flex;
+    flex-direction: column; /* Apilamos enlaces y CTA en móvil */
+    align-items: center;
+    gap: 20px; /* Espacio entre la lista de enlaces y el botón de acción */
+    width: 100%;
 }
 
 .nav-links {
@@ -128,35 +133,35 @@ a:hover {
     margin: 0;
     padding: 0;
     display: flex;
-    flex-wrap: wrap; /* Permite que los enlaces se envuelvan */
-    justify-content: center; /* Centra los enlaces en móviles */
-    gap: 15px; /* Espacio entre elementos de navegación */
+    flex-wrap: wrap;
+    justify-content: center; /* Centramos los enlaces */
+    gap: 20px; /* Espacio entre los enlaces */
     align-items: center;
-    width: 100%; /* Ocupa todo el ancho disponible */
 }
 
-.nav-links li {
-    margin: 0;
-}
-
-.nav-links a, .nav-links span {
+.nav-links a, .nav-links span, .nav-link-button {
     color: white;
     text-decoration: none;
     font-weight: bold;
     padding: 5px 0;
-    white-space: nowrap; /* Evita que los textos como "Hola, usuario!" se rompan */
-    font-family: 'Lato', sans-serif; /* APLICADO: Lato para enlaces de navegación */
+    white-space: nowrap;
+    font-family: 'Lato', sans-serif;
 }
 
-.nav-links a:hover {
-    text-decoration: underline;
-}
-
-.welcome-message {
+/* NUEVO: Estilos para el botón de outline */
+.button.button-outline {
+    background-color: transparent;
+    border: 2px solid #FAF7F0; /* Borde con el color de fondo de las tarjetas */
+    color: #FAF7F0; /* Texto del mismo color que el borde */
+    padding: 8px 15px;
     font-weight: bold;
-    margin-right: 0; /* Ya no necesitamos margen si están centrados */
-    color: white;
-    font-family: 'Lato', sans-serif; /* APLICADO: Lato para el mensaje de bienvenida */
+    transition: all 0.3s ease; /* Transición suave para el hover */
+}
+
+.button.button-outline:hover {
+    background-color: #FAF7F0; /* Fondo se rellena al pasar el ratón */
+    color: #AA775A; /* Texto cambia a un color oscuro de la paleta */
+    text-decoration: none;
 }
 
 /* Footer Styles */
@@ -785,4 +790,85 @@ hr {
     color: #333;
     line-height: 1.6;
     margin: 0;
+}
+
+/* --- AÑADIDO: Estilos para Breadcrumbs --- */
+.breadcrumb-container {
+    padding: 10px 20px;
+    background-color: #E8D8C9;
+    border-bottom: 1px solid #CC9980;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9em;
+    color: #6B4F4F;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+.breadcrumb-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 800px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.breadcrumb-item {
+    display: inline;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: '›';
+    padding: 0 8px;
+    color: #AA775A;
+    font-weight: bold;
+}
+
+.breadcrumb-item a {
+    color: #6B4F4F;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb-item span[aria-current="page"] {
+    font-weight: bold;
+    color: #AA775A;
+}
+
+@media (max-width: 600px) {
+    .breadcrumb-container {
+        padding: 8px 15px;
+        margin-bottom: 15px;
+    }
+    .breadcrumb-list {
+        justify-content: flex-start;
+    }
+    .breadcrumb-item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 45%;
+    }
+    .breadcrumb-item:last-child {
+        max-width: 100%;
+    }
+}
+
+/* MODIFICADO: Media Queries para Responsiveness */
+
+/* En pantallas más grandes, colocamos la nav y el CTA en la misma línea */
+@media (min-width: 768px) {
+    .main-nav {
+        flex-direction: row; /* Ponemos los enlaces y el CTA en fila */
+        justify-content: center; /* Centramos el conjunto */
+    }
+
+    .logo a {
+        font-size: 2.8em; /* Aumentamos aún más el tamaño del logo en desktop */
+    }
 }

@@ -19,33 +19,41 @@
 </head>
 <body>
     <header class="main-header">
-        <nav class="main-nav">
+        {# MODIFICADO: Cambiamos la clase de 'main-nav' a 'header-content' para mayor claridad #}
+        <div class="header-content">
             <div class="logo">
                 <a href="{% url 'home' %}">Taller de Escritura de Cálamo y Papiro</a>
             </div>
-            <ul class="nav-links">
-                <li><a href="{% url 'escritura:lista_escritos' %}">Escritos</a></li>
-                
+
+            {# AÑADIDO: Contenedor para los enlaces de navegación y el CTA #}
+            <nav class="main-nav" aria-label="Navegación principal">
+                <ul class="nav-links">
+                    <li><a href="{% url 'escritura:lista_escritos' %}">Escritos</a></li>
+                    
+                    {% if user.is_authenticated %}
+                        <li><span class="welcome-message">Hola, {{ user.username }}!</span></li>
+                        <li><a href="{% url 'escritura:perfil_usuario' %}">Mi Perfil</a></li>
+                        <li>
+                            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="nav-link-button">Cerrar Sesión</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}" class="button">Iniciar Sesión</a></li>
+                        <li><a href="{% url 'escritura:registro' %}" class="button secondary">Registrarse</a></li>
+                    {% endif %}
+                </ul>
+
+                {# AÑADIDO: Acción principal separada para usuarios autenticados #}
                 {% if user.is_authenticated %}
-                    <li><span class="welcome-message">Hola, {{ user.username }}!</span></li>
-                    {# AÑADIDO: Enlace a la página de perfil #}
-                    <li><a href="{% url 'escritura:perfil_usuario' %}">Mi Perfil</a></li>
-                    
-                    {# MODIFICADO: Reemplazamos el enlace <a> por un formulario <form> #}
-                    <li>
-                        <form method="post" action="{% url 'logout' %}" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="nav-link-button">Cerrar Sesión</button>
-                        </form>
-                    </li>
-                    
-                    <li><a href="{% url 'escritura:crear_escrito' %}" class="button primary">+ Crear Nuevo Escrito</a></li>
-                {% else %}
-                    <li><a href="{% url 'login' %}" class="button">Iniciar Sesión</a></li>
-                    <li><a href="{% url 'escritura:registro' %}" class="button secondary">Registrarse</a></li>
+                <div class="header-actions">
+                    {# MODIFICADO: Aplicamos la nueva clase 'button-outline' #}
+                    <a href="{% url 'escritura:crear_escrito' %}" class="button button-outline">+ Crear Nuevo Escrito</a>
+                </div>
                 {% endif %}
-            </ul>
-        </nav>
+            </nav>
+        </div>
     </header>
 
     {% block breadcrumbs %}
