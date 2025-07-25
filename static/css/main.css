@@ -324,24 +324,25 @@ ul.errorlist {
     opacity: 0;
 }
 
-/* CAMBIO: Ajustes para el botón de expansión */
+/* REEMPLAZA CUALQUIER ESTILO ANTERIOR DE .toggle-button CON ESTO */
+
 .toggle-button {
-    width: auto;
+    width: auto; /* El ancho se ajusta al contenido */
     height: auto;
     background-color: #E8D8C9;
     color: #AA775A;
     border: 1px solid #CC9980;
-    border-radius: 5px;
+    border-radius: 5px; /* Ligeramente más cuadrado para acomodar texto */
     cursor: pointer;
-    display: flex;
+    display: flex; /* CLAVE: Para alinear el texto y el ícono */
     justify-content: center;
     align-items: center;
-    /* Eliminado: gap: 8px; */
+    gap: 8px; /* Espacio entre el texto y el ícono */
     font-size: 0.9em;
     font-weight: bold;
     line-height: 1;
     padding: 8px 12px;
-    transition: background-color 0.3s, transform 0.3s;
+    transition: background-color 0.3s ease; /* Quitamos la transición de 'transform' de aquí */
     flex-shrink: 0;
 }
 
@@ -350,12 +351,36 @@ ul.errorlist {
     color: white;
 }
 
-/* NUEVO: Estilos para el texto dentro del botón */
+/* Estilos para el texto dentro del botón */
 .button-text {
     white-space: nowrap;
 }
 
-/* Eliminado: Estilos para el ícono de flecha */
+/* Estilos para el ícono de flecha (hecho con bordes) */
+.button-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #AA775A; /* Flecha hacia abajo por defecto */
+    transition: transform 0.3s ease; /* La rotación solo se aplica al ícono */
+}
+
+/* Rota la flecha hacia arriba cuando el escrito está expandido */
+.escrito-item.is-expanded .button-icon {
+    transform: rotate(180deg);
+}
+
+/* Ajuste para el color del ícono en estado hover */
+.toggle-button:hover .button-icon {
+    border-top-color: white;
+}
+
+/* Asegura que el color de la flecha también cambie cuando el botón está hover Y expandido */
+.escrito-item.is-expanded .toggle-button:hover .button-icon {
+    border-top-color: white;
+}
 
 .escrito-footer {
     display: flex;
