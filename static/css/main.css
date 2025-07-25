@@ -336,7 +336,7 @@ ul.errorlist {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 8px;
+    /* Eliminado: gap: 8px; */
     font-size: 0.9em;
     font-weight: bold;
     line-height: 1;
@@ -355,25 +355,7 @@ ul.errorlist {
     white-space: nowrap;
 }
 
-/* NUEVO: Estilos para el ícono de flecha */
-.button-icon {
-    display: inline-block;
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid #AA775A;
-    transition: transform 0.3s ease;
-}
-
-.escrito-item.is-expanded .button-icon {
-    transform: rotate(180deg);
-    border-top-color: white;
-}
-
-.toggle-button:hover .button-icon {
-    border-top-color: white;
-}
+/* Eliminado: Estilos para el ícono de flecha */
 
 .escrito-footer {
     display: flex;
