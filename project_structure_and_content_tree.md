@@ -1,12 +1,13 @@
 # Contenido del Proyecto: taller escritura
 
-**Generado el:** 2025-07-17 00:11:34
+**Generado el:** 2025-07-25 14:24:39
 
 ## Estructura del Proyecto
 
 ```text
 taller escritura
 ├── .gitignore
+├── AGENTS.md
 ├── Desglose de Funcionalidades de la App.txt
 ├── GEMINI.md
 ├── README.md
@@ -21,12 +22,16 @@ taller escritura
 │   ├── tests.py
 │   ├── urls.py
 │   ├── views.py
+│   ├── management
+│   │   ├── commands
+│   │   │   ├── enviar_notificaciones.py
 │   ├── migrations
 │   │   ├── 0001_initial.py
 │   │   ├── 0002_profile.py
 │   │   ├── 0003_alter_escrito_contenido.py
 │   │   ├── 0004_profile_mostrar_en_comunidad.py
 │   │   ├── 0005_comentario.py
+│   │   ├── 0006_escrito_notificacion_enviada.py
 │   │   ├── __init__.py
 │   ├── templates
 │   │   ├── escritura
@@ -62,6 +67,53 @@ taller escritura
 ## Archivo: `.gitignore`
 
 [Contenido de '.gitignore' omitido (Extensión no listada: )]
+
+## Archivo: `AGENTS.md`
+
+```markdown
+# MODO: ASISTENTE EXPERTO EN ARQUITECTURA DE SOFTWARE
+
+### ROL Y MISIÓN PRINCIPAL
+Actúa como un "Arquitecto de Software Senior y Mentor Técnico". Tu misión principal es guiar al usuario de forma interactiva en la definición, diseño y andamiaje de un proyecto de software desde cero. Tu objetivo final no es solo escribir código, sino asegurar que el proyecto nazca sobre una base de principios de ingeniería de software robustos, escalables y mantenibles. Eres un experto en patrones de diseño, arquitecturas limpias (Clean Architecture), Domain-Driven Design (DDD), y metodologías de desarrollo modernas.
+
+### PROTOCOLO DE INTERACCIÓN OBLIGATORIO
+Tu interacción con el usuario debe seguir ESTRICTAMENTE los siguientes pasos secuenciales. No avances al siguiente paso sin haber completado y obtenido la aprobación explícita del usuario en el paso actual.
+
+1.  **FASE DE DESCUBRIMIENTO (Discovery Phase):**
+    *   **Objetivo:** Comprender a fondo el problema de negocio y los requerimientos funcionales y no funcionales.
+    *   **Acción:** Realiza preguntas clave para clarificar el propósito de la aplicación, el público objetivo, los casos de uso principales, las expectativas de carga (usuarios concurrentes, volumen de datos), y las restricciones (presupuesto, tecnología existente, plazos).
+    *   **Prohibición:** NO sugieras ninguna tecnología o arquitectura en esta fase. Concéntrate únicamente en el "qué" y el "porqué".
+
+2.  **FASE DE DISEÑO ARQUITECTÓNICO (Architectural Design Phase):**
+    *   **Objetivo:** Proponer una arquitectura de alto nivel que cumpla con los requisitos no funcionales (escalabilidad, rendimiento, seguridad, mantenibilidad).
+    *   **Acción:** Basado en la fase anterior, presenta 2-3 opciones de estilos arquitectónicos (ej: Microservicios, Arquitectura Hexagonal, Monolito Modular). Para CADA opción, explica de forma concisa:
+        *   **Pros:** Ventajas específicas para este proyecto.
+        *   **Contras:** Desventajas y posibles complejidades.
+        *   **Justificación:** Por qué es una opción viable.
+    *   **Recomendación:** Ofrece una recomendación fundamentada sobre cuál opción consideras la más adecuada y espera la decisión del usuario.
+
+3.  **FASE DE SELECCIÓN TECNOLÓGICA (Tech Stack Selection Phase):**
+    *   **Objetivo:** Definir el stack tecnológico completo.
+    *   **Acción:** Una vez la arquitectura esté aprobada, sugiere un stack tecnológico (lenguajes, frameworks, bases de datos, proveedores de nube, etc.) que se alinee con la arquitectura elegida. Justifica cada elección basándote en factores como el ecosistema, la comunidad, el rendimiento y la facilidad de contratación de talento.
+
+4.  **FASE DE ANDAMIAJE Y ESTRUCTURA (Scaffolding & Structuring Phase):**
+    *   **Objetivo:** Generar la estructura de directorios y el código inicial.
+    *   **Acción:** Proporciona una estructura de carpetas y archivos detallada y lógica, coherente con la arquitectura definida (ej: `src/core`, `src/infrastructure`, `src/api`). Genera el código "boilerplate" esencial para los módulos principales, incluyendo configuraciones iniciales, puntos de entrada de la API y ejemplos de capas de dominio/aplicación/infraestructura. El código debe ser IMPECABLE, comentado donde sea necesario y seguir las mejores prácticas del lenguaje.
+
+### PRINCIPIOS GUÍA Y RESTRICCIONES
+*   **Mentalidad de Mantenibilidad:** Prioriza la claridad sobre la astucia. El código y la estructura deben ser fácilmente comprensibles por otros desarrolladores.
+*   **Abstracción y Desacoplamiento:** Aplica rigurosamente los principios SOLID y el desacoplamiento entre capas.
+*   **Seguridad por Defecto:** Incorpora consideraciones de seguridad desde el inicio del diseño.
+*   **Obsesión por el "Porqué":** NUNCA sugieras algo sin explicar la razón fundamental detrás de ello, conectándolo directamente con los objetivos del proyecto.
+*   **NO Generar Soluciones Monolíticas Simplistas:** A menos que sea explícitamente justificado y aprobado por el usuario, evita proponer soluciones de un solo archivo o sin una separación clara de responsabilidades.
+
+### FORMATOS DE SALIDA
+*   **Estructuras de Directorios:** Utiliza formato de árbol de texto (tree-like structure).
+*   **Diagramas:** Cuando sea necesario, utiliza la sintaxis de Mermaid para generar diagramas de arquitectura.
+*   **Código:** Siempre dentro de bloques de código con el identificador de lenguaje correcto (ej: ```python ... ```).
+```
+
+---
 
 ## Archivo: `Desglose de Funcionalidades de la App.txt`
 
@@ -398,84 +450,66 @@ class EscrituraConfig(AppConfig):
 # escritura/forms.py
 
 from django import forms
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
-from .models import Escrito, Profile, Comentario # MODIFICADO: Importamos también nuestro modelo Profile y Comentario
+from .models import Profile, Escrito, Comentario
+from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
+User = get_user_model()
 
-# Formulario personalizado para el registro de usuarios
 class CustomUserCreationForm(UserCreationForm):
     """
-    Formulario de registro personalizado que hereda de UserCreationForm de Django.
-    Por ahora, no añadimos campos extra directamente aquí,
-    ya que los campos del perfil (bio, foto) se gestionarán en el modelo Profile.
+    Formulario para la creación de nuevos usuarios. Extiende el base
+    para incluir el campo de email.
     """
     class Meta(UserCreationForm.Meta):
-        model = UserCreationForm.Meta.model
-        # Si NO quieres pedir el email en el registro, simplemente usa los campos predeterminados:
-        fields = UserCreationForm.Meta.fields
-        # Si SÍ quieres pedir el email en el registro, descomenta la línea de abajo:
-        # fields = UserCreationForm.Meta.fields + ('email',)
+        model = User
+        fields = UserCreationForm.Meta.fields + ('email', 'first_name', 'last_name')
 
-
-# Formulario para crear y editar objetos Escrito (sin cambios)
-class EscritoForm(forms.ModelForm):
+class UserUpdateForm(forms.ModelForm):
     """
-    Formulario basado en el modelo Escrito para crear y editar textos.
+    Formulario para actualizar los campos básicos del modelo User.
     """
     class Meta:
-        model = Escrito
-        fields = ['titulo', 'contenido', 'estado'] 
-        labels = {
-            'titulo': 'Título del Escrito',
-            'contenido': 'Contenido del Texto',
-            'estado': 'Visibilidad',
-        }
+        model = User
+        fields = ['first_name', 'last_name', 'email']
 
-# AÑADIDO: Formulario para editar el perfil de usuario
-class ProfileForm(forms.ModelForm):
+class ProfileUpdateForm(forms.ModelForm):
     """
-    Formulario para que los usuarios editen su propio perfil.
+    Formulario para actualizar los campos del modelo Profile.
     """
     class Meta:
         model = Profile
-        # Especificamos los campos que el usuario puede editar.
-        # No incluimos el campo 'user' porque no debe ser modificable.
         fields = ['bio', 'foto_perfil', 'mostrar_en_comunidad']
-        labels = {
-            'bio': 'Tu Biografía',
-            'foto_perfil': 'Cambiar Foto de Perfil',
-            'mostrar_en_comunidad': 'Mostrar mi perfil en la página de la comunidad',
-        }
-        help_texts = {
-            'mostrar_en_comunidad': 'Si marcas esta casilla, otros usuarios podrán ver tu nombre y foto en la página principal.',
-        }
-        # Opcional: Widgets para personalizar la apariencia de los campos
         widgets = {
-            'bio': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Cuéntanos un poco sobre ti...'}),
+            'bio': forms.Textarea(attrs={'rows': 4}),
         }
 
-# AÑADIR AL FINAL DE forms.py
+class EscritoForm(forms.ModelForm):
+    """
+    Formulario para la creación y edición de Escritos.
+    """
+    contenido = forms.CharField(widget=CKEditorUploadingWidget())
+
+    class Meta:
+        model = Escrito
+        fields = ['titulo', 'contenido', 'estado']
 
 class ComentarioForm(forms.ModelForm):
     """
-    Formulario para que los usuarios puedan crear nuevos comentarios.
+    Formulario para crear nuevos comentarios.
     """
     class Meta:
         model = Comentario
-        # Solo necesitamos que el usuario introduzca el texto.
-        # El autor y el escrito se asignarán automáticamente en la vista.
         fields = ['texto']
         widgets = {
-            'texto': forms.Textarea(
-                attrs={
-                    'rows': 3,
-                    'placeholder': 'Escribe tu comentario aquí...',
-                    'class': 'comment-textarea' # Clase para darle estilo si es necesario
-                }
-            ),
+            'texto': forms.Textarea(attrs={
+                'rows': 3,
+                'placeholder': 'Añade tu comentario...'
+            }),
         }
         labels = {
-            'texto': '' # Ocultamos la etiqueta <label> para un diseño más limpio
+            'texto': '' # Oculta la etiqueta "Texto del Comentario"
         }
 ```
 
@@ -510,6 +544,7 @@ class Escrito(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
     estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='BORRADOR')
+    notificacion_enviada = models.BooleanField(default=False, verbose_name="Notificación Enviada")
 
     def __str__(self):
         return f"{self.titulo} por {self.autor.username}"
@@ -667,7 +702,7 @@ from django.contrib import messages
 
 # MODIFICADO: Ahora importamos también el modelo y formulario de Comentario
 from .models import Escrito, Profile, Comentario
-from .forms import CustomUserCreationForm, EscritoForm, ProfileForm, ComentarioForm
+from .forms import CustomUserCreationForm, EscritoForm, UserUpdateForm, ProfileUpdateForm, ComentarioForm
 
 User = get_user_model()
 
@@ -933,22 +968,34 @@ def perfil_usuario(request):
 @login_required
 def editar_perfil(request):
     """
-    Permite al usuario autenticado editar su propio perfil (bio y foto).
+    Permite al usuario autenticado editar su propio perfil, incluyendo
+    datos del modelo User (nombre, apellido) y del modelo Profile (bio, foto).
     """
     if request.method == 'POST':
-        # Al procesar el formulario, pasamos la instancia del perfil a actualizar.
-        # ¡CRÍTICO! Pasamos request.FILES para manejar la subida de la imagen.
-        form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
-        if form.is_valid():
-            form.save() # Guarda los cambios en el perfil del usuario.
+        # Al procesar, instanciamos ambos formularios con los datos POST y FILES.
+        # Es crucial pasar la instancia correcta a cada formulario.
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+
+        # Verificamos que ambos formularios sean válidos.
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()      # Guarda los cambios en el modelo User.
+            profile_form.save()   # Guarda los cambios en el modelo Profile.
+            
             messages.success(request, '¡Tu perfil ha sido actualizado con éxito!')
             return redirect('escritura:perfil_usuario')
+        else:
+            # Si alguno de los formularios no es válido, se mostrarán los errores.
+            messages.error(request, 'Por favor, corrige los errores a continuación.')
+
     else:
-        # Al mostrar el formulario por primera vez, lo inicializamos con los datos actuales del perfil.
-        form = ProfileForm(instance=request.user.profile)
+        # Al mostrar la página (GET), inicializamos los formularios con los datos actuales.
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=request.user.profile)
 
     contexto = {
-        'form': form
+        'user_form': user_form,
+        'profile_form': profile_form
     }
     return render(request, 'escritura/editar_perfil.html', contexto)
 
@@ -975,6 +1022,88 @@ def perfil_publico(request, user_id):
         'escritos': escritos_publicos
     }
     return render(request, 'escritura/perfil_publico.html', contexto)
+```
+
+---
+
+## Archivo: `escritura/management/commands/enviar_notificaciones.py`
+
+```python
+# escritura/management/commands/enviar_notificaciones.py
+
+from django.core.management.base import BaseCommand
+from django.core.mail import send_mail
+from django.contrib.auth import get_user_model
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from escritura.models import Escrito
+
+User = get_user_model()
+
+class Command(BaseCommand):
+    help = 'Envía notificaciones por email sobre nuevos escritos publicados.'
+
+    def handle(self, *args, **options):
+        # 1. Obtener los escritos que son públicos y de los que aún no se ha enviado notificación.
+        escritos_a_notificar = Escrito.objects.filter(estado='PUBLICO', notificacion_enviada=False)
+
+        if not escritos_a_notificar.exists():
+            self.stdout.write(self.style.SUCCESS('No hay nuevos escritos para notificar.'))
+            return
+
+        # 2. Obtener todos los usuarios que recibirán la notificación.
+        usuarios = User.objects.all()
+
+        for escrito in escritos_a_notificar:
+            self.stdout.write(f'Procesando escrito: "{escrito.titulo}"...')
+
+            # 3. Preparar el contenido del email.
+            # Usamos un template para que sea más fácil de mantener.
+            # (Crearemos este template en el siguiente paso)
+            contexto_email = {
+                'titulo_escrito': escrito.titulo,
+                'nombre_autor': escrito.autor.username,
+                # Podrías añadir una URL completa si tienes configurado el dominio
+                # 'url_escrito': escrito.get_absolute_url() 
+            }
+            asunto = f"Nuevo artículo de {escrito.autor.username}: {escrito.titulo}"
+            
+            # Renderizamos un template HTML para el cuerpo del correo
+            # html_mensaje = render_to_string('emails/notificacion_nuevo_escrito.html', contexto_email)
+            # Creamos una versión en texto plano para clientes de correo que no soportan HTML
+            # texto_plano_mensaje = strip_tags(html_mensaje)
+            
+            # Por simplicidad ahora, usaremos un texto simple.
+            mensaje = f'{escrito.autor.username} ha publicado un nuevo artículo: "{escrito.titulo}"'
+
+            # 4. Filtrar y enviar emails.
+            destinatarios = [user.email for user in usuarios if user.email and user.id != escrito.autor.id]
+            
+            if destinatarios:
+                try:
+                    send_mail(
+                        asunto,
+                        mensaje,
+                        'notificaciones@tallerescritura.com', # Remitente
+                        destinatarios,
+                        fail_silently=False,
+                    )
+                    self.stdout.write(self.style.SUCCESS(f'  > Notificaciones enviadas a {len(destinatarios)} usuarios.'))
+                    
+                    # 5. Marcar el escrito como notificado para no volver a enviarlo.
+                    escrito.notificacion_enviada = True
+                    escrito.save()
+
+                except Exception as e:
+                    self.stdout.write(self.style.ERROR(f'  > Error al enviar notificaciones para "{escrito.titulo}": {e}'))
+            else:
+                self.stdout.write(self.style.WARNING(f'  > No hay destinatarios para notificar sobre "{escrito.titulo}".'))
+                # Aunque no haya destinatarios, lo marcamos como procesado.
+                escrito.notificacion_enviada = True
+                escrito.save()
+
+        self.stdout.write(self.style.SUCCESS('Proceso de notificación completado.'))
+
 ```
 
 ---
@@ -1168,6 +1297,32 @@ class Migration(migrations.Migration):
 
 ---
 
+## Archivo: `escritura/migrations/0006_escrito_notificacion_enviada.py`
+
+```python
+# Generated by Django 5.2.3 on 2025-07-25 16:09
+
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ('escritura', '0005_comentario'),
+    ]
+
+    operations = [
+        migrations.AddField(
+            model_name='escrito',
+            name='notificacion_enviada',
+            field=models.BooleanField(default=False, verbose_name='Notificación Enviada'),
+        ),
+    ]
+
+```
+
+---
+
 ## Archivo: `escritura/migrations/__init__.py`
 
 ```python
@@ -1336,12 +1491,53 @@ class Migration(migrations.Migration):
     <h1 class="page-title">Editar Mi Perfil</h1>
 
     {# ¡CRÍTICO! El atributo enctype es necesario para subir archivos (la foto de perfil). #}
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" class="form-container">
         {% csrf_token %}
 
-        {{ form.as_p }}
+        <fieldset>
+            <legend>Información de la Cuenta</legend>
+            <div class="form-field">
+                {{ user_form.email.label_tag }}
+                {{ user_form.email }}
+                {{ user_form.email.errors }}
+            </div>
+            <div class="form-field">
+                {{ user_form.first_name.label_tag }}
+                {{ user_form.first_name }}
+                {{ user_form.first_name.errors }}
+            </div>
+            <div class="form-field">
+                {{ user_form.last_name.label_tag }}
+                {{ user_form.last_name }}
+                {{ user_form.last_name.errors }}
+            </div>
+            <div class="form-field">
+                {{ profile_form.bio.label_tag }}
+                {{ profile_form.bio }}
+                {{ profile_form.bio.errors }}
+            </div>
+        </fieldset>
 
-        <div style="display: flex; gap: 15px; margin-top: 20px;">
+        <fieldset>
+            <legend>Foto de Perfil</legend>
+            <div class="form-field">
+                {{ profile_form.foto_perfil.label_tag }}
+                {{ profile_form.foto_perfil }}
+                {{ profile_form.foto_perfil.errors }}
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Configuración de Privacidad</legend>
+            <div class="form-field checkbox-field">
+                {{ profile_form.mostrar_en_comunidad }}
+                {{ profile_form.mostrar_en_comunidad.label_tag }}
+                <small class="help-text">{{ profile_form.mostrar_en_comunidad.help_text }}</small>
+                {{ profile_form.mostrar_en_comunidad.errors }}
+            </div>
+        </fieldset>
+
+        <div class="form-actions">
             <button type="submit" class="button primary">Guardar Cambios</button>
             <a href="{% url 'escritura:perfil_usuario' %}" class="button secondary">Cancelar</a>
         </div>
@@ -1410,11 +1606,11 @@ class Migration(migrations.Migration):
 
 ```html
 {# escritura/templates/escritura/lista_escritos.html #}
-{% extends 'base.html' %} {# Extends the base template #}
+{% extends 'base.html' %} {# Extiende la plantilla base #}
 
-{% block title %}Lista de Escritos Públicos{% endblock %} {# Sets the specific title for this page #}
+{% block title %}Lista de Escritos Públicos{% endblock %} {# Define el título específico para esta página #}
 
-{% block content %} {# This content will be inserted into the 'content' block in base.html #}
+{% block content %} {# Este contenido se insertará en el bloque 'content' de base.html #}
     <h1 class="page-title">Escritos Públicos del Taller</h1>
 
     {% if escritos %}
@@ -1424,28 +1620,13 @@ class Migration(migrations.Migration):
 
                     <div class="escrito-card-header">
                         <div class="header-author-info">
-                            {# MODIFICADO: Añadimos una condición para la imagen de perfil #}
-                            {# 1. Verificamos que el perfil del autor exista. #}
-                            {% if escrito.autor.profile %}
-                                {# 2. Verificamos que el campo foto_perfil TENGA un archivo asociado. #}
-                                {% if escrito.autor.profile.foto_perfil %}
-                                    <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
-                                {% else %}
-                                    {# Opcional: Puedes poner una imagen genérica si no hay foto #}
-                                    {# <img class="author-pic" src="{% static 'images/avatar_generico.png' %}" alt="Avatar genérico"> #}
-                                {% endif %}
+                            {% if escrito.autor.profile and escrito.autor.profile.foto_perfil %}
+                                <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
                             {% endif %}
                             <span class="author-name">{{ escrito.autor.username }}</span>
                         </div>
                         <div class="header-title-actions">
                             <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
-                            <button
-                                class="toggle-button"
-                                aria-expanded="false"
-                                aria-controls="escrito-content-{{ escrito.pk }}"
-                                title="Expandir/Contraer"
-                            >
-                            </button>
                         </div>
                     </div>
 
@@ -1457,6 +1638,17 @@ class Migration(migrations.Migration):
                         <div class="escrito-meta">
                             <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
                         </div>
+                        
+                        <!-- Contenedor Unificado para todas las acciones -->
+                        <div class="card-actions-container">
+                            <button
+                                class="toggle-button"
+                                aria-expanded="false"
+                                aria-controls="escrito-content-{{ escrito.pk }}"
+                                title="Expandir/Contraer"
+                            >
+                            </button>
+                        </div>
                     </div>
                 </li>
             {% endfor %}
@@ -1464,7 +1656,7 @@ class Migration(migrations.Migration):
     {% else %}
         <p>No hay escritos públicos disponibles en este momento.</p>
     {% endif %}
-{% endblock %}
+{% endblock %}```
 ```
 
 ---
@@ -1511,13 +1703,6 @@ class Migration(migrations.Migration):
                         </div>
                         <div class="header-title-actions">
                             <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
-                            <button
-                                class="toggle-button"
-                                aria-expanded="false"
-                                aria-controls="escrito-content-perfil-{{ escrito.pk }}"
-                                title="Expandir/Contraer"
-                            >
-                            </button>
                         </div>
                     </div>
 
@@ -1529,8 +1714,17 @@ class Migration(migrations.Migration):
                         <div class="escrito-meta">
                             <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
                         </div>
-                        <div class="escrito-status-actions">
+                        
+                        <!-- Contenedor Unificado para todas las acciones -->
+                        <div class="card-actions-container">
                             <span class="escrito-status status-{{ escrito.estado|lower }}">{{ escrito.get_estado_display }}</span>
+                            <button
+                                class="toggle-button"
+                                aria-expanded="false"
+                                aria-controls="escrito-content-perfil-{{ escrito.pk }}"
+                                title="Expandir/Contraer"
+                            >
+                            </button>
                         </div>
                     </div>
                 </li>
@@ -1556,7 +1750,6 @@ class Migration(migrations.Migration):
 
 {% block content %}
     <div class="profile-header">
-        {# MODIFICADO: Añadimos una condición para la imagen de perfil #}
         {% if perfil and perfil.foto_perfil %}
             <img src="{{ perfil.foto_perfil.url }}" alt="Foto de perfil de {{ usuario.username }}" class="profile-pic">
         {% endif %}
@@ -1582,7 +1775,6 @@ class Migration(migrations.Migration):
 
                     <div class="escrito-card-header">
                         <div class="header-author-info">
-                             {# MODIFICADO: Replicamos la misma lógica segura para la imagen #}
                             {% if escrito.autor.profile and escrito.autor.profile.foto_perfil %}
                                 <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
                             {% endif %}
@@ -1590,13 +1782,6 @@ class Migration(migrations.Migration):
                         </div>
                         <div class="header-title-actions">
                             <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
-                            <button
-                                class="toggle-button"
-                                aria-expanded="false"
-                                aria-controls="escrito-content-perfil-{{ escrito.pk }}"
-                                title="Expandir/Contraer"
-                            >
-                            </button>
                         </div>
                     </div>
 
@@ -1611,12 +1796,19 @@ class Migration(migrations.Migration):
                                 <p>Última actualización: {{ escrito.fecha_actualizacion|date:"d M Y H:i" }}</p>
                             {% endif %}
                         </div>
-                        <div class="escrito-status-actions">
+
+                        <!-- Contenedor Unificado para todas las acciones -->
+                        <div class="card-actions-container">
                             <span class="escrito-status status-{{ escrito.estado|lower }}">{{ escrito.get_estado_display }}</span>
-                            <div class="action-buttons">
-                                <a href="{% url 'escritura:editar_escrito' pk=escrito.pk %}" class="button warning small-button">Editar</a>
-                                <a href="{% url 'escritura:eliminar_escrito' pk=escrito.pk %}" class="button danger small-button">Eliminar</a>
-                            </div>
+                            <a href="{% url 'escritura:editar_escrito' pk=escrito.pk %}" class="button warning small-button">Editar</a>
+                            <a href="{% url 'escritura:eliminar_escrito' pk=escrito.pk %}" class="button danger small-button">Eliminar</a>
+                            <button
+                                class="toggle-button"
+                                aria-expanded="false"
+                                aria-controls="escrito-content-perfil-{{ escrito.pk }}"
+                                title="Expandir/Contraer"
+                            >
+                            </button>
                         </div>
                     </div>
                 </li>
@@ -1887,31 +2079,28 @@ ul.errorlist {
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative; /* Contexto de posicionamiento por si se necesitan insignias, etc. */
 }
 
-/* AÑADIDO: Nueva cabecera unificada */
 .escrito-card-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start; /* MODIFICADO: Alinea los elementos al inicio (arriba) */
+    align-items: flex-start;
     gap: 15px;
     margin-bottom: 15px;
 }
 
-/* AÑADIDO: Grupo para info del autor a la izquierda */
 .header-author-info {
     display: flex;
     align-items: center;
     gap: 10px;
-    min-width: 0; /* Evita que el contenedor se desborde si el nombre es largo */
+    min-width: 0;
 }
 
-/* AÑADIDO: Grupo para título y acciones a la derecha */
 .header-title-actions {
     display: flex;
-    align-items: flex-start; /* MODIFICADO: Alinea los elementos al inicio (arriba) */
+    align-items: flex-start;
     gap: 15px;
-    flex-wrap: wrap; /* AÑADIDO: Permite que los elementos se envuelvan en varias líneas */
 }
 
 .author-pic {
@@ -1920,7 +2109,7 @@ ul.errorlist {
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid #E8D8C9;
-    flex-shrink: 0; /* Evita que la imagen se encoja */
+    flex-shrink: 0;
 }
 
 .author-name {
@@ -1933,20 +2122,20 @@ ul.errorlist {
 }
 
 .escrito-title {
-    margin: 0; /* Quitamos margen del h2 */
+    margin: 0;
     font-family: 'Playfair Display', serif;
     color: #AA775A;
-    /* MODIFICADO: Permitir que el título ocupe varias líneas */
     white-space: normal;
-    word-wrap: break-word; /* Para navegadores antiguos */
-    overflow-wrap: break-word; /* Estándar moderno */
-    overflow: visible; /* Asegura que no se corte */
-    text-overflow: clip; /* Evita los puntos suspensivos */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow: visible;
+    text-overflow: clip;
+    flex-grow: 1; /* Permite que el título ocupe el espacio sobrante en la cabecera */
 }
 
 .escrito-title a {
     text-decoration: none;
-    color: inherit; /* Hereda el color del h2 */
+    color: inherit;
 }
 
 .escrito-title a:hover {
@@ -2002,7 +2191,7 @@ ul.errorlist {
     line-height: 1;
     padding: 0;
     transition: background-color 0.3s, transform 0.3s;
-    flex-shrink: 0;
+    flex-shrink: 0; /* Evita que el botón se encoja */
 }
 
 .toggle-button:hover {
@@ -2024,7 +2213,7 @@ ul.errorlist {
 
 .escrito-footer {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* <-- CLAVE: Empuja la meta-info y las acciones a los extremos */
     align-items: center;
     flex-wrap: wrap;
     gap: 15px;
@@ -2036,12 +2225,13 @@ ul.errorlist {
     font-family: 'Lato', sans-serif;
 }
 
-.escrito-status-actions {
+/* Contenedor unificado para botones de acción en el footer */
+.card-actions-container {
     display: flex;
     align-items: center;
-    gap: 15px;
-    flex-wrap: wrap;
+    gap: 10px; /* Espacio entre los botones y/o el estado */
 }
+
 
 /* Escrito Detail Specific Styles */
 .header-section {
@@ -2331,27 +2521,22 @@ hr {
     padding: 20px 0;
 }
 
-/* AÑADIDO: Estilos para que el botón de logout parezca un enlace en la barra de navegación */
 .nav-link-button {
     background: none;
     border: none;
     padding: 0;
     margin: 0;
     cursor: pointer;
-    font-family: inherit; /* Hereda la fuente de su contenedor (ul.nav-links) */
-    
-    /* Replicamos los estilos de .nav-links a */
+    font-family: inherit;
     color: white;
     text-decoration: none;
     font-weight: bold;
-    font-size: 1em; /* Asegura que el tamaño de fuente sea el mismo */
+    font-size: 1em;
 }
 
 .nav-link-button:hover {
     text-decoration: underline;
 }
-
-/* AÑADIR AL FINAL de main.css */
 
 /* --- Estilos para la Sección de Comentarios --- */
 
@@ -2698,6 +2883,10 @@ try:
     from .local_settings import *
 except ImportError:
     pass
+
+# --- EMAIL CONFIGURATION (for development) ---
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'notificaciones@tallerescritura.com'
 ```
 
 ---
@@ -2783,7 +2972,7 @@ application = get_wsgi_application()
     <header class="main-header">
         <nav class="main-nav">
             <div class="logo">
-                <a href="{% url 'escritura:lista_escritos' %}">Taller de Escritura de Cálamo y Papiro</a>
+                <a href="{% url 'home' %}">Taller de Escritura de Cálamo y Papiro</a>
             </div>
             <ul class="nav-links">
                 {% if user.is_authenticated %}

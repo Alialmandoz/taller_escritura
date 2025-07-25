@@ -13,32 +13,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 2. Iteramos sobre cada elemento de la lista para añadirle la funcionalidad.
     escritoItems.forEach(item => {
-        // Encontramos el contenido y el botón dentro de cada item.
         const content = item.querySelector('.escrito-content');
         const toggleButton = item.querySelector('.toggle-button');
 
-        // Si no encontramos el contenido o el botón, saltamos al siguiente item.
         if (!content || !toggleButton) return;
 
-        // Por defecto, comprobamos si el contenido es más alto que nuestra altura colapsada.
-        // Si no lo es, no necesitamos el botón, así que lo ocultamos.
-        // `scrollHeight` es la altura total del contenido, `clientHeight` es la altura visible.
+        const buttonText = toggleButton.querySelector('.button-text');
+
         if (content.scrollHeight <= content.clientHeight) {
             toggleButton.style.display = 'none';
+        } else {
+            buttonText.textContent = 'Leer más';
+            toggleButton.setAttribute('aria-expanded', 'false');
         }
 
-        // 3. Añadimos un 'escuchador de eventos' al botón.
-        //    Esto ejecuta una función cada vez que el usuario hace clic en el botón.
         toggleButton.addEventListener('click', () => {
-            // `classList.toggle` es un método muy útil:
-            // - Si la clase 'is-expanded' existe en el 'item', la quita.
-            // - Si la clase 'is-expanded' no existe, la añade.
-            // Esto nos permite cambiar entre los dos estados con una sola línea.
             item.classList.toggle('is-expanded');
 
-            // MEJORA DE ACCESIBILIDAD: Actualizamos el atributo aria-expanded.
             const isExpanded = item.classList.contains('is-expanded');
             toggleButton.setAttribute('aria-expanded', isExpanded);
+
+            if (isExpanded) {
+                buttonText.textContent = 'Leer menos';
+            } else {
+                buttonText.textContent = 'Leer más';
+            }
         });
     });
 });

@@ -324,23 +324,25 @@ ul.errorlist {
     opacity: 0;
 }
 
+/* CAMBIO: Ajustes para el botón de expansión */
 .toggle-button {
-    width: 28px;
-    height: 28px;
+    width: auto;
+    height: auto;
     background-color: #E8D8C9;
     color: #AA775A;
     border: 1px solid #CC9980;
-    border-radius: 50%;
+    border-radius: 5px;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 20px;
+    gap: 8px;
+    font-size: 0.9em;
     font-weight: bold;
     line-height: 1;
-    padding: 0;
+    padding: 8px 12px;
     transition: background-color 0.3s, transform 0.3s;
-    flex-shrink: 0; /* Evita que el botón se encoja */
+    flex-shrink: 0;
 }
 
 .toggle-button:hover {
@@ -348,16 +350,29 @@ ul.errorlist {
     color: white;
 }
 
-.toggle-button::before {
-    content: '+';
+/* NUEVO: Estilos para el texto dentro del botón */
+.button-text {
+    white-space: nowrap;
 }
 
-.escrito-item.is-expanded .toggle-button::before {
-    content: '−';
+/* NUEVO: Estilos para el ícono de flecha */
+.button-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #AA775A;
+    transition: transform 0.3s ease;
 }
 
-.escrito-item.is-expanded .toggle-button {
+.escrito-item.is-expanded .button-icon {
     transform: rotate(180deg);
+    border-top-color: white;
+}
+
+.toggle-button:hover .button-icon {
+    border-top-color: white;
 }
 
 .escrito-footer {
