@@ -1,51 +1,20 @@
-# .gitignore
-
-# Directorios de entorno virtual
-# Ignora la carpeta 'venv' que creamos para el entorno virtual.
-# Si usas 'env', cámbialo por 'env/'
-venv/
-env/
-
-# Archivos de la base de datos de desarrollo
-# Ignora la base de datos SQLite predeterminada.
-# ¡IMPORTANTE! Si usas otra base de datos o quieres conservar db.sqlite3,
-# coméntalo o quítalo. Para desarrollo con SQLite es una buena práctica ignorarla.
-db.sqlite3
-
-# Archivos compilados de Python
-# Ignora los directorios que Python crea para almacenar el bytecode compilado.
+# Archivos de Bytecode de Python
 __pycache__/
 *.pyc
 
-# Archivos de medios subidos por usuarios
-# Este directorio aún no existe, pero es donde Django guardará archivos
-# como fotos de perfil o adjuntos de escritos. Es crucial no versionarlos.
-# Lo configuraremos más adelante en settings.py.
-media/
+# Base de datos de desarrollo
+db.sqlite3
+*.sqlite3
 
-# Archivos de configuración de IDEs (ejemplos)
-# Si usas PyCharm, VS Code, etc., estos directorios contienen configuraciones locales.
-.idea/
-.vscode/
-
-# Archivos de logs
-# Si en algún momento configuramos logging en archivos, los ignoramos.
-*.log
-logs/
-
-# Archivos de configuración del sistema operativo
-.DS_Store # macOS
-Thumbs.db # Windows
-
-# Variables de entorno locales (si se usaran en un archivo separado)
-# En proyectos más grandes, a veces se usan archivos .env para variables de entorno sensibles.
+# Archivos de entorno virtual
+venv/
+env/
 .env
 
-# Archivos de prueba
-# Ignorar resultados de cobertura de pruebas si se generan
-.coverage
-htmlcov/
+# Directorios de archivos estáticos y de medios generados
+staticfiles/
+media/
 
-# Archivos de caché de Django
-# A veces Django genera archivos de caché temporales
-*.sqlite3-journal
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db

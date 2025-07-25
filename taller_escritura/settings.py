@@ -142,3 +142,7 @@ try:
     from .local_settings import *
 except ImportError:
     pass
+
+# --- EMAIL CONFIGURATION (for development) ---
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+DEFAULT_FROM_EMAIL = 'notificaciones@tallerescritura.com'
