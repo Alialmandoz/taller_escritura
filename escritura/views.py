@@ -26,7 +26,7 @@ from django.contrib import messages
 
 # MODIFICADO: Ahora importamos también el modelo y formulario de Comentario
 from .models import Escrito, Profile, Comentario
-from .forms import CustomUserCreationForm, EscritoForm, ProfileForm, ComentarioForm
+from .forms import CustomUserCreationForm, EscritoForm, UserUpdateForm, ProfileUpdateForm, ComentarioForm
 
 User = get_user_model()
 
