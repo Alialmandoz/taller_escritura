@@ -2,18 +2,25 @@
 
 from django import forms
 from django.contrib.auth import get_user_model
-from .models import Profile, Escrito
+from django.contrib.auth.forms import UserCreationForm
+from .models import Profile, Escrito, Comentario
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 User = get_user_model()
+
+class CustomUserCreationForm(UserCreationForm):
+    """
+    Formulario para la creación de nuevos usuarios. Extiende el base
+    para incluir el campo de email.
+    """
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = UserCreationForm.Meta.fields + ('email', 'first_name', 'last_name')
 
 class UserUpdateForm(forms.ModelForm):
     """
     Formulario para actualizar los campos básicos del modelo User.
     """
-    first_name = forms.CharField(max_length=30, required=False, label="Nombre")
-    last_name = forms.CharField(max_length=150, required=False, label="Apellidos")
-
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email']
@@ -32,18 +39,26 @@ class ProfileUpdateForm(forms.ModelForm):
 class EscritoForm(forms.ModelForm):
     """
     Formulario para la creación y edición de Escritos.
-    Utiliza CKEditor para el campo de contenido.
     """
     contenido = forms.CharField(widget=CKEditorUploadingWidget())
 
     class Meta:
         model = Escrito
         fields = ['titulo', 'contenido', 'estado']
-        labels = {
-            'titulo': 'Título del Escrito',
-            'contenido': 'Contenido',
-            'estado': 'Visibilidad',
+
+class ComentarioForm(forms.ModelForm):
+    """
+    Formulario para crear nuevos comentarios.
+    """
+    class Meta:
+        model = Comentario
+        fields = ['texto']
+        widgets = {
+            'texto': forms.Textarea(attrs={
+                'rows': 3,
+                'placeholder': 'Añade tu comentario...'
+            }),
         }
-        help_texts = {
-            'estado': 'Elige quién puede ver tu escrito.',
+        labels = {
+            'texto': '' # Oculta la etiqueta "Texto del Comentario"
         }
