@@ -292,22 +292,34 @@ def perfil_usuario(request):
 @login_required
 def editar_perfil(request):
     """
-    Permite al usuario autenticado editar su propio perfil (bio y foto).
+    Permite al usuario autenticado editar su propio perfil, incluyendo
+    datos del modelo User (nombre, apellido) y del modelo Profile (bio, foto).
     """
     if request.method == 'POST':
-        # Al procesar el formulario, pasamos la instancia del perfil a actualizar.
-        # ¡CRÍTICO! Pasamos request.FILES para manejar la subida de la imagen.
-        form = ProfileForm(request.POST, request.FILES, instance=request.user.profile)
-        if form.is_valid():
-            form.save() # Guarda los cambios en el perfil del usuario.
+        # Al procesar, instanciamos ambos formularios con los datos POST y FILES.
+        # Es crucial pasar la instancia correcta a cada formulario.
+        user_form = UserUpdateForm(request.POST, instance=request.user)
+        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+
+        # Verificamos que ambos formularios sean válidos.
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()      # Guarda los cambios en el modelo User.
+            profile_form.save()   # Guarda los cambios en el modelo Profile.
+            
             messages.success(request, '¡Tu perfil ha sido actualizado con éxito!')
             return redirect('escritura:perfil_usuario')
+        else:
+            # Si alguno de los formularios no es válido, se mostrarán los errores.
+            messages.error(request, 'Por favor, corrige los errores a continuación.')
+
     else:
-        # Al mostrar el formulario por primera vez, lo inicializamos con los datos actuales del perfil.
-        form = ProfileForm(instance=request.user.profile)
+        # Al mostrar la página (GET), inicializamos los formularios con los datos actuales.
+        user_form = UserUpdateForm(instance=request.user)
+        profile_form = ProfileUpdateForm(instance=request.user.profile)
 
     contexto = {
-        'form': form
+        'user_form': user_form,
+        'profile_form': profile_form
     }
     return render(request, 'escritura/editar_perfil.html', contexto)
 

@@ -7,12 +7,53 @@
     <h1 class="page-title">Editar Mi Perfil</h1>
 
     {# ¡CRÍTICO! El atributo enctype es necesario para subir archivos (la foto de perfil). #}
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" class="form-container">
         {% csrf_token %}
 
-        {{ form.as_p }}
+        <fieldset>
+            <legend>Información de la Cuenta</legend>
+            <div class="form-field">
+                {{ user_form.email.label_tag }}
+                {{ user_form.email }}
+                {{ user_form.email.errors }}
+            </div>
+            <div class="form-field">
+                {{ user_form.first_name.label_tag }}
+                {{ user_form.first_name }}
+                {{ user_form.first_name.errors }}
+            </div>
+            <div class="form-field">
+                {{ user_form.last_name.label_tag }}
+                {{ user_form.last_name }}
+                {{ user_form.last_name.errors }}
+            </div>
+            <div class="form-field">
+                {{ profile_form.bio.label_tag }}
+                {{ profile_form.bio }}
+                {{ profile_form.bio.errors }}
+            </div>
+        </fieldset>
 
-        <div style="display: flex; gap: 15px; margin-top: 20px;">
+        <fieldset>
+            <legend>Foto de Perfil</legend>
+            <div class="form-field">
+                {{ profile_form.foto_perfil.label_tag }}
+                {{ profile_form.foto_perfil }}
+                {{ profile_form.foto_perfil.errors }}
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Configuración de Privacidad</legend>
+            <div class="form-field checkbox-field">
+                {{ profile_form.mostrar_en_comunidad }}
+                {{ profile_form.mostrar_en_comunidad.label_tag }}
+                <small class="help-text">{{ profile_form.mostrar_en_comunidad.help_text }}</small>
+                {{ profile_form.mostrar_en_comunidad.errors }}
+            </div>
+        </fieldset>
+
+        <div class="form-actions">
             <button type="submit" class="button primary">Guardar Cambios</button>
             <a href="{% url 'escritura:perfil_usuario' %}" class="button secondary">Cancelar</a>
         </div>
