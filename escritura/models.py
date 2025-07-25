@@ -24,6 +24,7 @@ class Escrito(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     fecha_actualizacion = models.DateTimeField(auto_now=True)
     estado = models.CharField(max_length=10, choices=ESTADO_CHOICES, default='BORRADOR')
+    notificacion_enviada = models.BooleanField(default=False, verbose_name="Notificación Enviada")
 
     def __str__(self):
         return f"{self.titulo} por {self.autor.username}"
