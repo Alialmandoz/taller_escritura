@@ -926,3 +926,38 @@ hr {
 .search-container .gsc-search-button-v2 svg {
     fill: white !important; /* Hacemos la lupa blanca */
 }
+
+
+/* --- Estilos Mejorados para la Paginación --- */
+
+/* Contenedor de los enlaces y texto de paginación */
+.pagination .step-links {
+    display: flex; /* Pone los elementos en fila */
+    align-items: center; /* Los alinea verticalmente */
+    gap: 10px; /* Espacio entre cada elemento */
+}
+
+/* Estilo para los enlaces de paginación (anterior, siguiente, etc.) */
+.pagination a {
+    padding: 8px 12px;
+    text-decoration: none;
+    background-color: #E8D8C9; /* Color de fondo suave */
+    color: #6B4F4F; /* Color de texto oscuro */
+    border: 1px solid #CC9980;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+/* Efecto al pasar el ratón por encima de los enlaces */
+.pagination a:hover {
+    background-color: #AA775A; /* Color primario */
+    color: white; /* Texto blanco */
+}
+
+/* Estilo para el texto "Página X de Y" */
+.pagination .current {
+    font-weight: bold;
+    color: #333333;
+    padding: 8px;
+}
