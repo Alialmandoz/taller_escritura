@@ -1,1 +1,1 @@
-fix: Añadir get_absolute_url al modelo Escrito para el sitemap
+fix: Especificar template_name para la vista del sitemap
