@@ -26,7 +26,7 @@
 
     {% if mis_escritos %}
         <ul class="escrito-list">
-            {% for escrito in mis_escritos %}
+            {% for escrito in page_obj %}
                 <li class="escrito-item">
 
                     <div class="escrito-card-header">
@@ -71,6 +71,7 @@
                 </li>
             {% endfor %}
         </ul>
+        {% include 'escritura/partials/pagination.html' %}
     {% else %}
         <p>Aún no has creado ningún escrito. <a href="{% url 'escritura:crear_escrito' %}">¡Empieza a escribir ahora!</a></p>
     {% endif %}

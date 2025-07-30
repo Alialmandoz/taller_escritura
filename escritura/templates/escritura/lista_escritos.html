@@ -1,16 +1,15 @@
-{# escritura/templates/escritura/lista_escritos.html #}
-{% extends 'base.html' %} {# Extiende la plantilla base #}
+{% extends 'base.html' %}
 
-{% block title %}Lista de Escritos Públicos{% endblock %} {# Define el título específico para esta página #}
+{% block title %}Lista de Escritos Públicos{% endblock %}
 
-{% block content %} {# Este contenido se insertará en el bloque 'content' de base.html #}
+{% block content %}
     <h1 class="page-title">Escritos Públicos del Taller</h1>
 
-    {% if escritos %}
+    {% if page_obj %}
         <ul class="escrito-list">
-            {% for escrito in escritos %}
+            {% for escrito in page_obj %}  {# MODIFICADO: Itera sobre page_obj #}
                 <li class="escrito-item">
-
+                    {# ... (El contenido de la tarjeta del escrito no cambia) ... #}
                     <div class="escrito-card-header">
                         <div class="header-author-info">
                             {% if escrito.autor.profile and escrito.autor.profile.foto_perfil %}
@@ -22,24 +21,15 @@
                             <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
                         </div>
                     </div>
-
                     <div class="escrito-content" id="escrito-content-{{ escrito.pk }}">
                         {{ escrito.contenido|safe }}
                     </div>
-
                     <div class="escrito-footer">
                         <div class="escrito-meta">
                             <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
                         </div>
-                        
-                        <!-- Contenedor Unificado para todas las acciones -->
                         <div class="card-actions-container">
-                            <button
-                                class="toggle-button"
-                                aria-expanded="false"
-                                aria-controls="escrito-content-{{ escrito.pk }}" {# Asegúrate que el ID del escrito es correcto para cada plantilla #}
-                                title="Expandir/Contraer"
-                            >
+                            <button class="toggle-button" aria-expanded="false" aria-controls="escrito-content-{{ escrito.pk }}" title="Expandir/Contraer">
                                 <span class="button-text">Leer más</span>
                             </button>
                         </div>
@@ -47,7 +37,11 @@
                 </li>
             {% endfor %}
         </ul>
+
+        {# AÑADIDO: Incluye el componente de paginación #}
+        {% include 'escritura/partials/pagination.html' %}
+
     {% else %}
         <p>No hay escritos públicos disponibles en este momento.</p>
     {% endif %}
-{% endblock %}```
+{% endblock %}

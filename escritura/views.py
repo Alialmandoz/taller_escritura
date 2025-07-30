@@ -1,6 +1,7 @@
 # escritura/views.py
 
 from django.shortcuts import render, get_object_or_404, redirect
+from django.core.paginator import Paginator
 
 # AÑADIDO: Vista para la página principal
 def pagina_principal(request):
@@ -30,32 +31,22 @@ from .forms import CustomUserCreationForm, EscritoForm, UserUpdateForm, ProfileU
 
 User = get_user_model()
 
-# Vista basada en función para listar escritos públicos
+# REEMPLAZAR la función lista_escritos existente con esta:
 def lista_escritos(request):
     """
-    Esta vista recupera todos los objetos Escrito cuyo estado sea 'PUBLICO'
-    y los pasa a la plantilla para su visualización.
+    Esta vista recupera todos los objetos Escrito cuyo estado sea 'PUBLICO',
+    los pagina y los pasa a la plantilla para su visualización.
     """
-    # MODIFICADO: Se optimiza la consulta para incluir los datos del autor y su perfil.
-    # Esto evita múltiples consultas a la base de datos (problema N+1) en la plantilla.
-    escritos = Escrito.objects.filter(estado='PUBLICO').select_related('autor__profile').order_by('-fecha_creacion')
+    escritos_list = Escrito.objects.filter(estado='PUBLICO').select_related('autor__profile').order_by('-fecha_creacion')
+    
+    # Lógica de Paginación
+    paginator = Paginator(escritos_list, 10)  # Muestra 10 escritos por página.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
-    # AÑADIDO PARA DEPURACIÓN: Imprime el queryset para ver qué elementos contiene.
-    # Estas líneas te mostrarán en la terminal del servidor qué escritos está recuperando la consulta.
-    print(f"DEBUG: Escritos públicos recuperados: {escritos}")
-    print(f"DEBUG: Cantidad de escritos públicos: {escritos.count()}")
-    for escrito in escritos:
-        print(f"DEBUG: Escrito ID: {escrito.pk}, Título: {escrito.titulo}, Estado: {escrito.estado}, Autor: {escrito.autor.username}")
-
-
-    # Diccionario de contexto: Los datos que queremos pasar a la plantilla.
-    # La clave 'escritos' será el nombre de la variable en la plantilla.
     contexto = {
-        'escritos': escritos
+        'page_obj': page_obj  # Pasamos el objeto de página a la plantilla
     }
-
-    # Renderiza la plantilla 'escritura/lista_escritos.html'
-    # y le pasa el diccionario 'contexto'.
     return render(request, 'escritura/lista_escritos.html', contexto)
 
 
@@ -252,39 +243,31 @@ def eliminar_escrito(request, pk):
 
 
 # AÑADIDO: Vista para mostrar el perfil del usuario y sus escritos
-@login_required # Solo usuarios autenticados pueden acceder a su perfil.
+@login_required
 def perfil_usuario(request):
     """
-    Esta vista muestra el perfil del usuario autenticado, incluyendo
-    su biografía, foto de perfil y una lista de TODOS sus escritos
-    (sin importar el estado: borrador, privado, público).
+    Muestra el perfil del usuario autenticado y una lista PAGINADA
+    de TODOS sus escritos.
     """
-    # El objeto 'request.user' ya está disponible gracias a @login_required
-    # y el middleware de autenticación.
     usuario = request.user
-
-    # Intentamos obtener el perfil del usuario.
-    # Gracias a la señal post_save que creamos, cada usuario debería tener un perfil.
+    
     try:
         perfil = usuario.profile
     except Profile.DoesNotExist:
-        # En un escenario muy improbable (ej. si la señal falló o se deshabilitó),
-        # podríamos crear uno aquí o redirigir. Por ahora, asumimos que existe.
         perfil = Profile.objects.create(user=usuario)
-        # Podrías añadir un mensaje de warning aquí si esto fuera algo que debe ser notado:
-        # messages.warning(request, "Tu perfil fue creado automáticamente. Por favor, complétalo.")
 
-    # MODIFICADO: Se optimiza la consulta para evitar el problema N+1.
-    # Usamos `select_related` para traer la información del autor y su perfil
-    # en una única consulta a la base de datos, mejorando drásticamente el rendimiento.
-    mis_escritos = Escrito.objects.filter(autor=usuario).select_related('autor__profile').order_by('-fecha_creacion')
+    mis_escritos_list = Escrito.objects.filter(autor=usuario).select_related('autor__profile').order_by('-fecha_creacion')
+
+    # Lógica de Paginación
+    paginator = Paginator(mis_escritos_list, 10)  # Muestra 10 escritos por página.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     contexto = {
-        'usuario': usuario,      # El objeto User
-        'perfil': perfil,        # El objeto Profile asociado
-        'mis_escritos': mis_escritos # Todos los escritos del usuario
+        'usuario': usuario,
+        'perfil': perfil,
+        'page_obj': page_obj  # Pasamos el objeto de página en lugar de la lista completa
     }
-
     return render(request, 'escritura/perfil_usuario.html', contexto)
 
 
@@ -327,22 +310,24 @@ def editar_perfil(request):
 # AÑADIDO: Vista para el perfil público de un usuario
 def perfil_publico(request, user_id):
     """
-    Muestra el perfil público de un usuario específico a cualquier visitante.
-    - user_id: La clave primaria (ID) del usuario cuyo perfil se quiere ver.
+    Muestra el perfil público de un usuario y una lista PAGINADA
+    de sus escritos públicos.
     """
-    # Usamos select_related para optimizar y traer los datos del perfil en una sola consulta.
-    # Si el usuario no existe o no quiere ser mostrado, devolvemos un 404.
     usuario_perfil = get_object_or_404(
         User.objects.select_related('profile'),
         pk=user_id,
         profile__mostrar_en_comunidad=True
     )
 
-    # Filtramos solo los escritos que son públicos.
-    escritos_publicos = Escrito.objects.filter(autor=usuario_perfil, estado='PUBLICO')
+    escritos_publicos_list = Escrito.objects.filter(autor=usuario_perfil, estado='PUBLICO')
 
+    # Lógica de Paginación
+    paginator = Paginator(escritos_publicos_list, 10)  # Muestra 10 escritos por página.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
     contexto = {
         'usuario_perfil': usuario_perfil,
-        'escritos': escritos_publicos
+        'page_obj': page_obj  # Pasamos el objeto de página
     }
     return render(request, 'escritura/perfil_publico.html', contexto)

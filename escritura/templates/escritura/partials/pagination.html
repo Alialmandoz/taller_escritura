@@ -1,0 +1,21 @@
+{# escritura/templates/escritura/partials/pagination.html #}
+
+{% if page_obj.has_other_pages %}
+<div class="pagination">
+    <div class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="pagination-link">« primera</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="pagination-link">anterior</a>
+        {% endif %}
+
+        <span class="current-page">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">última »</a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
