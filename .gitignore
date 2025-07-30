@@ -1,6 +1,7 @@
 # Archivos de Bytecode de Python
 __pycache__/
 *.pyc
+__pycache__/settings.cpython-313.pyc
 
 # Base de datos de desarrollo
 db.sqlite3

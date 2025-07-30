@@ -1,23 +1,24 @@
 # taller_escritura/settings.py
-# VERSIÓN FINAL AUTOSUFICIENTE PARA PYTHONANYWHERE
-
 import os
 from pathlib import Path
+from dotenv import load_dotenv # AÑADIR
+import dj_database_url # AÑADIR (necesitarás instalarlo: pip install dj-database-url)
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Build paths...
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# --- CONFIGURACIÓN DE PRODUCCIÓN FIJA ---
+# AÑADIR: Carga el archivo .env
+load_dotenv(BASE_DIR / '.env')
 
-# MODIFICADO: Clave secreta segura y única para tu proyecto.
-SECRET_KEY = '***REDACTED***'
+# MODIFICADO: Lee la SECRET_KEY desde el entorno
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-# DEBUG debe ser False en producción por seguridad.
-DEBUG = False
+# MODIFICADO: Lee DEBUG desde el entorno
+DEBUG = os.getenv('DEBUG', 'False').lower() in ['true', '1', 't']
 
-# MODIFICADO: Host permitido para tu aplicación.
-ALLOWED_HOSTS = ['devivan.pythonanywhere.com']
+ALLOWED_HOSTS = ['devivan.pythonanywhere.com', '127.0.0.1', 'localhost'] # Permite hosts para prod y dev
 
+# ... INSTALLED_APPS, MIDDLEWARE, etc. ...
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -61,19 +62,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'taller_escritura.wsgi.application'
 
-# --- BASE DE DATOS DE PRODUCCIÓN (MYSQL EN PYTHONANYWHERE) ---
-# MODIFICADO: Rellenado con las credenciales exactas de tu cuenta de PythonAnywhere.
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'DevIvan$db_taller_escritura',
-        'USER': 'DevIvan',
-        'PASSWORD': '***REDACTED***', # AÑADIDA: Tu contraseña de la base de datos.
-        'HOST': 'DevIvan.mysql.pythonanywhere-services.com',
-        'PORT': '3306',
-    }
-}
 
+# MODIFICADO: Configuración de Base de Datos flexible
+# Por defecto, usa la URL de la base de datos de producción
+# El archivo .env la sobreescribirá para desarrollo local
+DATABASES = {
+    'default': dj_database_url.config(
+        default='mysql://DevIvan:sql159753@DevIvan.mysql.pythonanywhere-services.com:3306/DevIvan$db_taller_escritura'
+    )
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
