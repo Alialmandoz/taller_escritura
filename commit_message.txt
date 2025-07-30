@@ -1,1 +1,1 @@
-fix: Especificar template_name para la vista del sitemap
+debug: Añadir prints al sitemap para depuración

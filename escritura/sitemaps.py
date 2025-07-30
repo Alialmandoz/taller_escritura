@@ -1,40 +1,50 @@
 # escritura/sitemaps.py
+
 from django.contrib.sitemaps import Sitemap
-from .models import Escrito
 from django.urls import reverse
+from .models import Escrito
 
 class EscritoSitemap(Sitemap):
+    """
+    Sitemap para los modelos de Escrito.
+    Usa el comportamiento por defecto de Django, que buscará automáticamente
+    el método `get_absolute_url()` en cada objeto Escrito.
+    """
     changefreq = "weekly"
     priority = 0.8
     protocol = 'https'
 
     def items(self):
-        print("[Sitemap DEBUG] Entrando a EscritoSitemap.items()") # Micrófono 1
-        queryset = Escrito.objects.filter(estado='PUBLICO')
-        print(f"[Sitemap DEBUG] .items() encontró {queryset.count()} objetos.") # Micrófono 2
-        return queryset
-
-    def location(self, obj):
-        # Sobrescribimos este método para ver qué pasa para CADA objeto.
-        # Este es el micrófono más importante.
-        print(f"  [Sitemap DEBUG] Procesando location para el objeto: '{obj.titulo}' (ID: {obj.pk})") # Micrófono 3
-        
-        # Devolvemos la URL como lo haría el método por defecto
-        url = obj.get_absolute_url()
-        print(f"  [Sitemap DEBUG] get_absolute_url() devolvió: '{url}'") # Micrófono 4
-        return url
+        """
+        Devuelve el QuerySet de objetos que se incluirán en el sitemap.
+        """
+        return Escrito.objects.filter(estado='PUBLICO')
 
     def lastmod(self, obj):
+        """
+        Devuelve la fecha de la última modificación para cada objeto.
+        """
         return obj.fecha_actualizacion
 
-# Dejamos la otra clase sin cambios
+
 class StaticViewSitemap(Sitemap):
-    priority = 0.5
+    """
+    Sitemap para las páginas estáticas del sitio (ej. Inicio, Lista de Escritos).
+    """
+    priority = 0.6
     changefreq = 'daily'
-    protocol = 'https' # Añadimos el protocolo aquí también por si acaso
+    protocol = 'https'
 
     def items(self):
+        """
+        Devuelve una lista con los nombres de las URLs estáticas.
+        Estos nombres deben coincidir con el `name` definido en los archivos urls.py.
+        """
         return ['home', 'escritura:lista_escritos', 'escritura:search_results']
 
     def location(self, item):
+        """
+        Para cada item de la lista de arriba, devuelve su URL completa.
+        La función `reverse` construye la URL a partir de su nombre.
+        """
         return reverse(item)
