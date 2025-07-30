@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'escritura',
     'ckeditor',
     'ckeditor_uploader',
+    'django.contrib.sites',
 ]
 
 MIDDLEWARE = [
@@ -108,6 +109,7 @@ STORAGES = {
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+SITE_ID = 1
 LOGIN_REDIRECT_URL = 'escritura:lista_escritos'
 LOGOUT_REDIRECT_URL = 'escritura:lista_escritos'
 
