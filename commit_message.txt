@@ -1,1 +1,1 @@
-feat: Add Google Search Console verification and sitemap
+refactor: Reubicar y estilizar la barra de búsqueda en la lista de escritos

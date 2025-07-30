@@ -1,5 +1,884 @@
 /* static/css/main.css */
 
+/* Base Styles */
+body {
+    font-family: 'Lato', sans-serif; /* APLICADO: Lato para el cuerpo de texto */
+    margin: 0; /* Reset default body margin */
+    background-color: #F5EFE6; /* Nuevo color de fondo principal (beige claro) */
+    color: #333333; /* Color de texto general (gris oscuro) */
+    display: flex;
+    flex-direction: column; /* Para layout de pie de página pegajoso */
+    min-height: 100vh; /* Asegura que el body ocupe el 100% del alto de la ventana */
+}
+
+/* Main Content Container */
+.container {
+    max-width: 800px; /* Límite de ancho para desktops */
+    margin: 20px auto; /* Centrar y añadir margen superior/inferior */
+    background-color: #FAF7F0; /* Nuevo color de fondo para el contenido/tarjetas (marfil) */
+    padding: 20px; /* Ajuste de padding para móviles */
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    flex-grow: 1; /* Permite que el contenedor crezca y empuje el pie de página hacia abajo */
+    box-sizing: border-box; /* Asegura que padding y borde no aumenten el ancho total */
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif; /* APLICADO: Playfair Display para los encabezados */
+    color: #AA775A; /* Nuevo color para encabezados (naranja/marrón cálido) */
+    margin-top: 0;
+    margin-bottom: 20px;
+}
+
+/* Links */
+a {
+    color: #6B4F4F; /* Nuevo color para enlaces (marrón oscuro) */
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+
+/* Buttons */
+.button {
+    background-color: #AA775A; /* Nuevo color de fondo para botones primarios */
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+    text-align: center;
+    transition: background-color 0.3s ease; /* Transición suave al pasar el ratón */
+    font-family: 'Lato', sans-serif; /* APLICADO: Lato para botones */
+}
+.button:hover {
+    background-color: #8C644E; /* Nuevo color de fondo para hover (marrón más oscuro) */
+    text-decoration: none;
+}
+
+/* Specific button variants - ajustados a la nueva paleta */
+.button.primary { /* Usado para "Crear Nuevo Escrito", "Publicar Escrito", "Guardar Cambios" */
+    background-color: #AA775A;
+}
+.button.primary:hover {
+    background-color: #8C644E;
+}
+
+.button.secondary { /* Usado para "Registrarse", "No, Cancelar" */
+    background-color: #E8D8C9; /* Un tono más claro, complementario */
+    color: #6B4F4F; /* Texto oscuro para contraste */
+}
+.button.secondary:hover {
+    background-color: #CC9980; /* Un tono más fuerte para hover */
+}
+
+.button.warning { /* Usado para "Editar" */
+    background-color: #AA775A; /* Se alinea con el color primario */
+    color: white;
+}
+.button.warning:hover {
+    background-color: #8C644E;
+}
+
+.button.danger { /* Usado para "Eliminar", "Sí, Eliminar" */
+    background-color: #dc3545; /* Rojo estándar para peligro */
+}
+.button.danger:hover {
+    background-color: #c82333; /* Rojo más oscuro al pasar el ratón */
+}
+
+/* MODIFICADO: Header Styles */
+.main-header {
+    background-color: #CC9980;
+    color: white;
+    padding: 20px; /* Aumentamos el padding para dar más aire */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Centramos todo por defecto */
+}
+
+/* NUEVO: Contenedor principal del header */
+.header-content {
+    display: flex;
+    flex-direction: column; /* Apilamos logo y nav verticalmente */
+    align-items: center; /* Centramos los items apilados */
+    gap: 15px; /* Espacio entre el logo y la barra de navegación */
+    width: 100%;
+}
+
+.logo a {
+    color: white;
+    font-size: 2.2em; /* Hacemos el logo más grande */
+    font-weight: bold;
+    text-decoration: none;
+    display: block;
+    font-family: 'Playfair Display', serif;
+}
+
+/* NUEVO: Contenedor de la navegación (enlaces + CTA) */
+.main-nav {
+    display: flex;
+    flex-direction: column; /* Apilamos enlaces y CTA en móvil */
+    align-items: center;
+    gap: 20px; /* Espacio entre la lista de enlaces y el botón de acción */
+    width: 100%;
+}
+
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* Centramos los enlaces */
+    gap: 20px; /* Espacio entre los enlaces */
+    align-items: center;
+}
+
+.nav-links a, .nav-links span, .nav-link-button {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 0;
+    white-space: nowrap;
+    font-family: 'Lato', sans-serif;
+}
+
+/* NUEVO: Estilos para el botón de outline */
+.button.button-outline {
+    background-color: transparent;
+    border: 2px solid #FAF7F0; /* Borde con el color de fondo de las tarjetas */
+    color: #FAF7F0; /* Texto del mismo color que el borde */
+    padding: 8px 15px;
+    font-weight: bold;
+    transition: all 0.3s ease; /* Transición suave para el hover */
+}
+
+.button.button-outline:hover {
+    background-color: #FAF7F0; /* Fondo se rellena al pasar el ratón */
+    color: #AA775A; /* Texto cambia a un color oscuro de la paleta */
+    text-decoration: none;
+}
+
+/* Footer Styles */
+.main-footer {
+    background-color: #AA775A; /* Nuevo color para el pie de página (marrón rojizo cálido) */
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px; /* Margen superior para separarlo del contenido */
+    font-family: 'Lato', sans-serif; /* APLICADO: Lato para el pie de página */
+}
+
+/* Form Styles (reused and adapted) */
+form {
+    display: flex;
+    flex-direction: column;
+}
+form p {
+    margin-bottom: 15px;
+}
+form p label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #6B4F4F; /* Nuevo color para etiquetas de formulario */
+    font-family: 'Lato', sans-serif; /* APLICADO: Lato para etiquetas de formulario */
+}
+input[type="text"],
+input[type="password"],
+input[type="email"],
+select,
+textarea {
+    font-family: 'Lato', sans-serif; /* APLICADO: Lato para campos de formulario */
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #CC9980; /* Nuevo color para borde de campos */
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #FAF7F0; /* Fondo de campo, más claro */
+}
+textarea {
+    resize: vertical;
+    min-height: 150px; /* Altura mínima para el área de texto */
+}
+ul.errorlist {
+    color: red;
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 5px;
+    font-size: 0.9em;
+    font-family: 'Lato', sans-serif; /* APLICADO: Lato para mensajes de error de formulario */
+}
+.helptext {
+    font-size: 0.8em;
+    color: #8C644E; /* Nuevo color para texto de ayuda */
+    margin-top: 5px;
+    font-family: 'Lato', sans-serif; /* APLICADO: Lato para texto de ayuda */
+}
+
+/* Specific Escrito List/Detail Styles */
+.escrito-list {
+    list-style: none;
+    padding: 0;
+}
+
+.escrito-item {
+    background-color: #FAF7F0;
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative; /* Contexto de posicionamiento por si se necesitan insignias, etc. */
+}
+
+.escrito-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.header-author-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.header-title-actions {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.author-pic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #E8D8C9;
+    flex-shrink: 0;
+}
+
+.author-name {
+    font-weight: bold;
+    color: #6B4F4F;
+    font-family: 'Lato', sans-serif;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.escrito-title {
+    margin: 0;
+    font-family: 'Playfair Display', serif;
+    color: #AA775A;
+    white-space: normal;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow: visible;
+    text-overflow: clip;
+    flex-grow: 1; /* Permite que el título ocupe el espacio sobrante en la cabecera */
+}
+
+.escrito-title a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.escrito-title a:hover {
+    text-decoration: underline;
+}
+
+.escrito-meta p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+.escrito-content {
+    max-height: 100px;
+    overflow: hidden;
+    position: relative;
+    transition: max-height 0.4s ease-in-out;
+    line-height: 1.6;
+    font-family: 'Lato', sans-serif;
+}
+
+.escrito-item.is-expanded .escrito-content {
+    max-height: 1500px;
+}
+
+.escrito-content::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(to bottom, transparent, #FAF7F0);
+    transition: opacity 0.4s ease-in-out;
+}
+
+.escrito-item.is-expanded .escrito-content::after {
+    opacity: 0;
+}
+
+/* REEMPLAZA CUALQUIER ESTILO ANTERIOR DE .toggle-button CON ESTO */
+
+.toggle-button {
+    width: auto; /* El ancho se ajusta al contenido */
+    height: auto;
+    background-color: #E8D8C9;
+    color: #AA775A;
+    border: 1px solid #CC9980;
+    border-radius: 5px; /* Ligeramente más cuadrado para acomodar texto */
+    cursor: pointer;
+    display: flex; /* CLAVE: Para alinear el texto y el ícono */
+    justify-content: center;
+    align-items: center;
+    gap: 8px; /* Espacio entre el texto y el ícono */
+    font-size: 0.9em;
+    font-weight: bold;
+    line-height: 1;
+    padding: 8px 12px;
+    transition: background-color 0.3s ease; /* Quitamos la transición de 'transform' de aquí */
+    flex-shrink: 0;
+}
+
+.toggle-button:hover {
+    background-color: #CC9980;
+    color: white;
+}
+
+/* Estilos para el texto dentro del botón */
+.button-text {
+    white-space: nowrap;
+}
+
+/* Estilos para el ícono de flecha (hecho con bordes) */
+.button-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #AA775A; /* Flecha hacia abajo por defecto */
+    transition: transform 0.3s ease; /* La rotación solo se aplica al ícono */
+}
+
+/* Rota la flecha hacia arriba cuando el escrito está expandido */
+.escrito-item.is-expanded .button-icon {
+    transform: rotate(180deg);
+}
+
+/* Ajuste para el color del ícono en estado hover */
+.toggle-button:hover .button-icon {
+    border-top-color: white;
+}
+
+/* Asegura que el color de la flecha también cambie cuando el botón está hover Y expandido */
+.escrito-item.is-expanded .toggle-button:hover .button-icon {
+    border-top-color: white;
+}
+
+.escrito-footer {
+    display: flex;
+    justify-content: space-between; /* <-- CLAVE: Empuja la meta-info y las acciones a los extremos */
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #E8D8C9;
+    font-size: 0.9em;
+    color: #6B4F4F;
+    font-family: 'Lato', sans-serif;
+}
+
+/* Contenedor unificado para botones de acción en el footer */
+.card-actions-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre los botones y/o el estado */
+}
+
+
+/* Escrito Detail Specific Styles */
+.header-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.header-section h1 {
+    flex-grow: 1;
+    margin-right: 10px;
+    font-family: 'Playfair Display', serif;
+}
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+.content {
+    line-height: 1.8;
+    color: #444444;
+    font-family: 'Lato', sans-serif;
+}
+.content p {
+    margin-bottom: 1em;
+}
+.back-link {
+    display: block;
+    margin-top: 30px;
+    text-align: center;
+    text-decoration: none;
+    color: #6B4F4F;
+    font-weight: bold;
+    font-family: 'Lato', sans-serif;
+}
+.back-link:hover {
+    text-decoration: underline;
+}
+
+/* Estilos para el sistema de mensajes de Django */
+.messages {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+    font-family: 'Lato', sans-serif;
+}
+
+.messages li {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid transparent;
+    color: #333;
+    position: relative;
+}
+
+.messages li.success {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.messages li.info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+.messages li.warning {
+    background-color: #fff3cd;
+    border-color: #ffeeba;
+    color: #856404;
+}
+
+.messages li.error {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+.close-message {
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.2em;
+    padding: 0 5px;
+    line-height: 1;
+}
+.close-message:hover {
+    color: black;
+}
+
+
+/* Media Queries for Responsiveness */
+
+@media (min-width: 600px) {
+    .container {
+        padding: 30px;
+    }
+    .main-header {
+        padding: 15px 30px;
+    }
+    .logo {
+        flex-basis: auto;
+        text-align: left;
+        margin-bottom: 0;
+    }
+    .nav-links {
+        justify-content: flex-end;
+        width: auto;
+    }
+}
+
+@media (min-width: 992px) {
+    .container {
+        margin-top: 40px;
+        margin-bottom: 40px;
+    }
+    h1 {
+        font-size: 2.5em;
+    }
+    .logo a {
+        font-size: 2em;
+    }
+}
+
+/* Estilos específicos para la página de perfil */
+.profile-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #E8D8C9;
+}
+.profile-pic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border: 3px solid #AA775A;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.profile-bio {
+    font-size: 1.1em;
+    color: #6B4F4F;
+    max-width: 600px;
+    margin: 0 auto 20px auto;
+    line-height: 1.6;
+}
+.section-title {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 30px;
+    font-size: 2em;
+    color: #AA775A;
+    font-family: 'Playfair Display', serif;
+}
+hr {
+    border: none;
+    border-top: 1px dashed #E8D8C9;
+    margin: 40px 0;
+}
+
+.escrito-status {
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+    color: white;
+    text-transform: uppercase;
+    font-family: 'Lato', sans-serif;
+}
+.status-borrador { background-color: #6c757d; }
+.status-privado { background-color: #AA775A; }
+.status-publico { background-color: #28a745; }
+
+.small-button {
+    padding: 5px 10px;
+    font-size: 0.8em;
+}
+
+@media (max-width: 600px) {
+    .profile-bio {
+        padding: 0 10px;
+    }
+    /* En pantallas pequeñas, permitimos que la cabecera se envuelva */
+    .escrito-card-header {
+        flex-wrap: wrap;
+    }
+}
+
+/* Estilos para la página de inicio (home.html) */
+.landing-page { padding: 0; }
+
+.hero-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1455390582262-044cdead277a?ixlib=rb-4.0.3&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1971') no-repeat center center/cover;
+    color: white;
+    text-align: center;
+    padding: 100px 20px;
+    background-color: transparent !important;
+}
+
+.hero-section .hero-title {
+    color: white;
+    font-size: 3em;
+    font-family: 'Playfair Display', serif;
+}
+
+.hero-section .hero-subtitle {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    font-family: 'Lato', sans-serif;
+    color: white;
+}
+
+.hero-section .large-button {
+    padding: 15px 30px;
+    font-size: 1.1em;
+}
+
+.about-section, .community-section {
+    padding: 60px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #FAF7F0;
+    border-radius: 0;
+}
+
+.about-section .section-title,
+.community-section .section-title {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 2.2em;
+    color: #AA775A;
+    font-family: 'Playfair Display', serif;
+}
+
+.community-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.user-card {
+    background-color: #FAF7F0;
+    border: 1px solid #E8D8C9;
+    border-radius: 8px;
+    width: 200px;
+    text-align: center;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.user-card-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #CC9980;
+    margin-bottom: 10px;
+}
+
+.user-card-name {
+    font-size: 1.2em;
+    margin: 10px 0 10px 0;
+    color: #6B4F4F;
+    font-family: 'Playfair Display', serif;
+}
+
+.user-card-bio {
+    font-size: 0.9em;
+    color: #6B4F4F;
+    font-style: italic;
+    font-family: 'Lato', sans-serif;
+    line-height: 1.4;
+}
+
+.community-empty {
+    width: 100%;
+    text-align: center;
+    color: #6B4F4F;
+    font-family: 'Lato', sans-serif;
+    padding: 20px 0;
+}
+
+.nav-link-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    font-family: inherit;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1em;
+}
+
+.nav-link-button:hover {
+    text-decoration: underline;
+}
+
+/* --- Estilos para la Sección de Comentarios --- */
+
+.section-divider {
+    border: none;
+    border-top: 1px solid #E8D8C9;
+    margin: 40px 0;
+}
+
+.comments-section .section-title {
+    text-align: left;
+    font-size: 1.8em;
+    margin-bottom: 20px;
+}
+
+.comment-form-container {
+    margin-bottom: 30px;
+    background-color: #F5EFE6;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.comment-form-container textarea {
+    min-height: 80px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.login-prompt {
+    text-align: center;
+    padding: 20px;
+    background-color: #F5EFE6;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.comment-item {
+    background-color: #FAF7F0;
+    border: 1px solid #E8D8C9;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.comment-author-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.author-pic-small {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.comment-author-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.comment-date {
+    font-size: 0.8em;
+    color: #6B4F4F;
+}
+
+.comment-text {
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* --- AÑADIDO: Estilos para Breadcrumbs --- */
+.breadcrumb-container {
+    padding: 10px 20px;
+    background-color: #E8D8C9;
+    border-bottom: 1px solid #CC9980;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9em;
+    color: #6B4F4F;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+.breadcrumb-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 800px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.breadcrumb-item {
+    display: inline;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: '›';
+    padding: 0 8px;
+    color: #AA775A;
+    font-weight: bold;
+}
+
+.breadcrumb-item a {
+    color: #6B4F4F;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb-item span[aria-current="page"] {
+    font-weight: bold;
+    color: #AA775A;
+}
+
+@media (max-width: 600px) {
+    .breadcrumb-container {
+        padding: 8px 15px;
+        margin-bottom: 15px;
+    }
+    .breadcrumb-list {
+        justify-content: flex-start;
+    }
+    .breadcrumb-item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 45%;
+    }
+    .breadcrumb-item:last-child {
+        max-width: 100%;
+    }
+}
+
+/* MODIFICADO: Media Queries para Responsiveness */
+
+/* En pantallas más grandes, colocamos la nav y el CTA en la misma línea */
+@media (min-width: 768px) {
+    .main-nav {
+        flex-direction: row; /* Ponemos los enlaces y el CTA en fila */
+        justify-content: center; /* Centramos el conjunto */
+    }
+
+    .logo a {
+        font-size: 2.8em; /* Aumentamos aún más el tamaño del logo en desktop */
+    }
+}
+
+/* 
+----------------------------------------------------------------------
+--- CÓDIGO AÑADIDO PARA LA BARRA DE BÚSQUEDA EN LA LISTA DE ESCRITOS ---
+----------------------------------------------------------------------
+*/
+
 /* --- Estilos para el Contenedor de Paginación y Búsqueda --- */
 
 .pagination-search-container {
