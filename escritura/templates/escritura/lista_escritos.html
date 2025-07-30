@@ -39,7 +39,35 @@
         </ul>
 
         {# AÑADIDO: Incluye el componente de paginación #}
-        {% include 'escritura/partials/pagination.html' %}
+        <div class="pagination-search-container">
+
+    {# 1. La Paginación (si existe) #}
+    {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            <span class="step-links">
+                <span class="current">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">« primera</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
+                {% endif %}
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">siguiente</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">última »</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+
+    {# 2. La Barra de Búsqueda de Google #}
+    <div class="search-container">
+        <div class="gcse-searchbox-only"></div>
+    </div>
+
+</div>
 
     {% else %}
         <p>No hay escritos públicos disponibles en este momento.</p>

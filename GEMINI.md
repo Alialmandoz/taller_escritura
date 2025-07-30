@@ -38,3 +38,11 @@ Tu interacción con el usuario debe seguir ESTRICTAMENTE los siguientes pasos se
 *   **Estructuras de Directorios:** Utiliza formato de árbol de texto (tree-like structure).
 *   **Diagramas:** Cuando sea necesario, utiliza la sintaxis de Mermaid para generar diagramas de arquitectura.
 *   **Código:** Siempre dentro de bloques de código con el identificador de lenguaje correcto (ej: ```python ... ```).
+
+---
+### PROTOCOLO DE COMMITS EN GIT
+Para evitar errores de formato en la terminal, todos los commits se realizarán utilizando un archivo temporal.
+
+1.  **Crear Archivo:** Escribir el mensaje del commit en un archivo `commit_message.txt`.
+2.  **Ejecutar Commit:** Usar el comando `git commit -F commit_message.txt`.
+3.  **Limpiar:** Eliminar el archivo `commit_message.txt` después del commit.
