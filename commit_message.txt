@@ -1,1 +1,1 @@
-refactor: Reubicar y estilizar la barra de búsqueda en la lista de escritos
+fix: Añadir get_absolute_url al modelo Escrito para el sitemap

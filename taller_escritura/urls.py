@@ -22,7 +22,7 @@ urlpatterns = [
     # AÑADIDO: URLs para django-ckeditor-uploader
     path('ckeditor/', include('ckeditor_uploader.urls')),
     # AÑADIR: URL del sitemap
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps, 'template_name': 'sitemap.xml'}, name='django.contrib.sitemaps.views.sitemap'),
 ]
 
 # AÑADIDO: Configuración para servir archivos de medios en el servidor de desarrollo.
