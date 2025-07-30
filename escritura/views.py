@@ -1,340 +1,43 @@
-# escritura/views.py
-
-from django.shortcuts import render, get_object_or_404, redirect
-from django.core.paginator import Paginator
-
-# AÑADIDO: Vista para la página principal
-def pagina_principal(request):
+def generar_sitemap(request):
     """
-    Renderiza la página de inicio/landing page.
-    Obtiene todos los perfiles que han aceptado ser mostrados públicamente.
+    Una vista personalizada para generar el sitemap.xml de forma manual y robusta.
     """
-    # Usamos select_related('user') para optimizar la consulta.
-    # Evita que Django haga una consulta a la base de datos por cada usuario en el bucle de la plantilla.
-    perfiles_publicos = Profile.objects.filter(mostrar_en_comunidad=True).select_related('user')
-
-    contexto = {
-        'perfiles_publicos': perfiles_publicos
-    }
-    return render(request, 'escritura/home.html', contexto)
-
-
-from django.views.generic import DetailView
-from django.contrib.auth import login, get_user_model
-from django.contrib.auth.decorators import login_required # Decorador para requerir autenticación
-from django.http import Http404
-from django.contrib import messages
-
-# MODIFICADO: Ahora importamos también el modelo y formulario de Comentario
-from .models import Escrito, Profile, Comentario
-from .forms import CustomUserCreationForm, EscritoForm, UserUpdateForm, ProfileUpdateForm, ComentarioForm
-
-User = get_user_model()
-
-# REEMPLAZAR la función lista_escritos existente con esta:
-def lista_escritos(request):
-    """
-    Esta vista recupera todos los objetos Escrito cuyo estado sea 'PUBLICO',
-    los pagina y los pasa a la plantilla para su visualización.
-    """
-    escritos_list = Escrito.objects.filter(estado='PUBLICO').select_related('autor__profile').order_by('-fecha_creacion')
+    from django.contrib.sites.models import Site
     
-    # Lógica de Paginación
-    paginator = Paginator(escritos_list, 10)  # Muestra 10 escritos por página.
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    # Obtenemos el dominio actual del framework de 'sites' que ya configuramos.
+    current_site = Site.objects.get_current()
+    domain = current_site.domain
 
-    contexto = {
-        'page_obj': page_obj  # Pasamos el objeto de página a la plantilla
-    }
-    return render(request, 'escritura/lista_escritos.html', contexto)
+    # 1. Recopilar URLs de los Escritos Públicos
+    escritos_publicos = Escrito.objects.filter(estado='PUBLICO').order_by('-fecha_actualizacion')
+    urls_escritos = []
+    for escrito in escritos_publicos:
+        url_info = {
+            'location': f"https://{domain}{escrito.get_absolute_url()}",
+            'lastmod': escrito.fecha_actualizacion,
+            'priority': 0.8,
+            'changefreq': 'weekly'
+        }
+        urls_escritos.append(url_info)
 
+    # 2. Recopilar URLs de las Páginas Estáticas
+    nombres_rutas_estaticas = ['home', 'escritura:lista_escritos', 'escritura:search_results']
+    urls_estaticas = []
+    for name in nombres_rutas_estaticas:
+        url_info = {
+            'location': f"https://{domain}{reverse(name)}",
+            'priority': 0.6,
+            'changefreq': 'daily'
+        }
+        urls_estaticas.append(url_info)
 
-# REEMPLAZAR la clase DetalleEscrito existente en views.py
+    # 3. Combinar todas las URLs
+    todas_las_urls = urls_estaticas + urls_escritos
 
-# MODIFICADO: Ahora importamos también el modelo y formulario de Comentario
-
-class DetalleEscrito(DetailView):
-    """
-    Vista basada en clase (CBV) mejorada para mostrar los detalles de un escrito,
-    sus comentarios, y manejar la publicación de nuevos comentarios.
-    """
-    model = Escrito
-    template_name = 'escritura/detalle_escrito.html'
-    context_object_name = 'escrito'
-
-    def get_context_data(self, **kwargs):
-        # 1. Obtenemos el contexto base de DetailView.
-        context = super().get_context_data(**kwargs)
-
-        # 2. Obtenemos el escrito actual.
-        escrito = self.get_object()
-
-        # 3. Añadimos los comentarios al contexto.
-        # Usamos `select_related` para optimizar la consulta y traer los datos del autor y su perfil
-        # en una sola query, evitando el problema N+1.
-        context['comentarios'] = escrito.comentarios.select_related('autor__profile').all()
-
-        # 4. Añadimos el formulario de comentarios al contexto (si el usuario está autenticado).
-        if self.request.user.is_authenticated:
-            context['comentario_form'] = ComentarioForm()
-
-        return context
-
-    def post(self, request, *args, **kwargs):
-        # Esta función se ejecuta solo cuando la página recibe una petición POST (es decir, al enviar un formulario).
-
-        # Verificamos si el usuario está autenticado antes de procesar.
-        if not request.user.is_authenticated:
-            return redirect('login') # O mostrar un error
-
-        # Obtenemos el escrito al que se está comentando.
-        self.object = self.get_object()
-
-        # Creamos una instancia del formulario con los datos enviados (request.POST).
-        form = ComentarioForm(request.POST)
-
-        if form.is_valid():
-            # Si el formulario es válido, creamos el objeto Comentario pero no lo guardamos aún.
-            nuevo_comentario = form.save(commit=False)
-            # Asignamos el escrito y el autor manually.
-            nuevo_comentario.escrito = self.object
-            nuevo_comentario.autor = request.user
-            # Ahora sí, lo guardamos en la base de datos.
-            nuevo_comentario.save()
-            messages.success(request, "Tu comentario ha sido publicado.")
-            # Redirigimos a la misma página para ver el comentario nuevo.
-            return redirect('escritura:detalle_escrito', pk=self.object.pk)
-        else:
-            # Si el formulario no es válido, volvemos a renderizar la página
-            # pero esta vez con el formulario que contiene los errores.
-            context = self.get_context_data()
-            context['comentario_form'] = form # Pasamos el formulario con errores
-            messages.error(request, "Hubo un error al publicar tu comentario. Por favor, revisa el formulario.")
-            return self.render_to_response(context)
-
-
-# Vista para el registro de nuevos usuarios
-def registro_usuario(request):
-    """
-    Esta vista maneja la lógica para el registro de nuevos usuarios.
-    - Si la solicitud es GET, muestra el formulario de registro vacío.
-    - Si la solicitud es POST, procesa los datos del formulario:
-        - Si es válido, crea el usuario, inicia sesión al usuario y redirige a la página principal.
-        - Si no es válido, vuelve a mostrar el formulario con los errores.
-    """
-    if request.method == 'POST':
-        # Si la solicitud es POST, el formulario ha sido enviado
-        form = CustomUserCreationForm(request.POST) # Crea una instancia del formulario con los datos enviados
-        if form.is_valid():
-            # Si el formulario es válido, guarda el nuevo usuario
-            user = form.save()
-            # Opcional: Iniciar sesión al usuario automáticamente después del registro
-            login(request, user)
-            # Redirige al usuario a una página de éxito (ej. la lista de escritos o un dashboard)
-            # Por ahora, redirigimos a la lista de escritos.
-            return redirect('escritura:lista_escritos')
-    else:
-        # Si la solicitud es GET, muestra un formulario vacío
-        form = CustomUserCreationForm()
-    
-    # Renderiza la plantilla con el formulario (vacío o con errores)
-    return render(request, 'escritura/registro.html', {'form': form})
-
-
-# Vista para crear un nuevo escrito
-@login_required # Decorador: Solo usuarios autenticados pueden acceder a esta vista.
-def crear_escrito(request):
-    """
-    Esta vista permite a un usuario autenticado crear un nuevo escrito.
-    - Si la solicitud es GET, muestra un formulario EscritoForm vacío.
-    - Si la solicitud es POST, procesa el formulario:
-        - Si es válido, guarda el escrito, asigna el autor (el usuario actual)
-          y redirige a la página de detalle del nuevo escrito.
-        - Si no es válido, vuelve a mostrar el formulario con los errores.
-    """
-    if request.method == 'POST':
-        form = EscritoForm(request.POST) # Crea una instancia del formulario con los datos enviados
-        if form.is_valid():
-            # No guardamos el formulario directamente todavía (commit=False)
-            # porque necesitamos añadir el autor (el usuario actual) antes de guardar.
-            escrito = form.save(commit=False) 
-            escrito.autor = request.user # Asigna el autor del escrito al usuario actualmente logueado.
-            escrito.save() # Ahora sí, guarda el objeto Escrito completo en la base de datos.
-            
-            # Redirige a la página de detalle del escrito recién creado.
-            # Necesitamos pasar el 'pk' del escrito a la URL.
-            return redirect('escritura:detalle_escrito', pk=escrito.pk)
-    else:
-        # Si es GET, muestra un formulario vacío.
-        form = EscritoForm()
-    
-    # Renderiza la plantilla con el formulario (vacío o con errores)
-    return render(request, 'escritura/crear_editar_escrito.html', {'form': form, 'es_creacion': True})
-
-# Vista para editar un escrito existente
-@login_required # Solo usuarios autenticados pueden acceder.
-def editar_escrito(request, pk):
-    """
-    Esta vista permite a un usuario autenticado editar un escrito existente.
-    - pk: La clave primaria (ID) del escrito a editar.
-    - Se verifica que el usuario autenticado sea el autor del escrito.
-    """
-    # Intentar obtener el escrito, o lanzar un 404 si no existe.
-    escrito = get_object_or_404(Escrito, pk=pk)
-
-    # VERIFICACIÓN DE PERMISOS: Asegurarse de que solo el autor pueda editar.
-    # Si el usuario logueado no es el autor del escrito, levantamos un error 404
-    # (por motivos de seguridad, es mejor un 404 que un 403 en algunos casos,
-    # para no revelar la existencia del escrito a usuarios no autorizados).
-    if request.user != escrito.autor:
-        raise Http404("No tienes permiso para editar este escrito.")
-        # Alternativamente, podrías redirigir:
-        # from django.contrib import messages
-        # messages.error(request, "No tienes permiso para editar este escrito.")
-        # return redirect('escritura:detalle_escrito', pk=escrito.pk)
-
-
-    if request.method == 'POST':
-        # Si es POST, creamos una instancia del formulario con los datos enviados
-        # y le pasamos la instancia del escrito existente para que la actualice.
-        form = EscritoForm(request.POST, instance=escrito)
-        if form.is_valid():
-            # Guarda los cambios en el escrito. Como ya pasamos 'instance', no necesitamos commit=False.
-            form.save()
-            # Redirige a la página de detalle del escrito editado.
-            return redirect('escritura:detalle_escrito', pk=escrito.pk)
-    else:
-        # Si es GET, creamos una instancia del formulario y la inicializamos
-        # con los datos del escrito existente para que aparezcan pre-rellenados.
-        form = EscritoForm(instance=escrito)
-    
-    # Renderiza la misma plantilla usada para crear, pasando el formulario y la bandera.
-    # es_creacion = False le dice a la plantilla que es una operación de edición.
-    return render(request, 'escritura/crear_editar_escrito.html', {'form': form, 'es_creacion': False})
-
-
-# AÑADIDO: Vista para eliminar un escrito
-@login_required # Solo usuarios autenticados pueden acceder.
-def eliminar_escrito(request, pk):
-    """
-    Esta vista maneja la eliminación de un escrito.
-    - Si la solicitud es GET, muestra una página de confirmación.
-    - Si la solicitud es POST, procede a eliminar el escrito.
-    - Se verifica que el usuario autenticado sea el autor del escrito.
-    """
-    escrito = get_object_or_404(Escrito, pk=pk)
-
-    # VERIFICACIÓN DE PERMISOS: Asegurarse de que solo el autor pueda eliminar.
-    if request.user != escrito.autor:
-        messages.error(request, "No tienes permiso para eliminar este escrito.")
-        return redirect('escritura:detalle_escrito', pk=escrito.pk)
-        # O podrías lanzar un Http404 como en editar_escrito, si prefieres no dar pistas.
-        # raise Http404("No tienes permiso para eliminar este escrito.")
-
-    if request.method == 'POST':
-        # Si la solicitud es POST, significa que el usuario ha confirmado la eliminación.
-        escrito.delete() # ¡Elimina el objeto de la base de datos!
-        messages.success(request, f"El escrito '{escrito.titulo}' ha sido eliminado exitosamente.")
-        return redirect('escritura:lista_escritos') # Redirige a la lista después de eliminar.
-
-    # Si la solicitud es GET, muestra la página de confirmación.
-    return render(request, 'escritura/confirmar_eliminar_escrito.html', {'escrito': escrito})
-
-
-# AÑADIDO: Vista para mostrar el perfil del usuario y sus escritos
-@login_required
-def perfil_usuario(request):
-    """
-    Muestra el perfil del usuario autenticado y una lista PAGINADA
-    de TODOS sus escritos.
-    """
-    usuario = request.user
-    
-    try:
-        perfil = usuario.profile
-    except Profile.DoesNotExist:
-        perfil = Profile.objects.create(user=usuario)
-
-    mis_escritos_list = Escrito.objects.filter(autor=usuario).select_related('autor__profile').order_by('-fecha_creacion')
-
-    # Lógica de Paginación
-    paginator = Paginator(mis_escritos_list, 10)  # Muestra 10 escritos por página.
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
-    contexto = {
-        'usuario': usuario,
-        'perfil': perfil,
-        'page_obj': page_obj  # Pasamos el objeto de página en lugar de la lista completa
-    }
-    return render(request, 'escritura/perfil_usuario.html', contexto)
-
-
-# AÑADIDO: Vista para editar el perfil del usuario
-@login_required
-def editar_perfil(request):
-    """
-    Permite al usuario autenticado editar su propio perfil, incluyendo
-    datos del modelo User (nombre, apellido) y del modelo Profile (bio, foto).
-    """
-    if request.method == 'POST':
-        # Al procesar, instanciamos ambos formularios con los datos POST y FILES.
-        # Es crucial pasar la instancia correcta a cada formulario.
-        user_form = UserUpdateForm(request.POST, instance=request.user)
-        profile_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
-
-        # Verificamos que ambos formularios sean válidos.
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()      # Guarda los cambios en el modelo User.
-            profile_form.save()   # Guarda los cambios en el modelo Profile.
-            
-            messages.success(request, '¡Tu perfil ha sido actualizado con éxito!')
-            return redirect('escritura:perfil_usuario')
-        else:
-            # Si alguno de los formularios no es válido, se mostrarán los errores.
-            messages.error(request, 'Por favor, corrige los errores a continuación.')
-
-    else:
-        # Al mostrar la página (GET), inicializamos los formularios con los datos actuales.
-        user_form = UserUpdateForm(instance=request.user)
-        profile_form = ProfileUpdateForm(instance=request.user.profile)
-
-    contexto = {
-        'user_form': user_form,
-        'profile_form': profile_form
-    }
-    return render(request, 'escritura/editar_perfil.html', contexto)
-
-
-# AÑADIDO: Vista para el perfil público de un usuario
-def perfil_publico(request, user_id):
-    """
-    Muestra el perfil público de un usuario y una lista PAGINADA
-    de sus escritos públicos.
-    """
-    usuario_perfil = get_object_or_404(
-        User.objects.select_related('profile'),
-        pk=user_id,
-        profile__mostrar_en_comunidad=True
+    # 4. Renderizar la plantilla XML
+    return render(
+        request,
+        'sitemap.xml',
+        {'url_list': todas_las_urls},
+        content_type='application/xml'
     )
-
-    escritos_publicos_list = Escrito.objects.filter(autor=usuario_perfil, estado='PUBLICO')
-
-    # Lógica de Paginación
-    paginator = Paginator(escritos_publicos_list, 10)  # Muestra 10 escritos por página.
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    
-    contexto = {
-        'usuario_perfil': usuario_perfil,
-        'page_obj': page_obj  # Pasamos el objeto de página
-    }
-    return render(request, 'escritura/perfil_publico.html', contexto)
-
-def search_results_view(request):
-    """
-    Renderiza la página que contendrá los resultados de búsqueda de Google.
-    No necesita pasar ningún contexto, Google se encarga de todo en el frontend.
-    """
-    return render(request, 'escritura/search_results.html')

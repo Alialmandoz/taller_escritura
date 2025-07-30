@@ -1,6 +1,6 @@
 # Contenido del Proyecto: taller escritura
 
-**Generado el:** 2025-07-25 14:24:39
+**Generado el:** 2025-07-30 12:41:24
 
 ## Estructura del Proyecto
 
@@ -11,6 +11,7 @@ taller escritura
 ├── Desglose de Funcionalidades de la App.txt
 ├── GEMINI.md
 ├── README.md
+├── commit_message.txt
 ├── manage.py
 ├── requirements.txt
 ├── escritura
@@ -19,9 +20,14 @@ taller escritura
 │   ├── apps.py
 │   ├── forms.py
 │   ├── models.py
+│   ├── sitemaps.py
 │   ├── tests.py
 │   ├── urls.py
 │   ├── views.py
+│   ├── escritura
+│   │   ├── templates
+│   │   │   ├── escritura
+│   │   │   │   ├── partials
 │   ├── management
 │   │   ├── commands
 │   │   │   ├── enviar_notificaciones.py
@@ -44,6 +50,9 @@ taller escritura
 │   │   │   ├── perfil_publico.html
 │   │   │   ├── perfil_usuario.html
 │   │   │   ├── registro.html
+│   │   │   ├── search_results.html
+│   │   │   ├── partials
+│   │   │   │   ├── pagination.html
 ├── static
 │   ├── css
 │   │   ├── main.css
@@ -58,6 +67,7 @@ taller escritura
 │   ├── wsgi.py
 │   ├── templates
 │   │   ├── base.html
+│   │   ├── sitemap.xml
 │   │   ├── registration
 │   │   │   ├── login.html
 ```
@@ -217,6 +227,15 @@ Tu interacción con el usuario debe seguir ESTRICTAMENTE los siguientes pasos se
 *   **Estructuras de Directorios:** Utiliza formato de árbol de texto (tree-like structure).
 *   **Diagramas:** Cuando sea necesario, utiliza la sintaxis de Mermaid para generar diagramas de arquitectura.
 *   **Código:** Siempre dentro de bloques de código con el identificador de lenguaje correcto (ej: ```python ... ```).
+
+---
+### PROTOCOLO DE COMMITS EN GIT
+Para evitar errores de formato en la terminal, todos los commits se realizarán utilizando un archivo temporal.
+
+1.  **Crear Archivo:** Escribir el mensaje del commit en un archivo `commit_message.txt`.
+2.  **Ejecutar Commit:** Usar el comando `git commit -F commit_message.txt`.
+3.  **Limpiar:** Eliminar el archivo `commit_message.txt` después del commit.
+
 ```
 
 ---
@@ -343,6 +362,14 @@ Este proyecto está bajo la Licencia MIT. Consulta el archivo `LICENSE` para má
 
 ---
 
+## Archivo: `commit_message.txt`
+
+```text
+debug: Añadir prints al sitemap para depuración
+```
+
+---
+
 ## Archivo: `manage.py`
 
 ```python
@@ -376,25 +403,19 @@ if __name__ == '__main__':
 ## Archivo: `requirements.txt`
 
 ```text
-a s g i r e f = = 3 . 8 . 1 
- 
- D j a n g o = = 5 . 2 . 3 
- 
- d j a n g o - c k e d i t o r = = 6 . 7 . 3 
- 
- d j a n g o - j s - a s s e t = = 3 . 1 . 2 
- 
- m y s q l c l i e n t = = 2 . 2 . 7 
- 
- p a c k a g i n g = = 2 5 . 0 
- 
- p i l l o w = = 1 1 . 2 . 1 
- 
- s q l p a r s e = = 0 . 5 . 3 
- 
- t z d a t a = = 2 0 2 5 . 2 
- 
- 
+asgiref==3.8.1
+dj-database-url==3.0.1
+Django==5.2.3
+django-ckeditor==6.7.3
+django-js-asset==3.1.2
+git-filter-repo==2.47.0
+mysqlclient==2.2.7
+packaging==25.0
+pillow==11.2.1
+python-dotenv==1.1.1
+sqlparse==0.5.3
+tzdata==2025.2
+
 ```
 
 ---
@@ -522,6 +543,7 @@ class ComentarioForm(forms.ModelForm):
 
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.urls import reverse # <-- ASEGÚRATE DE AÑADIR ESTA LÍNEA
 from django.db.models.signals import post_save # AÑADIDO: Para crear el perfil automáticamente
 from django.dispatch import receiver         # AÑADIDO: Para conectar la señal
 from ckeditor_uploader.fields import RichTextUploadingField # MODIFICADO: Importa RichTextUploadingField
@@ -548,6 +570,15 @@ class Escrito(models.Model):
 
     def __str__(self):
         return f"{self.titulo} por {self.autor.username}"
+
+    # AÑADE ESTE MÉTODO COMPLETO
+    def get_absolute_url(self):
+        """
+        Devuelve la URL canónica para una instancia de un Escrito.
+        """
+        # 'escritura:detalle_escrito' es el nombre que le dimos a la URL en urls.py
+        # kwargs={'pk': self.pk} le pasa el ID del escrito actual a la URL.
+        return reverse('escritura:detalle_escrito', kwargs={'pk': self.pk})
 
     class Meta:
         ordering = ['-fecha_creacion']
@@ -631,6 +662,63 @@ class Comentario(models.Model):
 
 ---
 
+## Archivo: `escritura/sitemaps.py`
+
+```python
+# escritura/sitemaps.py
+
+from django.contrib.sitemaps import Sitemap
+from django.urls import reverse
+from .models import Escrito
+
+class EscritoSitemap(Sitemap):
+    """
+    Sitemap para los modelos de Escrito.
+    Usa el comportamiento por defecto de Django, que buscará automáticamente
+    el método `get_absolute_url()` en cada objeto Escrito.
+    """
+    changefreq = "weekly"
+    priority = 0.8
+    protocol = 'https'
+
+    def items(self):
+        """
+        Devuelve el QuerySet de objetos que se incluirán en el sitemap.
+        """
+        return Escrito.objects.filter(estado='PUBLICO')
+
+    def lastmod(self, obj):
+        """
+        Devuelve la fecha de la última modificación para cada objeto.
+        """
+        return obj.fecha_actualizacion
+
+
+class StaticViewSitemap(Sitemap):
+    """
+    Sitemap para las páginas estáticas del sitio (ej. Inicio, Lista de Escritos).
+    """
+    priority = 0.6
+    changefreq = 'daily'
+    protocol = 'https'
+
+    def items(self):
+        """
+        Devuelve una lista con los nombres de las URLs estáticas.
+        Estos nombres deben coincidir con el `name` definido en los archivos urls.py.
+        """
+        return ['home', 'escritura:lista_escritos', 'escritura:search_results']
+
+    def location(self, item):
+        """
+        Para cada item de la lista de arriba, devuelve su URL completa.
+        La función `reverse` construye la URL a partir de su nombre.
+        """
+        return reverse(item)
+```
+
+---
+
 ## Archivo: `escritura/tests.py`
 
 ```python
@@ -666,6 +754,7 @@ urlpatterns = [
     path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
     # AÑADIDO: URL para el perfil público de un usuario
     path('perfil/<int:user_id>/', views.perfil_publico, name='perfil_publico'),
+    path('search-results/', views.search_results_view, name='search_results'),
 ]
 ```
 
@@ -677,6 +766,7 @@ urlpatterns = [
 # escritura/views.py
 
 from django.shortcuts import render, get_object_or_404, redirect
+from django.core.paginator import Paginator
 
 # AÑADIDO: Vista para la página principal
 def pagina_principal(request):
@@ -706,32 +796,22 @@ from .forms import CustomUserCreationForm, EscritoForm, UserUpdateForm, ProfileU
 
 User = get_user_model()
 
-# Vista basada en función para listar escritos públicos
+# REEMPLAZAR la función lista_escritos existente con esta:
 def lista_escritos(request):
     """
-    Esta vista recupera todos los objetos Escrito cuyo estado sea 'PUBLICO'
-    y los pasa a la plantilla para su visualización.
+    Esta vista recupera todos los objetos Escrito cuyo estado sea 'PUBLICO',
+    los pagina y los pasa a la plantilla para su visualización.
     """
-    # MODIFICADO: Se optimiza la consulta para incluir los datos del autor y su perfil.
-    # Esto evita múltiples consultas a la base de datos (problema N+1) en la plantilla.
-    escritos = Escrito.objects.filter(estado='PUBLICO').select_related('autor__profile').order_by('-fecha_creacion')
+    escritos_list = Escrito.objects.filter(estado='PUBLICO').select_related('autor__profile').order_by('-fecha_creacion')
+    
+    # Lógica de Paginación
+    paginator = Paginator(escritos_list, 10)  # Muestra 10 escritos por página.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
-    # AÑADIDO PARA DEPURACIÓN: Imprime el queryset para ver qué elementos contiene.
-    # Estas líneas te mostrarán en la terminal del servidor qué escritos está recuperando la consulta.
-    print(f"DEBUG: Escritos públicos recuperados: {escritos}")
-    print(f"DEBUG: Cantidad de escritos públicos: {escritos.count()}")
-    for escrito in escritos:
-        print(f"DEBUG: Escrito ID: {escrito.pk}, Título: {escrito.titulo}, Estado: {escrito.estado}, Autor: {escrito.autor.username}")
-
-
-    # Diccionario de contexto: Los datos que queremos pasar a la plantilla.
-    # La clave 'escritos' será el nombre de la variable en la plantilla.
     contexto = {
-        'escritos': escritos
+        'page_obj': page_obj  # Pasamos el objeto de página a la plantilla
     }
-
-    # Renderiza la plantilla 'escritura/lista_escritos.html'
-    # y le pasa el diccionario 'contexto'.
     return render(request, 'escritura/lista_escritos.html', contexto)
 
 
@@ -928,39 +1008,31 @@ def eliminar_escrito(request, pk):
 
 
 # AÑADIDO: Vista para mostrar el perfil del usuario y sus escritos
-@login_required # Solo usuarios autenticados pueden acceder a su perfil.
+@login_required
 def perfil_usuario(request):
     """
-    Esta vista muestra el perfil del usuario autenticado, incluyendo
-    su biografía, foto de perfil y una lista de TODOS sus escritos
-    (sin importar el estado: borrador, privado, público).
+    Muestra el perfil del usuario autenticado y una lista PAGINADA
+    de TODOS sus escritos.
     """
-    # El objeto 'request.user' ya está disponible gracias a @login_required
-    # y el middleware de autenticación.
     usuario = request.user
-
-    # Intentamos obtener el perfil del usuario.
-    # Gracias a la señal post_save que creamos, cada usuario debería tener un perfil.
+    
     try:
         perfil = usuario.profile
     except Profile.DoesNotExist:
-        # En un escenario muy improbable (ej. si la señal falló o se deshabilitó),
-        # podríamos crear uno aquí o redirigir. Por ahora, asumimos que existe.
         perfil = Profile.objects.create(user=usuario)
-        # Podrías añadir un mensaje de warning aquí si esto fuera algo que debe ser notado:
-        # messages.warning(request, "Tu perfil fue creado automáticamente. Por favor, complétalo.")
 
-    # MODIFICADO: Se optimiza la consulta para evitar el problema N+1.
-    # Usamos `select_related` para traer la información del autor y su perfil
-    # en una única consulta a la base de datos, mejorando drásticamente el rendimiento.
-    mis_escritos = Escrito.objects.filter(autor=usuario).select_related('autor__profile').order_by('-fecha_creacion')
+    mis_escritos_list = Escrito.objects.filter(autor=usuario).select_related('autor__profile').order_by('-fecha_creacion')
+
+    # Lógica de Paginación
+    paginator = Paginator(mis_escritos_list, 10)  # Muestra 10 escritos por página.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
 
     contexto = {
-        'usuario': usuario,      # El objeto User
-        'perfil': perfil,        # El objeto Profile asociado
-        'mis_escritos': mis_escritos # Todos los escritos del usuario
+        'usuario': usuario,
+        'perfil': perfil,
+        'page_obj': page_obj  # Pasamos el objeto de página en lugar de la lista completa
     }
-
     return render(request, 'escritura/perfil_usuario.html', contexto)
 
 
@@ -1003,25 +1075,35 @@ def editar_perfil(request):
 # AÑADIDO: Vista para el perfil público de un usuario
 def perfil_publico(request, user_id):
     """
-    Muestra el perfil público de un usuario específico a cualquier visitante.
-    - user_id: La clave primaria (ID) del usuario cuyo perfil se quiere ver.
+    Muestra el perfil público de un usuario y una lista PAGINADA
+    de sus escritos públicos.
     """
-    # Usamos select_related para optimizar y traer los datos del perfil en una sola consulta.
-    # Si el usuario no existe o no quiere ser mostrado, devolvemos un 404.
     usuario_perfil = get_object_or_404(
         User.objects.select_related('profile'),
         pk=user_id,
         profile__mostrar_en_comunidad=True
     )
 
-    # Filtramos solo los escritos que son públicos.
-    escritos_publicos = Escrito.objects.filter(autor=usuario_perfil, estado='PUBLICO')
+    escritos_publicos_list = Escrito.objects.filter(autor=usuario_perfil, estado='PUBLICO')
 
+    # Lógica de Paginación
+    paginator = Paginator(escritos_publicos_list, 10)  # Muestra 10 escritos por página.
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
     contexto = {
         'usuario_perfil': usuario_perfil,
-        'escritos': escritos_publicos
+        'page_obj': page_obj  # Pasamos el objeto de página
     }
     return render(request, 'escritura/perfil_publico.html', contexto)
+
+def search_results_view(request):
+    """
+    Renderiza la página que contendrá los resultados de búsqueda de Google.
+    No necesita pasar ningún contexto, Google se encarga de todo en el frontend.
+    """
+    return render(request, 'escritura/search_results.html')
+
 ```
 
 ---
@@ -1605,19 +1687,18 @@ class Migration(migrations.Migration):
 ## Archivo: `escritura/templates/escritura/lista_escritos.html`
 
 ```html
-{# escritura/templates/escritura/lista_escritos.html #}
-{% extends 'base.html' %} {# Extiende la plantilla base #}
+{% extends 'base.html' %}
 
-{% block title %}Lista de Escritos Públicos{% endblock %} {# Define el título específico para esta página #}
+{% block title %}Lista de Escritos Públicos{% endblock %}
 
-{% block content %} {# Este contenido se insertará en el bloque 'content' de base.html #}
+{% block content %}
     <h1 class="page-title">Escritos Públicos del Taller</h1>
 
-    {% if escritos %}
+    {% if page_obj %}
         <ul class="escrito-list">
-            {% for escrito in escritos %}
+            {% for escrito in page_obj %}  {# MODIFICADO: Itera sobre page_obj #}
                 <li class="escrito-item">
-
+                    {# ... (El contenido de la tarjeta del escrito no cambia) ... #}
                     <div class="escrito-card-header">
                         <div class="header-author-info">
                             {% if escrito.autor.profile and escrito.autor.profile.foto_perfil %}
@@ -1629,34 +1710,58 @@ class Migration(migrations.Migration):
                             <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
                         </div>
                     </div>
-
                     <div class="escrito-content" id="escrito-content-{{ escrito.pk }}">
                         {{ escrito.contenido|safe }}
                     </div>
-
                     <div class="escrito-footer">
                         <div class="escrito-meta">
                             <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
                         </div>
-                        
-                        <!-- Contenedor Unificado para todas las acciones -->
                         <div class="card-actions-container">
-                            <button
-                                class="toggle-button"
-                                aria-expanded="false"
-                                aria-controls="escrito-content-{{ escrito.pk }}"
-                                title="Expandir/Contraer"
-                            >
+                            <button class="toggle-button" aria-expanded="false" aria-controls="escrito-content-{{ escrito.pk }}" title="Expandir/Contraer">
+                                <span class="button-text">Leer más</span>
                             </button>
                         </div>
                     </div>
                 </li>
             {% endfor %}
         </ul>
+
+        {# AÑADIDO: Incluye el componente de paginación #}
+        <div class="pagination-search-container">
+
+    {# 1. La Paginación (si existe) #}
+    {% if page_obj.has_other_pages %}
+        <div class="pagination">
+            <span class="step-links">
+                <span class="current">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+                </span>
+
+                {% if page_obj.has_previous %}
+                    <a href="?page=1">« primera</a>
+                    <a href="?page={{ page_obj.previous_page_number }}">anterior</a>
+                {% endif %}
+
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">siguiente</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}">última »</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+
+    {# 2. La Barra de Búsqueda de Google #}
+    <div class="search-container">
+        <div class="gcse-searchbox-only"></div>
+    </div>
+
+</div>
+
     {% else %}
         <p>No hay escritos públicos disponibles en este momento.</p>
     {% endif %}
-{% endblock %}```
+{% endblock %}
 ```
 
 ---
@@ -1691,7 +1796,7 @@ class Migration(migrations.Migration):
 
     {% if escritos %}
         <ul class="escrito-list">
-            {% for escrito in escritos %}
+            {% for escrito in page_obj %}
                 <li class="escrito-item">
 
                     <div class="escrito-card-header">
@@ -1717,19 +1822,21 @@ class Migration(migrations.Migration):
                         
                         <!-- Contenedor Unificado para todas las acciones -->
                         <div class="card-actions-container">
-                            <span class="escrito-status status-{{ escrito.estado|lower }}">{{ escrito.get_estado_display }}</span>
+                            
                             <button
                                 class="toggle-button"
                                 aria-expanded="false"
-                                aria-controls="escrito-content-perfil-{{ escrito.pk }}"
+                                aria-controls="escrito-content-perfil-{{ escrito.pk }}" {# Asegúrate que el ID del escrito es correcto para cada plantilla #}
                                 title="Expandir/Contraer"
                             >
+                                <span class="button-text">Leer más</span>
                             </button>
                         </div>
                     </div>
                 </li>
             {% endfor %}
         </ul>
+        {% include 'escritura/partials/pagination.html' %}
     {% else %}
         <p>Este autor aún no ha publicado ningún escrito.</p>
     {% endif %}
@@ -1770,7 +1877,7 @@ class Migration(migrations.Migration):
 
     {% if mis_escritos %}
         <ul class="escrito-list">
-            {% for escrito in mis_escritos %}
+            {% for escrito in page_obj %}
                 <li class="escrito-item">
 
                     <div class="escrito-card-header">
@@ -1805,15 +1912,17 @@ class Migration(migrations.Migration):
                             <button
                                 class="toggle-button"
                                 aria-expanded="false"
-                                aria-controls="escrito-content-perfil-{{ escrito.pk }}"
+                                aria-controls="escrito-content-perfil-{{ escrito.pk }}" {# Asegúrate que el ID del escrito es correcto para cada plantilla #}
                                 title="Expandir/Contraer"
                             >
+                                <span class="button-text">Leer más</span>
                             </button>
                         </div>
                     </div>
                 </li>
             {% endfor %}
         </ul>
+        {% include 'escritura/partials/pagination.html' %}
     {% else %}
         <p>Aún no has creado ningún escrito. <a href="{% url 'escritura:crear_escrito' %}">¡Empieza a escribir ahora!</a></p>
     {% endif %}
@@ -1842,6 +1951,53 @@ class Migration(migrations.Migration):
         ¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión aquí</a>
     </div>
 {% endblock %}
+```
+
+---
+
+## Archivo: `escritura/templates/escritura/search_results.html`
+
+```html
+{# escritura/templates/escritura/search_results.html #}
+{% extends 'base.html' %}
+
+{% block title %}Resultados de Búsqueda{% endblock %}
+
+{% block content %}
+    <h1 class="page-title">Resultados de Búsqueda</h1>
+    
+    {# Este es el contenedor donde Google mostrará los resultados. #}
+    {# La clase 'gcse-searchresults-only' es específica para páginas de resultados. #}
+    <div class="gcse-searchresults-only"></div>
+{% endblock %}
+```
+
+---
+
+## Archivo: `escritura/templates/escritura/partials/pagination.html`
+
+```html
+{# escritura/templates/escritura/partials/pagination.html #}
+
+{% if page_obj.has_other_pages %}
+<div class="pagination">
+    <div class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="pagination-link">« primera</a>
+            <a href="?page={{ page_obj.previous_page_number }}" class="pagination-link">anterior</a>
+        {% endif %}
+
+        <span class="current-page">
+            Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="pagination-link">siguiente</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination-link">última »</a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
 ```
 
 ---
@@ -1943,35 +2099,40 @@ a:hover {
     background-color: #c82333; /* Rojo más oscuro al pasar el ratón */
 }
 
-/* Header Styles */
+/* MODIFICADO: Header Styles */
 .main-header {
-    background-color: #CC9980; /* Nuevo color de fondo para el encabezado (marrón rojizo claro) */
+    background-color: #CC9980;
     color: white;
-    padding: 15px 20px; /* Ajuste de padding para móviles */
+    padding: 20px; /* Aumentamos el padding para dar más aire */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Centramos todo por defecto */
 }
 
-.main-nav {
+/* NUEVO: Contenedor principal del header */
+.header-content {
     display: flex;
-    flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px; /* Límite opcional para el ancho de la navegación */
-    margin: 0 auto;
+    flex-direction: column; /* Apilamos logo y nav verticalmente */
+    align-items: center; /* Centramos los items apilados */
+    gap: 15px; /* Espacio entre el logo y la barra de navegación */
+    width: 100%;
 }
 
-.logo {
-    flex-basis: 100%; /* El logo ocupa todo el ancho en móviles */
-    text-align: center;
-    margin-bottom: 10px;
-}
 .logo a {
     color: white;
-    font-size: 1.8em; /* Tamaño de fuente ligeramente más grande para el logo */
+    font-size: 2.2em; /* Hacemos el logo más grande */
     font-weight: bold;
     text-decoration: none;
-    display: block; /* Asegura que el enlace ocupe todo el espacio del logo */
-    font-family: 'Playfair Display', serif; /* APLICADO: Playfair Display para el logo */
+    display: block;
+    font-family: 'Playfair Display', serif;
+}
+
+/* NUEVO: Contenedor de la navegación (enlaces + CTA) */
+.main-nav {
+    display: flex;
+    flex-direction: column; /* Apilamos enlaces y CTA en móvil */
+    align-items: center;
+    gap: 20px; /* Espacio entre la lista de enlaces y el botón de acción */
+    width: 100%;
 }
 
 .nav-links {
@@ -1979,35 +2140,35 @@ a:hover {
     margin: 0;
     padding: 0;
     display: flex;
-    flex-wrap: wrap; /* Permite que los enlaces se envuelvan */
-    justify-content: center; /* Centra los enlaces en móviles */
-    gap: 15px; /* Espacio entre elementos de navegación */
+    flex-wrap: wrap;
+    justify-content: center; /* Centramos los enlaces */
+    gap: 20px; /* Espacio entre los enlaces */
     align-items: center;
-    width: 100%; /* Ocupa todo el ancho disponible */
 }
 
-.nav-links li {
-    margin: 0;
-}
-
-.nav-links a, .nav-links span {
+.nav-links a, .nav-links span, .nav-link-button {
     color: white;
     text-decoration: none;
     font-weight: bold;
     padding: 5px 0;
-    white-space: nowrap; /* Evita que los textos como "Hola, usuario!" se rompan */
-    font-family: 'Lato', sans-serif; /* APLICADO: Lato para enlaces de navegación */
+    white-space: nowrap;
+    font-family: 'Lato', sans-serif;
 }
 
-.nav-links a:hover {
-    text-decoration: underline;
-}
-
-.welcome-message {
+/* NUEVO: Estilos para el botón de outline */
+.button.button-outline {
+    background-color: transparent;
+    border: 2px solid #FAF7F0; /* Borde con el color de fondo de las tarjetas */
+    color: #FAF7F0; /* Texto del mismo color que el borde */
+    padding: 8px 15px;
     font-weight: bold;
-    margin-right: 0; /* Ya no necesitamos margen si están centrados */
-    color: white;
-    font-family: 'Lato', sans-serif; /* APLICADO: Lato para el mensaje de bienvenida */
+    transition: all 0.3s ease; /* Transición suave para el hover */
+}
+
+.button.button-outline:hover {
+    background-color: #FAF7F0; /* Fondo se rellena al pasar el ratón */
+    color: #AA775A; /* Texto cambia a un color oscuro de la paleta */
+    text-decoration: none;
 }
 
 /* Footer Styles */
@@ -2175,23 +2336,26 @@ ul.errorlist {
     opacity: 0;
 }
 
+/* REEMPLAZA CUALQUIER ESTILO ANTERIOR DE .toggle-button CON ESTO */
+
 .toggle-button {
-    width: 28px;
-    height: 28px;
+    width: auto; /* El ancho se ajusta al contenido */
+    height: auto;
     background-color: #E8D8C9;
     color: #AA775A;
     border: 1px solid #CC9980;
-    border-radius: 50%;
+    border-radius: 5px; /* Ligeramente más cuadrado para acomodar texto */
     cursor: pointer;
-    display: flex;
+    display: flex; /* CLAVE: Para alinear el texto y el ícono */
     justify-content: center;
     align-items: center;
-    font-size: 20px;
+    gap: 8px; /* Espacio entre el texto y el ícono */
+    font-size: 0.9em;
     font-weight: bold;
     line-height: 1;
-    padding: 0;
-    transition: background-color 0.3s, transform 0.3s;
-    flex-shrink: 0; /* Evita que el botón se encoja */
+    padding: 8px 12px;
+    transition: background-color 0.3s ease; /* Quitamos la transición de 'transform' de aquí */
+    flex-shrink: 0;
 }
 
 .toggle-button:hover {
@@ -2199,16 +2363,35 @@ ul.errorlist {
     color: white;
 }
 
-.toggle-button::before {
-    content: '+';
+/* Estilos para el texto dentro del botón */
+.button-text {
+    white-space: nowrap;
 }
 
-.escrito-item.is-expanded .toggle-button::before {
-    content: '−';
+/* Estilos para el ícono de flecha (hecho con bordes) */
+.button-icon {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #AA775A; /* Flecha hacia abajo por defecto */
+    transition: transform 0.3s ease; /* La rotación solo se aplica al ícono */
 }
 
-.escrito-item.is-expanded .toggle-button {
+/* Rota la flecha hacia arriba cuando el escrito está expandido */
+.escrito-item.is-expanded .button-icon {
     transform: rotate(180deg);
+}
+
+/* Ajuste para el color del ícono en estado hover */
+.toggle-button:hover .button-icon {
+    border-top-color: white;
+}
+
+/* Asegura que el color de la flecha también cambie cuando el botón está hover Y expandido */
+.escrito-item.is-expanded .toggle-button:hover .button-icon {
+    border-top-color: white;
 }
 
 .escrito-footer {
@@ -2615,6 +2798,176 @@ hr {
     line-height: 1.6;
     margin: 0;
 }
+
+/* --- AÑADIDO: Estilos para Breadcrumbs --- */
+.breadcrumb-container {
+    padding: 10px 20px;
+    background-color: #E8D8C9;
+    border-bottom: 1px solid #CC9980;
+    font-family: 'Lato', sans-serif;
+    font-size: 0.9em;
+    color: #6B4F4F;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+.breadcrumb-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 800px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.breadcrumb-item {
+    display: inline;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: '›';
+    padding: 0 8px;
+    color: #AA775A;
+    font-weight: bold;
+}
+
+.breadcrumb-item a {
+    color: #6B4F4F;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    text-decoration: underline;
+}
+
+.breadcrumb-item span[aria-current="page"] {
+    font-weight: bold;
+    color: #AA775A;
+}
+
+@media (max-width: 600px) {
+    .breadcrumb-container {
+        padding: 8px 15px;
+        margin-bottom: 15px;
+    }
+    .breadcrumb-list {
+        justify-content: flex-start;
+    }
+    .breadcrumb-item {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 45%;
+    }
+    .breadcrumb-item:last-child {
+        max-width: 100%;
+    }
+}
+
+/* MODIFICADO: Media Queries para Responsiveness */
+
+/* En pantallas más grandes, colocamos la nav y el CTA en la misma línea */
+@media (min-width: 768px) {
+    .main-nav {
+        flex-direction: row; /* Ponemos los enlaces y el CTA en fila */
+        justify-content: center; /* Centramos el conjunto */
+    }
+
+    .logo a {
+        font-size: 2.8em; /* Aumentamos aún más el tamaño del logo en desktop */
+    }
+}
+
+/* 
+----------------------------------------------------------------------
+--- CÓDIGO AÑADIDO PARA LA BARRA DE BÚSQUEDA EN LA LISTA DE ESCRITOS ---
+----------------------------------------------------------------------
+*/
+
+/* --- Estilos para el Contenedor de Paginación y Búsqueda --- */
+
+.pagination-search-container {
+    margin-top: 40px; /* Espacio superior para separarlo del contenido */
+    padding-top: 20px;
+    border-top: 1px solid #E8D8C9; /* Línea separadora sutil */
+    display: flex;
+    flex-direction: column; /* Apila la paginación encima de la búsqueda */
+    align-items: center; /* Centra ambos elementos horizontalmente */
+    gap: 25px; /* Espacio entre la paginación y la búsqueda */
+}
+
+.pagination {
+    font-family: 'Lato', sans-serif;
+}
+
+/* Contenedor específico de la barra de búsqueda */
+.search-container {
+    width: 100%;
+    max-width: 450px; /* Define el ancho máximo de la barra de búsqueda. ¡Ajusta este valor a tu gusto! */
+}
+
+/* Sobrescribimos los estilos de Google para que ocupe nuestro contenedor */
+.search-container .gsc-control-cse {
+    padding: 0 !important;
+    border: none !important;
+    background: none !important;
+}
+
+/* El campo de texto de Google */
+.search-container input.gsc-input {
+    border-radius: 5px !important;
+    background-color: #FFF !important; /* Fondo blanco como en la imagen */
+    border: 1px solid #CC9980 !important; /* Borde con el color de la paleta */
+    padding: 10px !important; /* Más espaciado interno */
+}
+
+/* El botón de búsqueda de Google */
+.search-container button.gsc-search-button {
+    border-radius: 5px !important;
+    border: 1px solid #6B4F4F !important;
+    background-color: #6B4F4F !important; /* Color marrón oscuro para el botón */
+}
+
+.search-container .gsc-search-button-v2 svg {
+    fill: white !important; /* Hacemos la lupa blanca */
+}
+
+
+/* --- Estilos Mejorados para la Paginación --- */
+
+/* Contenedor de los enlaces y texto de paginación */
+.pagination .step-links {
+    display: flex; /* Pone los elementos en fila */
+    align-items: center; /* Los alinea verticalmente */
+    gap: 10px; /* Espacio entre cada elemento */
+}
+
+/* Estilo para los enlaces de paginación (anterior, siguiente, etc.) */
+.pagination a {
+    padding: 8px 12px;
+    text-decoration: none;
+    background-color: #E8D8C9; /* Color de fondo suave */
+    color: #6B4F4F; /* Color de texto oscuro */
+    border: 1px solid #CC9980;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+/* Efecto al pasar el ratón por encima de los enlaces */
+.pagination a:hover {
+    background-color: #AA775A; /* Color primario */
+    color: white; /* Texto blanco */
+}
+
+/* Estilo para el texto "Página X de Y" */
+.pagination .current {
+    font-weight: bold;
+    color: #333333;
+    padding: 8px;
+}
 ```
 
 ---
@@ -2637,32 +2990,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 2. Iteramos sobre cada elemento de la lista para añadirle la funcionalidad.
     escritoItems.forEach(item => {
-        // Encontramos el contenido y el botón dentro de cada item.
         const content = item.querySelector('.escrito-content');
         const toggleButton = item.querySelector('.toggle-button');
 
-        // Si no encontramos el contenido o el botón, saltamos al siguiente item.
         if (!content || !toggleButton) return;
 
-        // Por defecto, comprobamos si el contenido es más alto que nuestra altura colapsada.
-        // Si no lo es, no necesitamos el botón, así que lo ocultamos.
-        // `scrollHeight` es la altura total del contenido, `clientHeight` es la altura visible.
+        const buttonText = toggleButton.querySelector('.button-text');
+
         if (content.scrollHeight <= content.clientHeight) {
             toggleButton.style.display = 'none';
+        } else {
+            buttonText.textContent = 'Leer más';
+            toggleButton.setAttribute('aria-expanded', 'false');
         }
 
-        // 3. Añadimos un 'escuchador de eventos' al botón.
-        //    Esto ejecuta una función cada vez que el usuario hace clic en el botón.
         toggleButton.addEventListener('click', () => {
-            // `classList.toggle` es un método muy útil:
-            // - Si la clase 'is-expanded' existe en el 'item', la quita.
-            // - Si la clase 'is-expanded' no existe, la añade.
-            // Esto nos permite cambiar entre los dos estados con una sola línea.
             item.classList.toggle('is-expanded');
 
-            // MEJORA DE ACCESIBILIDAD: Actualizamos el atributo aria-expanded.
             const isExpanded = item.classList.contains('is-expanded');
             toggleButton.setAttribute('aria-expanded', isExpanded);
+
+            if (isExpanded) {
+                buttonText.textContent = 'Leer menos';
+            } else {
+                buttonText.textContent = 'Leer más';
+            }
         });
     });
 });
@@ -2740,25 +3092,26 @@ SECRET_KEY = 'django-insecure-local-development-key'
 
 ```python
 # taller_escritura/settings.py
-# VERSIÓN FINAL AUTOSUFICIENTE PARA PYTHONANYWHERE
-
 import os
 from pathlib import Path
+from dotenv import load_dotenv # AÑADIR
+import dj_database_url # AÑADIR (necesitarás instalarlo: pip install dj-database-url)
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Build paths...
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# --- CONFIGURACIÓN DE PRODUCCIÓN FIJA ---
+# AÑADIR: Carga el archivo .env
+load_dotenv(BASE_DIR / '.env')
 
-# MODIFICADO: Clave secreta segura y única para tu proyecto.
-SECRET_KEY = '***REDACTED***'
+# MODIFICADO: Lee la SECRET_KEY desde el entorno
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-# DEBUG debe ser False en producción por seguridad.
-DEBUG = False
+# MODIFICADO: Lee DEBUG desde el entorno
+DEBUG = os.getenv('DEBUG', 'False').lower() in ['true', '1', 't']
 
-# MODIFICADO: Host permitido para tu aplicación.
-ALLOWED_HOSTS = ['devivan.pythonanywhere.com']
+ALLOWED_HOSTS = ['devivan.pythonanywhere.com', '127.0.0.1', 'localhost'] # Permite hosts para prod y dev
 
+# ... INSTALLED_APPS, MIDDLEWARE, etc. ...
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -2770,6 +3123,7 @@ INSTALLED_APPS = [
     'escritura',
     'ckeditor',
     'ckeditor_uploader',
+    'django.contrib.sites',
 ]
 
 MIDDLEWARE = [
@@ -2802,19 +3156,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'taller_escritura.wsgi.application'
 
-# --- BASE DE DATOS DE PRODUCCIÓN (MYSQL EN PYTHONANYWHERE) ---
-# MODIFICADO: Rellenado con las credenciales exactas de tu cuenta de PythonAnywhere.
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'DevIvan$db_taller_escritura',
-        'USER': 'DevIvan',
-        'PASSWORD': '***REDACTED***', # AÑADIDA: Tu contraseña de la base de datos.
-        'HOST': 'DevIvan.mysql.pythonanywhere-services.com',
-        'PORT': '3306',
-    }
-}
 
+# MODIFICADO: Configuración de Base de Datos flexible
+# Por defecto, usa la URL de la base de datos de producción
+# El archivo .env la sobreescribirá para desarrollo local
+DATABASES = {
+    'default': dj_database_url.config(
+        default='mysql://DevIvan:sql159753@DevIvan.mysql.pythonanywhere-services.com:3306/DevIvan$db_taller_escritura'
+    )
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -2852,6 +3202,7 @@ STORAGES = {
 }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+SITE_ID = 1
 LOGIN_REDIRECT_URL = 'escritura:lista_escritos'
 LOGOUT_REDIRECT_URL = 'escritura:lista_escritos'
 
@@ -2887,6 +3238,7 @@ except ImportError:
 # --- EMAIL CONFIGURATION (for development) ---
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = 'notificaciones@tallerescritura.com'
+
 ```
 
 ---
@@ -2899,6 +3251,14 @@ from django.urls import path, include
 from django.conf import settings # AÑADIDO: Para importar settings
 from django.conf.urls.static import static # AÑADIDO: Para servir archivos media en desarrollo
 from escritura import views # AÑADIDO: Importamos las vistas de nuestra app
+from django.contrib.sitemaps.views import sitemap # AÑADIR
+from escritura.sitemaps import EscritoSitemap, StaticViewSitemap # AÑADIR
+
+# AÑADIR: Diccionario de Sitemaps
+sitemaps = {
+    'escritos': EscritoSitemap,
+    'static': StaticViewSitemap,
+}
 
 urlpatterns = [
     # AÑADIDO: URL para la página principal
@@ -2909,6 +3269,8 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     # AÑADIDO: URLs para django-ckeditor-uploader
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    # AÑADIR: URL del sitemap
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps, 'template_name': 'sitemap.xml'}, name='django.contrib.sitemaps.views.sitemap'),
 ]
 
 # AÑADIDO: Configuración para servir archivos de medios en el servidor de desarrollo.
@@ -2967,35 +3329,52 @@ application = get_wsgi_application()
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     
     {% block head_extra %}{% endblock %} 
+    <meta name="google-site-verification" content="TU_CODIGO_UNICO_AQUI" />
+    <script async src="https://cse.google.com/cse.js?cx=001720844550609399072:ascmc2rsftg"></script>
 </head>
 <body>
     <header class="main-header">
-        <nav class="main-nav">
+        {# MODIFICADO: Cambiamos la clase de 'main-nav' a 'header-content' para mayor claridad #}
+        <div class="header-content">
             <div class="logo">
                 <a href="{% url 'home' %}">Taller de Escritura de Cálamo y Papiro</a>
             </div>
-            <ul class="nav-links">
+
+            {# AÑADIDO: Contenedor para los enlaces de navegación y el CTA #}
+            <nav class="main-nav" aria-label="Navegación principal">
+                <ul class="nav-links">
+                    <li><a href="{% url 'escritura:lista_escritos' %}">Escritos</a></li>
+                    
+                    {% if user.is_authenticated %}
+                        <li><span class="welcome-message">Hola, {{ user.username }}!</span></li>
+                        <li><a href="{% url 'escritura:perfil_usuario' %}">Mi Perfil</a></li>
+                        <li>
+                            <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="nav-link-button">Cerrar Sesión</button>
+                            </form>
+                        </li>
+                    {% else %}
+                        <li><a href="{% url 'login' %}" class="button">Iniciar Sesión</a></li>
+                        <li><a href="{% url 'escritura:registro' %}" class="button secondary">Registrarse</a></li>
+                    {% endif %}
+                    
+                </ul>
+
+                {# AÑADIDO: Acción principal separada para usuarios autenticados #}
                 {% if user.is_authenticated %}
-                    <li><span class="welcome-message">Hola, {{ user.username }}!</span></li>
-                    {# AÑADIDO: Enlace a la página de perfil #}
-                    <li><a href="{% url 'escritura:perfil_usuario' %}">Mi Perfil</a></li>
-                    
-                    {# MODIFICADO: Reemplazamos el enlace <a> por un formulario <form> #}
-                    <li>
-                        <form method="post" action="{% url 'logout' %}" style="display: inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="nav-link-button">Cerrar Sesión</button>
-                        </form>
-                    </li>
-                    
-                    <li><a href="{% url 'escritura:crear_escrito' %}" class="button primary">+ Crear Nuevo Escrito</a></li>
-                {% else %}
-                    <li><a href="{% url 'login' %}" class="button">Iniciar Sesión</a></li>
-                    <li><a href="{% url 'escritura:registro' %}" class="button secondary">Registrarse</a></li>
+                <div class="header-actions">
+                    {# MODIFICADO: Aplicamos la nueva clase 'button-outline' #}
+                    <a href="{% url 'escritura:crear_escrito' %}" class="button button-outline">+ Crear Nuevo Escrito</a>
+                </div>
                 {% endif %}
-            </ul>
-        </nav>
+            </nav>
+        </div>
     </header>
+
+    {% block breadcrumbs %}
+        {# Este bloque será sobrescrito por plantillas hijas cuando necesiten breadcrumbs #}
+    {% endblock %}
 
     <main class="container">
         {# AÑADIDO: Bloque para mostrar mensajes del sistema de Django #}
@@ -3030,6 +3409,10 @@ application = get_wsgi_application()
 ```
 
 ---
+
+## Archivo: `taller_escritura/templates/sitemap.xml`
+
+[Contenido de 'sitemap.xml' omitido (Extensión no listada: .xml)]
 
 ## Archivo: `taller_escritura/templates/registration/login.html`
 
@@ -3079,6 +3462,7 @@ application = get_wsgi_application()
 *(Binarios, errores de codificación/lectura, o errores inesperados durante el procesamiento)*
 
 - `.gitignore (Extensión no listada)`
+- `taller_escritura/templates/sitemap.xml (Extensión no listada)`
 
 ## Lista de Archivos Omitidos por Tamaño Excesivo
 
