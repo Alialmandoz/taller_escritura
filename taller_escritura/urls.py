@@ -9,7 +9,7 @@ from escritura.sitemaps import EscritoSitemap, StaticViewSitemap # AÑADIR
 # AÑADIR: Diccionario de Sitemaps
 sitemaps = {
     'escritos': EscritoSitemap,
-    'static': StaticViewSitemap,
+  # 'static': StaticViewSitemap,
 }
 
 urlpatterns = [
