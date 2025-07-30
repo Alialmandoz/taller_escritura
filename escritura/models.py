@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.urls import reverse # <-- ASEGÚRATE DE AÑADIR ESTA LÍNEA
 from django.db.models.signals import post_save # AÑADIDO: Para crear el perfil automáticamente
 from django.dispatch import receiver         # AÑADIDO: Para conectar la señal
 from ckeditor_uploader.fields import RichTextUploadingField # MODIFICADO: Importa RichTextUploadingField
@@ -28,6 +29,15 @@ class Escrito(models.Model):
 
     def __str__(self):
         return f"{self.titulo} por {self.autor.username}"
+
+    # AÑADE ESTE MÉTODO COMPLETO
+    def get_absolute_url(self):
+        """
+        Devuelve la URL canónica para una instancia de un Escrito.
+        """
+        # 'escritura:detalle_escrito' es el nombre que le dimos a la URL en urls.py
+        # kwargs={'pk': self.pk} le pasa el ID del escrito actual a la URL.
+        return reverse('escritura:detalle_escrito', kwargs={'pk': self.pk})
 
     class Meta:
         ordering = ['-fecha_creacion']
