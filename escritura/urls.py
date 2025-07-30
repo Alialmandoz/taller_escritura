@@ -19,4 +19,5 @@ urlpatterns = [
     path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
     # AÑADIDO: URL para el perfil público de un usuario
     path('perfil/<int:user_id>/', views.perfil_publico, name='perfil_publico'),
+    path('search-results/', views.search_results_view, name='search_results'),
 ]

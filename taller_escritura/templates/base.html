@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     
     {% block head_extra %}{% endblock %} 
+    <script async src="https://cse.google.com/cse.js?cx=001720844550609399072:ascmc2rsftg"></script>
 </head>
 <body>
     <header class="main-header">
@@ -43,6 +44,7 @@
                         <li><a href="{% url 'login' %}" class="button">Iniciar Sesión</a></li>
                         <li><a href="{% url 'escritura:registro' %}" class="button secondary">Registrarse</a></li>
                     {% endif %}
+                    <li><div class="gcse-search"></div></li> {# <-- LÍNEA AÑADIDA #}
                 </ul>
 
                 {# AÑADIDO: Acción principal separada para usuarios autenticados #}

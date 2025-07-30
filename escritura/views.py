@@ -331,3 +331,10 @@ def perfil_publico(request, user_id):
         'page_obj': page_obj  # Pasamos el objeto de página
     }
     return render(request, 'escritura/perfil_publico.html', contexto)
+
+def search_results_view(request):
+    """
+    Renderiza la página que contendrá los resultados de búsqueda de Google.
+    No necesita pasar ningún contexto, Google se encarga de todo en el frontend.
+    """
+    return render(request, 'escritura/search_results.html')
