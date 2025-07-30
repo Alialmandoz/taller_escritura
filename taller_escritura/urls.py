@@ -3,6 +3,14 @@ from django.urls import path, include
 from django.conf import settings # AÑADIDO: Para importar settings
 from django.conf.urls.static import static # AÑADIDO: Para servir archivos media en desarrollo
 from escritura import views # AÑADIDO: Importamos las vistas de nuestra app
+from django.contrib.sitemaps.views import sitemap # AÑADIR
+from escritura.sitemaps import EscritoSitemap, StaticViewSitemap # AÑADIR
+
+# AÑADIR: Diccionario de Sitemaps
+sitemaps = {
+    'escritos': EscritoSitemap,
+    'static': StaticViewSitemap,
+}
 
 urlpatterns = [
     # AÑADIDO: URL para la página principal
@@ -13,6 +21,8 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     # AÑADIDO: URLs para django-ckeditor-uploader
     path('ckeditor/', include('ckeditor_uploader.urls')),
+    # AÑADIR: URL del sitemap
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 ]
 
 # AÑADIDO: Configuración para servir archivos de medios en el servidor de desarrollo.

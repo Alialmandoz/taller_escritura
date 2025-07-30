@@ -1,3 +1,0 @@
-refactor: Actualizar implementación de Google Search
-
-Cambia a gcse-searchbox-only para separar la caja de búsqueda de los resultados.
