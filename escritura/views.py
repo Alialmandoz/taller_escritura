@@ -8,6 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.contrib import messages
 from django.urls import reverse
+from django.core.mail import send_mail
+from django.contrib.auth.decorators import user_passes_test
 
 from .models import Escrito, Profile, Comentario
 from .forms import CustomUserCreationForm, EscritoForm, UserUpdateForm, ProfileUpdateForm, ComentarioForm
@@ -242,3 +244,40 @@ def generar_sitemap(request):
         {'url_list': todas_las_urls},
         content_type='application/xml'
     )
+
+@user_passes_test(lambda u: u.is_superuser)
+def vista_test_email(request):
+    """
+    Una vista para administradores para enviar un correo de prueba y verificar
+    la configuración del servidor de correo.
+    """
+    # Si se hace clic en el botón, el método de la petición será POST.
+    if request.method == 'POST':
+        try:
+            # Construimos y enviamos el correo.
+            asunto = "Correo de prueba desde Taller de Escritura"
+            mensaje = (
+                "¡Felicidades! Este es un correo de prueba enviado desde tu aplicación "
+                "en PythonAnywhere. Si lo has recibido, tu configuración de correo (SMTP) funciona correctamente."
+            )
+            # El remitente (from_email) se toma del DEFAULT_FROM_EMAIL en settings.py
+            send_mail(
+                subject=asunto,
+                message=mensaje,
+                from_email=None,
+                # Corregí el typo en el correo, debe ser una lista.
+                recipient_list=['alialmandoz@gmail.com'], 
+                fail_silently=False  # Queremos que falle ruidosamente si hay un error.
+            )
+            # Añadimos un mensaje de éxito para mostrar en la plantilla.
+            messages.success(request, "¡Correo de prueba enviado con éxito! Revisa la bandeja de entrada de alialmandoz@gmail.com.")
+
+        except Exception as e:
+            # Si algo sale mal (ej: contraseña incorrecta, bloqueo de Google), mostramos un error.
+            messages.error(request, f"Error al enviar el correo: {e}")
+
+        # Redirigimos a la misma página para mostrar el mensaje de éxito o error.
+        return redirect('escritura:test_email')
+
+    # Si la petición es GET, simplemente mostramos la página.
+    return render(request, 'escritura/test_email.html')

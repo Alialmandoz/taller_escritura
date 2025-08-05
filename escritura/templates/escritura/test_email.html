@@ -1,0 +1,26 @@
+{# escritura/templates/escritura/test_email.html #}
+{% extends 'base.html' %}
+
+{% block title %}Prueba de Envío de Correo{% endblock %}
+
+{% block content %}
+    <div style="text-align: center; padding: 40px; background-color: #F5EFE6; border-radius: 8px;">
+        <h1 class="page-title">Herramienta de Diagnóstico de Correo</h1>
+        <p style="font-size: 1.1em; max-width: 600px; margin: 20px auto; line-height: 1.6;">
+            Haz clic en el siguiente botón para enviar un correo de prueba desde la aplicación.
+            Este correo se enviará a la dirección <strong>alialmandoz @gmail.com</strong>
+            utilizando la configuración SMTP definida en el servidor.
+        </p>
+
+        {# Este formulario es crucial. Envía una petición POST a la vista actual. #}
+        <form method="post" action="{% url 'escritura:test_email' %}">
+            
+            {# ¡CRÍTICO PARA LA SEGURIDAD! No funcionará sin esto. #}
+            {% csrf_token %}
+
+            <button type="submit" class="button primary" style="padding: 15px 30px; font-size: 1.2em;">
+                Enviar Correo de Prueba
+            </button>
+        </form>
+    </div>
+{% endblock %}

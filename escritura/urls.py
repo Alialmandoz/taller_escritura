@@ -20,4 +20,5 @@ urlpatterns = [
     # AÑADIDO: URL para el perfil público de un usuario
     path('perfil/<int:user_id>/', views.perfil_publico, name='perfil_publico'),
     path('search-results/', views.search_results_view, name='search_results'),
+    path('test-email/', views.vista_test_email, name='test_email'),
 ]
