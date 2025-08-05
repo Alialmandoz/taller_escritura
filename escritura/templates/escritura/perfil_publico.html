@@ -23,51 +23,54 @@
 
     <h2 class="section-title">Escritos Públicos de {{ usuario_perfil.username }}</h2>
 
-    {% if escritos %}
-        <ul class="escrito-list">
-            {% for escrito in page_obj %}
-                <li class="escrito-item">
+    <ul class="escrito-list">
+        {% for escrito in page_obj %}
+            <li class="escrito-item">
 
-                    <div class="escrito-card-header">
-                        <div class="header-author-info">
-                            {% if escrito.autor.profile and escrito.autor.profile.foto_perfil %}
-                                <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
-                            {% endif %}
-                            <span class="author-name">{{ escrito.autor.username }}</span>
-                        </div>
-                        <div class="header-title-actions">
-                            <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
-                        </div>
+                <div class="escrito-card-header">
+                    <div class="header-author-info">
+                        {% if escrito.autor.profile and escrito.autor.profile.foto_perfil %}
+                            <img class="author-pic" src="{{ escrito.autor.profile.foto_perfil.url }}" alt="Foto de {{ escrito.autor.username }}">
+                        {% endif %}
+                        <span class="author-name">{{ escrito.autor.username }}</span>
                     </div>
-
-                    <div class="escrito-content" id="escrito-content-perfil-{{ escrito.pk }}">
-                        {{ escrito.contenido|safe }}
+                    <div class="header-title-actions">
+                        <h2 class="escrito-title"><a href="{% url 'escritura:detalle_escrito' pk=escrito.pk %}">{{ escrito.titulo }}</a></h2>
                     </div>
+                </div>
 
-                    <div class="escrito-footer">
-                        <div class="escrito-meta">
-                            <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
-                        </div>
+                <div class="escrito-content" id="escrito-content-perfil-{{ escrito.pk }}">
+                    {{ escrito.contenido|safe }}
+                </div>
+
+                <div class="escrito-footer">
+                    <div class="escrito-meta">
+                        <p>Publicado el: {{ escrito.fecha_creacion|date:"d M Y H:i" }}</p>
+                    </div>
+                    
+                    <!-- Contenedor Unificado para todas las acciones -->
+                    <div class="card-actions-container">
                         
-                        <!-- Contenedor Unificado para todas las acciones -->
-                        <div class="card-actions-container">
-                            
-                            <button
-                                class="toggle-button"
-                                aria-expanded="false"
-                                aria-controls="escrito-content-perfil-{{ escrito.pk }}" {# Asegúrate que el ID del escrito es correcto para cada plantilla #}
-                                title="Expandir/Contraer"
-                            >
-                                <span class="button-text">Leer más</span>
-                            </button>
-                        </div>
+                        <button
+                            class="toggle-button"
+                            aria-expanded="false"
+                            aria-controls="escrito-content-perfil-{{ escrito.pk }}" {# Asegúrate que el ID del escrito es correcto para cada plantilla #}
+                            title="Expandir/Contraer"
+                        >
+                            <span class="button-text">Leer más</span>
+                        </button>
                     </div>
-                </li>
-            {% endfor %}
-        </ul>
+                </div>
+            </li>
+        {% empty %}
+            <li>
+                <p>Este autor aún no ha publicado ningún escrito.</p>
+            </li>
+        {% endfor %}
+    </ul>
+
+    {% if page_obj.has_other_pages %}
         {% include 'escritura/partials/pagination.html' %}
-    {% else %}
-        <p>Este autor aún no ha publicado ningún escrito.</p>
     {% endif %}
 
 {% endblock %}
