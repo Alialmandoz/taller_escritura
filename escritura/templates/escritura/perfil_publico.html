@@ -2,14 +2,14 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Perfil de {{ usuario_perfil.username }}{% endblock %}
+{% block title %}Perfil de {{ usuario_perfil.username|capfirst }}{% endblock %}
 
 {% block content %}
     <div class="profile-header">
         {% if usuario_perfil.profile and usuario_perfil.profile.foto_perfil %}
             <img src="{{ usuario_perfil.profile.foto_perfil.url }}" alt="Foto de perfil de {{ usuario_perfil.username }}" class="profile-pic">
         {% endif %}
-        <h1 class="page-title">{{ usuario_perfil.username }}</h1>
+        <h1 class="page-title">{{ usuario_perfil.username|capfirst }}</h1>
         <p class="profile-bio">
             {% if usuario_perfil.profile.bio %}
                 {{ usuario_perfil.profile.bio }}
@@ -21,7 +21,7 @@
 
     <hr> {# Separador visual #}
 
-    <h2 class="section-title">Escritos Públicos de {{ usuario_perfil.username }}</h2>
+    <h2 class="section-title">Escritos públicos de {{ usuario_perfil.username|capfirst }}</h2>
 
     <ul class="escrito-list">
         {% for escrito in page_obj %}

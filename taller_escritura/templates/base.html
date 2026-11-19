@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Taller de Escritura de Cálamo y Papiro {% endblock %}</title>
+    <title>{% block title %}Inicio{% endblock %} · Taller de Escritura de Cálamo y Papiro</title>
     
     {# AÑADIDO: Enlaces para importar las fuentes de Google Fonts #}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     
     {% block head_extra %}{% endblock %} 
-    <meta name="google-site-verification" content="TU_CODIGO_UNICO_AQUI" />
+    {# Para verificar en Google Search Console, agregar aquí: <meta name="google-site-verification" content="CODIGO_REAL"> #}
     <script async src="https://cse.google.com/cse.js?cx=001720844550609399072:ascmc2rsftg"></script>
 </head>
 <body>
@@ -83,7 +83,7 @@
     </main>
 
     <footer class="main-footer"> {# MODIFICADO: Cambiado de <footer> a <footer class="main-footer"> para consistencia #}
-        <p>© 2025 Taller de Escritura. Todos los derechos reservados.</p>
+        <p>© {% now "Y" %} Taller de Escritura de Cálamo y Papiro. Todos los derechos reservados.</p>
     </footer>
 
     {% block body_extra %}{% endblock %}
